@@ -2090,7 +2090,6 @@ setTimeout(function(){
   // shared mouse (px) + smoothed
   var mx = window.innerWidth*0.5, my = window.innerHeight*0.5;
   addEventListener('mousemove', function(e){ mx=e.clientX; my=e.clientY; }, {passive:true});
-  addEventListener('touchmove', function(e){ if(e.touches[0]){ mx=e.touches[0].clientX; my=e.touches[0].clientY; } }, {passive:true});
 
   var glOK = false;
   try{ var probe=document.createElement('canvas'); glOK = !!(window.THREE && (probe.getContext('webgl2')||probe.getContext('webgl')||probe.getContext('experimental-webgl'))); }catch(e){ glOK=false; }
