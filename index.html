@@ -364,7 +364,7 @@ html.a11y-stop *{animation:none!important;transition:none!important}
   .nav.nav-hidden{transform:translateY(-120%)}
   .nav-links{display:none}
   .burger{display:flex}
-  .hero{height:100vh}
+  .hero{height:100svh}
   .hero-pin{position:relative;top:auto}
   .about{grid-template-columns:1fr}
   .services-grid{grid-template-columns:1fr}
@@ -384,6 +384,15 @@ html.a11y-stop *{animation:none!important;transition:none!important}
   #contact.contact-dark{border-radius:24px 24px 0 0}
   .section-bg-text{font-size:clamp(4rem,16vw,8rem)}
   .marquee-item{padding:0 24px;gap:24px}
+  /* Mobile reveals: skip JS animations, use CSS transitions via IntersectionObserver */
+  .split-line-inner{transform:translateY(105%);opacity:0;transition:transform 0.7s cubic-bezier(.32,.72,0,1),opacity 0.7s ease}
+  .split-line-inner.vis{transform:translateY(0);opacity:1}
+  .char-reveal{opacity:0;transition:opacity 0.8s ease}
+  .char-reveal.visible{opacity:1}
+  [data-reveal="clip"]{opacity:0;transition:opacity 0.6s ease}
+  [data-reveal="clip"].visible{opacity:1}
+  .step.reveal,.service-card.reveal{opacity:0;transform:translateY(30px);transition:opacity 0.6s ease,transform 0.6s ease}
+  .step.visible,.service-card.visible{opacity:1;transform:none}
 }
 @media(max-width:480px){
   .process-steps{grid-template-columns:1fr}
@@ -1221,29 +1230,55 @@ document.querySelectorAll('.section-title,.contact-title').forEach(function(titl
     return '<span class="split-line"><span class="split-line-inner">' + line.trim() + '</span></span>';
   }).join('');
 
-  var inners = title.querySelectorAll('.split-line-inner');
-  ScrollTrigger.create({
-    trigger: title,
-    start: 'top 85%',
-    onEnter: function(){
-      gsap.to(inners, {y:'0%', filter:'blur(0px)', duration:1.4, stagger:0.15, ease:'power3.out'});
-    },
-    once: true
-  });
+  if(isMobile){
+    // CSS transition via IntersectionObserver (zero GSAP scroll listener)
+    var inners = title.querySelectorAll('.split-line-inner');
+    var io = new IntersectionObserver(function(entries){
+      if(entries[0].isIntersecting){
+        var delay = 0;
+        inners.forEach(function(inner){
+          setTimeout(function(){ inner.classList.add('vis'); }, delay);
+          delay += 120;
+        });
+        io.disconnect();
+      }
+    }, {threshold:0.2});
+    io.observe(title);
+  } else {
+    var inners = title.querySelectorAll('.split-line-inner');
+    ScrollTrigger.create({
+      trigger: title,
+      start: 'top 85%',
+      onEnter: function(){
+        gsap.to(inners, {y:'0%', filter:'blur(0px)', duration:1.4, stagger:0.15, ease:'power3.out'});
+      },
+      once: true
+    });
+  }
 });
 
 /* ===== REVEALS ===== */
-document.querySelectorAll('.reveal').forEach(function(el){
-  if(el.classList.contains('step') || el.classList.contains('service-card')) return;
-  ScrollTrigger.create({
-    trigger:el, start:'top 85%',
-    onEnter:function(){el.classList.add('visible')},
-    once:true
+if(!isMobile){
+  document.querySelectorAll('.reveal').forEach(function(el){
+    if(el.classList.contains('step') || el.classList.contains('service-card')) return;
+    ScrollTrigger.create({
+      trigger:el, start:'top 85%',
+      onEnter:function(){el.classList.add('visible')},
+      once:true
+    });
   });
-});
+} else {
+  // Single IntersectionObserver for all .reveal elements on mobile — zero GSAP overhead
+  var _mRevealIO = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){ e.target.classList.add('visible'); _mRevealIO.unobserve(e.target); }
+    });
+  }, {threshold:0.12});
+  document.querySelectorAll('.reveal').forEach(function(el){ _mRevealIO.observe(el); });
+}
 
 /* [#17] TEXT SCRAMBLE ON SECTION EYEBROWS */
-(function(){
+if(!isMobile)(function(){
   var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789·';
   document.querySelectorAll('.section-eyebrow').forEach(function(el){
     var original = el.textContent;
@@ -1277,32 +1312,34 @@ document.querySelectorAll('.reveal').forEach(function(el){
   });
 })();
 
-/* ===== SECTION PARALLAX ===== */
-document.querySelectorAll('.section-eyebrow').forEach(function(el){
-  gsap.to(el, {
-    y: -25,
-    scrollTrigger:{
-      trigger: el.closest('.content-section') || el.closest('.work-header'),
-      start:'top bottom',
-      end:'bottom top',
-      scrub: true
-    }
+/* ===== SECTION PARALLAX (desktop only — scrub per-frame kills mobile scroll) ===== */
+if(!isMobile){
+  document.querySelectorAll('.section-eyebrow').forEach(function(el){
+    gsap.to(el, {
+      y: -25,
+      scrollTrigger:{
+        trigger: el.closest('.content-section') || el.closest('.work-header'),
+        start:'top bottom',
+        end:'bottom top',
+        scrub: true
+      }
+    });
   });
-});
-document.querySelectorAll('.about-visual').forEach(function(el){
-  gsap.to(el, {
-    y: -40,
-    scrollTrigger:{
-      trigger: el.closest('.content-section'),
-      start:'top bottom',
-      end:'bottom top',
-      scrub: true
-    }
+  document.querySelectorAll('.about-visual').forEach(function(el){
+    gsap.to(el, {
+      y: -40,
+      scrollTrigger:{
+        trigger: el.closest('.content-section'),
+        start:'top bottom',
+        end:'bottom top',
+        scrub: true
+      }
+    });
   });
-});
+}
 
 /* [#11] SMOOTH SECTION BACKGROUND COLOR TRANSITIONS */
-(function(){
+if(!isMobile)(function(){
   var colors = ['#08070a','#0a0810','#09080d','#0a0910','#08070a'];
   var sections = document.querySelectorAll('.content-section');
   sections.forEach(function(sec, i){
@@ -1319,7 +1356,7 @@ document.querySelectorAll('.about-visual').forEach(function(el){
 })();
 
 /* [#13] SECTION SNAP PULSE */
-document.querySelectorAll('.content-section').forEach(function(sec){
+if(!isMobile) document.querySelectorAll('.content-section').forEach(function(sec){
   if(sec.id === 'contact') return;
   ScrollTrigger.create({
     trigger: sec,
@@ -1482,15 +1519,23 @@ document.querySelectorAll('.content-section').forEach(function(sec){
 window.addEventListener('scroll', function(){
   navEl.classList.toggle('scrolled', window.scrollY > 60);
 }, {passive:true});
-ScrollTrigger.create({
-  trigger: '#contact',
-  start: 'top 80%',
-  end: 'bottom top',
-  onEnter: function(){ navEl.classList.add('inverted'); inDarkSection = true; },
-  onLeave: function(){ navEl.classList.remove('inverted'); inDarkSection = false; },
-  onEnterBack: function(){ navEl.classList.add('inverted'); inDarkSection = true; },
-  onLeaveBack: function(){ navEl.classList.remove('inverted'); inDarkSection = false; }
-});
+if(!isMobile){
+  ScrollTrigger.create({
+    trigger: '#contact',
+    start: 'top 80%',
+    end: 'bottom top',
+    onEnter: function(){ navEl.classList.add('inverted'); inDarkSection = true; },
+    onLeave: function(){ navEl.classList.remove('inverted'); inDarkSection = false; },
+    onEnterBack: function(){ navEl.classList.add('inverted'); inDarkSection = true; },
+    onLeaveBack: function(){ navEl.classList.remove('inverted'); inDarkSection = false; }
+  });
+} else {
+  new IntersectionObserver(function(entries){
+    var inv = entries[0].isIntersecting;
+    navEl.classList.toggle('inverted', inv);
+    inDarkSection = inv;
+  }, {threshold:0, rootMargin:'-80px 0px 0px 0px'}).observe(document.getElementById('contact'));
+}
 
 /* ===== BURGER ===== */
 var burger=document.getElementById('burger'), mobileNav=document.getElementById('mobileNav');
@@ -1604,10 +1649,10 @@ document.getElementById('cookieDecline').addEventListener('click',function(){loc
 /* ===== CHARACTER-BY-CHARACTER REVEAL ===== */
 document.querySelectorAll('.char-reveal').forEach(function(p){
   if(isMobile){
-    // On mobile skip per-frame DOM writes; simple fade-in instead
-    ScrollTrigger.create({trigger:p, start:'top 85%', once:true,
-      onEnter:function(){ gsap.to(p,{opacity:1,duration:0.8,ease:'power3.out'}); }});
-    gsap.set(p,{opacity:0});
+    // CSS class + IntersectionObserver — zero GSAP/ScrollTrigger overhead
+    new IntersectionObserver(function(entries,obs){
+      if(entries[0].isIntersecting){ p.classList.add('visible'); obs.disconnect(); }
+    }, {threshold:0.2}).observe(p);
     return;
   }
   var text = p.textContent;
@@ -1634,6 +1679,12 @@ document.querySelectorAll('.char-reveal').forEach(function(p){
 
 /* ===== ABOUT VISUAL CLIP REVEAL ===== */
 document.querySelectorAll('[data-reveal="clip"]').forEach(function(el){
+  if(isMobile){
+    new IntersectionObserver(function(entries,obs){
+      if(entries[0].isIntersecting){ el.classList.add('visible'); obs.disconnect(); }
+    }, {threshold:0.2}).observe(el);
+    return;
+  }
   gsap.from(el, {
     clipPath: 'inset(100% 0% 0% 0%)',
     duration: 1.8,
@@ -1659,6 +1710,12 @@ if(!isMobile){
   var serviceCards = document.querySelectorAll('.service-card');
   serviceCards.forEach(function(card, i){
     card.classList.remove('reveal');
+    if(isMobile){
+      new IntersectionObserver(function(entries,obs){
+        if(entries[0].isIntersecting){ card.classList.add('visible'); obs.disconnect(); }
+      }, {threshold:0.15}).observe(card);
+      return;
+    }
     gsap.from(card, {
       y: 80, rotationX: 8, scale: 0.9, opacity: 0, filter:'blur(8px)',
       duration: 1.4, delay: i * 0.15, ease: 'power3.out',
@@ -1674,7 +1731,7 @@ if(!isMobile){
     });
   }
 
-  ScrollTrigger.create({
+  if(!isMobile) ScrollTrigger.create({
     trigger: '#services',
     start: 'bottom 20%',
     end: 'bottom top',
@@ -1704,6 +1761,12 @@ if(!isMobile){
   var steps = document.querySelectorAll('.step');
   steps.forEach(function(step, i){
     step.classList.remove('reveal');
+    if(isMobile){
+      new IntersectionObserver(function(entries,obs){
+        if(entries[0].isIntersecting){ step.classList.add('visible'); obs.disconnect(); }
+      }, {threshold:0.15}).observe(step);
+      return;
+    }
     gsap.from(step, {
       y: 60, rotationX: 5, opacity: 0, filter:'blur(4px)',
       duration: 1.2, delay: i * 0.2, ease: 'power3.out',
@@ -1711,7 +1774,7 @@ if(!isMobile){
     });
   });
 
-  document.querySelectorAll('.step-num').forEach(function(num){
+  if(!isMobile) document.querySelectorAll('.step-num').forEach(function(num){
     var target = parseInt(num.textContent);
     gsap.from(num, {
       scale: 0.3, opacity: 0, duration: 1.2, ease: 'elastic.out(1,0.5)',
@@ -1768,7 +1831,7 @@ if(!isMobile){
 })();
 
 /* [#34] CONTACT DETAILS STAGGER REVEAL */
-(function(){
+if(!isMobile)(function(){
   var details = document.querySelectorAll('.contact-details > *');
   details.forEach(function(el, i){
     gsap.from(el, {
@@ -1780,7 +1843,7 @@ if(!isMobile){
 })();
 
 /* [#35] FOOTER PARALLAX */
-gsap.from('footer', {
+if(!isMobile) gsap.from('footer', {
   y: 40, opacity: 0, duration: 1,
   scrollTrigger:{trigger:'footer', start:'top 95%', once:true}
 });
@@ -1830,12 +1893,16 @@ document.addEventListener('visibilitychange', function(){
     onUpdate: function(){ counterEl.textContent = Math.round(count.val) + '%' }
   });
 })();
-setTimeout(function(){
+var _preloaderDone = false;
+function _dismissPreloader(){
+  if(_preloaderDone) return; _preloaderDone = true;
   document.getElementById('preloader').classList.add('done');
-  setTimeout(function(){
-    if(window._heroEntrance) window._heroEntrance.play();
-  }, 500);
-}, 2200);
+  setTimeout(function(){ if(window._heroEntrance) window._heroEntrance.play(); }, 500);
+}
+setTimeout(_dismissPreloader, 2200);
+// Safety net: if user touches/scrolls before timer, release scroll immediately
+window.addEventListener('touchstart', _dismissPreloader, {once:true, passive:true});
+window.addEventListener('wheel', _dismissPreloader, {once:true, passive:true});
 </script>
 
 <!-- ===== EXTRA MOTION — magnetic buttons + tilt ===== -->
