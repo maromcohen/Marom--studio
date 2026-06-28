@@ -97,6 +97,24 @@ html[dir="rtl"] .contact-details{direction:ltr}
 /* AMBIENT CANVAS */
 #scene3d{position:fixed;top:0;left:0;width:100%;height:100%;z-index:2;pointer-events:none;touch-action:auto;will-change:transform}
 
+/* ===== MOBILE CSS-ONLY AMBIENT FX (replaces WebGL — compositor thread, zero JS) ===== */
+#mobile-fx{display:none;position:fixed;inset:0;z-index:2;pointer-events:none;overflow:hidden}
+@media(max-width:767px){
+  #scene3d{display:none!important}
+  #mobile-fx{display:block}
+}
+.mfx-dot{position:absolute;border-radius:50%;will-change:transform,opacity}
+@keyframes mfx1{0%{transform:translate(0,0) scale(1)}33%{transform:translate(18px,-28px) scale(1.15)}66%{transform:translate(-12px,16px) scale(0.9)}100%{transform:translate(0,0) scale(1)}}
+@keyframes mfx2{0%{transform:translate(0,0) scale(1)}40%{transform:translate(-22px,14px) scale(1.1)}80%{transform:translate(10px,-20px) scale(0.85)}100%{transform:translate(0,0) scale(1)}}
+@keyframes mfx3{0%{transform:translate(0,0) scale(1)}50%{transform:translate(16px,22px) scale(1.2)}100%{transform:translate(0,0) scale(1)}}
+@keyframes mfx4{0%{transform:translate(0,0) scale(1)}30%{transform:translate(-14px,-18px) scale(0.9)}70%{transform:translate(20px,10px) scale(1.1)}100%{transform:translate(0,0) scale(1)}}
+@keyframes mfxPulse{0%,100%{opacity:.18}50%{opacity:.5}}
+@keyframes mfxGlow{0%,100%{transform:scale(1) translate(-50%,-50%)}50%{transform:scale(1.3) translate(-38%,-38%)}}
+.mfx-orb{position:absolute;border-radius:50%;pointer-events:none;will-change:transform,opacity}
+@keyframes orbA{0%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.18)}100%{transform:translate(-50%,-50%) scale(1)}}
+@keyframes orbB{0%{transform:translate(-50%,-50%) scale(1.1)}50%{transform:translate(-50%,-50%) scale(0.88)}100%{transform:translate(-50%,-50%) scale(1.1)}}
+@media(prefers-reduced-motion:reduce){.mfx-dot,.mfx-orb{animation:none!important}}
+
 /* ========== HERO ========== */
 .hero{height:300vh;position:relative}
 .hero-pin{position:sticky;top:0;height:100vh;height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden}
@@ -464,6 +482,26 @@ html[dir="rtl"] .work-view{right:auto;left:16px}
 <div class="cursor-trail" id="trail3"></div>
 
 <canvas id="scene3d"></canvas>
+
+<!-- MOBILE CSS-ONLY AMBIENT (no JS, no rAF, compositor thread only) -->
+<div id="mobile-fx" aria-hidden="true">
+  <!-- soft gold orbs -->
+  <div class="mfx-orb" style="width:55vw;height:55vw;left:80%;top:-10%;background:radial-gradient(circle,rgba(232,201,122,.28) 0%,transparent 70%);animation:orbA 22s ease-in-out infinite;filter:blur(38px)"></div>
+  <div class="mfx-orb" style="width:50vw;height:50vw;left:-10%;top:55%;background:radial-gradient(circle,rgba(200,150,70,.22) 0%,transparent 70%);animation:orbB 28s ease-in-out infinite;filter:blur(32px)"></div>
+  <div class="mfx-orb" style="width:38vw;height:38vw;left:50%;top:40%;background:radial-gradient(circle,rgba(170,120,40,.16) 0%,transparent 70%);animation:orbA 18s ease-in-out infinite 4s;filter:blur(28px)"></div>
+  <!-- floating gold particles -->
+  <div class="mfx-dot" style="width:2px;height:2px;left:12%;top:18%;background:#e8c97a;opacity:.45;animation:mfx1 14s ease-in-out infinite,mfxPulse 7s ease-in-out infinite"></div>
+  <div class="mfx-dot" style="width:3px;height:3px;left:78%;top:8%;background:#f3e0a0;opacity:.35;animation:mfx2 17s ease-in-out infinite 1s,mfxPulse 9s ease-in-out infinite 2s"></div>
+  <div class="mfx-dot" style="width:2px;height:2px;left:55%;top:25%;background:#e8c97a;opacity:.5;animation:mfx3 11s ease-in-out infinite 3s,mfxPulse 6s ease-in-out infinite 1s"></div>
+  <div class="mfx-dot" style="width:4px;height:4px;left:25%;top:62%;background:#c8a04a;opacity:.3;animation:mfx4 19s ease-in-out infinite 2s,mfxPulse 11s ease-in-out infinite 4s"></div>
+  <div class="mfx-dot" style="width:2px;height:2px;left:88%;top:45%;background:#e8c97a;opacity:.4;animation:mfx1 16s ease-in-out infinite 5s,mfxPulse 8s ease-in-out infinite 3s"></div>
+  <div class="mfx-dot" style="width:3px;height:3px;left:40%;top:80%;background:#f0d88a;opacity:.28;animation:mfx2 13s ease-in-out infinite 1.5s,mfxPulse 10s ease-in-out infinite"></div>
+  <div class="mfx-dot" style="width:2px;height:2px;left:65%;top:70%;background:#e8c97a;opacity:.42;animation:mfx3 20s ease-in-out infinite 4s,mfxPulse 7s ease-in-out infinite 2s"></div>
+  <div class="mfx-dot" style="width:3px;height:3px;left:8%;top:85%;background:#c8a04a;opacity:.32;animation:mfx4 15s ease-in-out infinite 3s,mfxPulse 9s ease-in-out infinite 1s"></div>
+  <div class="mfx-dot" style="width:2px;height:2px;left:92%;top:30%;background:#f3e0a0;opacity:.38;animation:mfx1 18s ease-in-out infinite 6s,mfxPulse 12s ease-in-out infinite 5s"></div>
+  <div class="mfx-dot" style="width:4px;height:4px;left:33%;top:42%;background:#e8c97a;opacity:.22;animation:mfx2 22s ease-in-out infinite 0.5s,mfxPulse 14s ease-in-out infinite 3s"></div>
+  <div class="mfx-dot" style="width:2px;height:2px;left:72%;top:92%;background:#c8a04a;opacity:.36;animation:mfx3 12s ease-in-out infinite 2.5s,mfxPulse 8s ease-in-out infinite 4s"></div>
+</div>
 
 <!-- SCROLL PROGRESS -->
 <div class="scroll-progress" id="scrollProgress"></div>
@@ -2074,8 +2112,8 @@ setTimeout(function(){
 })();
 </script>
 
-<!-- Three.js UMD (global THREE) from cdnjs — reliable, no ES-modules/importmap -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<!-- Three.js UMD — desktop only (mobile uses CSS ambient, no canvas) -->
+<script>if(window.innerWidth>=768){document.write('<scr'+'ipt src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"><\/scr'+'ipt>')}</script>
 <script>
 (function(){
   var canvas = document.getElementById('scene3d');
@@ -2089,9 +2127,12 @@ setTimeout(function(){
   var mx = window.innerWidth*0.5, my = window.innerHeight*0.5;
   addEventListener('mousemove', function(e){ mx=e.clientX; my=e.clientY; }, {passive:true});
 
+  // On mobile: skip all canvas/WebGL — CSS-only ambient (#mobile-fx) handles the visual.
+  // Zero rAF JS on mobile = nothing competing with native iOS scroll momentum.
+  if(mobile){ console.log('[MAROM] mobile: CSS ambient mode'); return; }
+
   var glOK = false;
   try{ var probe=document.createElement('canvas'); glOK = !!(window.THREE && (probe.getContext('webgl2')||probe.getContext('webgl')||probe.getContext('experimental-webgl'))); }catch(e){ glOK=false; }
-  // probe a throwaway canvas so THREE can create its own (WebGL2) context on #scene3d
   if(glOK){ try{ startWebGL(); }catch(e){ console.warn('[MAROM] WebGL failed, fallback:', e); startCanvas2D(); } }
   else { startCanvas2D(); }
 
