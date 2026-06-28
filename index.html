@@ -3,8 +3,28 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>MAROM — Digital Studio</title>
-<meta name="description" content="Premium web design & development studio. We craft cinematic digital experiences."/>
+<title>MAROM — Digital Studio · Tel Aviv</title>
+<meta name="description" content="MAROM is a boutique digital studio in Tel Aviv crafting cinematic, award-level websites — design, development & brand identity."/>
+<meta name="keywords" content="MAROM, digital studio, web design, web development, brand identity, Tel Aviv, סטודיו דיגיטלי, עיצוב אתרים, בניית אתרים, תל אביב"/>
+<meta name="author" content="MAROM Digital Studio"/>
+<meta name="theme-color" content="#08070a"/>
+<link rel="canonical" href="https://maromcohen.github.io/Marom--studio/"/>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%2308070a'/%3E%3Cpath d='M22 74 L22 26 L50 56 L78 26 L78 74' fill='none' stroke='%23e8c97a' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"/>
+<!-- Open Graph -->
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="https://maromcohen.github.io/Marom--studio/"/>
+<meta property="og:title" content="MAROM — Digital Studio · Tel Aviv"/>
+<meta property="og:description" content="Boutique digital studio crafting cinematic, award-level websites — design, development & brand identity."/>
+<meta property="og:image" content="https://maromcohen.github.io/Marom--studio/og.png"/>
+<meta property="og:image:width" content="1200"/>
+<meta property="og:image:height" content="630"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:locale:alternate" content="he_IL"/>
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="MAROM — Digital Studio · Tel Aviv"/>
+<meta name="twitter:description" content="Boutique digital studio crafting cinematic, award-level websites."/>
+<meta name="twitter:image" content="https://maromcohen.github.io/Marom--studio/og.png"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700&family=Heebo:wght@100;200;300;400;500;600;700&family=Marcellus&display=swap" rel="stylesheet"/>
@@ -32,7 +52,6 @@ html[dir="rtl"] .cookie-banner{direction:rtl}
 html[dir="rtl"] .service-num,html[dir="rtl"] .step-num,html[dir="rtl"] .work-card-num{direction:ltr}
 html[dir="rtl"] .marquee-track{direction:ltr}
 html[dir="rtl"] .contact-details{direction:ltr}
-html[dir="rtl"] .contact-cta svg{transform:scaleX(-1)}
 ::selection{background:var(--gold);color:#08070a}
 
 /* SKIP */
@@ -91,7 +110,7 @@ html[dir="rtl"] .contact-cta svg{transform:scaleX(-1)}
 @keyframes orbFloat2{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(-25px,20px) scale(.94)}66%{transform:translate(20px,-20px) scale(1.05)}}
 @keyframes orbFloat3{0%,100%{transform:translateX(-50%) scale(1)}50%{transform:translateX(-50%) translate(15px,-30px) scale(1.08)}}
 
-.hero-letters{display:flex;align-items:center;justify-content:center;gap:0;position:relative;z-index:2;perspective:1000px;transform-style:preserve-3d}
+.hero-letters{display:flex;align-items:center;justify-content:center;gap:0;position:relative;z-index:2;perspective:1000px;transform-style:preserve-3d;direction:ltr}
 .hero-letters::before{content:"";position:absolute;left:50%;top:50%;width:120%;height:160%;transform:translate(-50%,-50%);background:radial-gradient(ellipse at center,rgba(232,201,122,.18) 0%,rgba(232,201,122,.06) 35%,transparent 70%);filter:blur(30px);pointer-events:none;z-index:-1;animation:heroHalo 6s ease-in-out infinite}
 @keyframes heroHalo{0%,100%{opacity:.7;transform:translate(-50%,-50%) scale(1)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.06)}}
 .hero-letter{font-family:var(--font);font-size:clamp(4rem,12vw,10rem);font-weight:100;letter-spacing:.05em;line-height:1;display:inline-block;will-change:transform,opacity;transform-style:preserve-3d;background:linear-gradient(105deg,#f3ede0 0%,#f3ede0 38%,#e8c97a 50%,#fff6e0 56%,#f3ede0 64%,#f3ede0 100%);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;animation:goldSheen 7s ease-in-out infinite}
@@ -339,6 +358,43 @@ html.a11y-stop *{animation:none!important;transition:none!important}
   *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
 }
 :focus-visible{outline:3px solid var(--fg);outline-offset:4px}
+
+/* ===== FAQ ===== */
+.faq-list{max-width:820px;margin:56px auto 0}
+.faq-item{border-top:1px solid var(--subtle)}
+.faq-item:last-child{border-bottom:1px solid var(--subtle)}
+.faq-q{width:100%;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:24px;padding:26px 4px;text-align:start;font-family:var(--font);font-size:clamp(1rem,2vw,1.2rem);font-weight:300;letter-spacing:.02em;color:var(--fg);transition:color .4s}
+.faq-q:hover{color:var(--gold)}
+.faq-ico{position:relative;flex-shrink:0;width:18px;height:18px}
+.faq-ico::before,.faq-ico::after{content:"";position:absolute;top:50%;left:50%;background:var(--gold);transition:transform .4s var(--ease)}
+.faq-ico::before{width:18px;height:1.5px;transform:translate(-50%,-50%)}
+.faq-ico::after{width:1.5px;height:18px;transform:translate(-50%,-50%)}
+.faq-item.open .faq-ico::after{transform:translate(-50%,-50%) scaleY(0)}
+.faq-item.open .faq-q{color:var(--gold)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .5s var(--ease)}
+.faq-a p{font-size:.9rem;font-weight:300;line-height:1.9;color:var(--muted);padding:0 4px 26px}
+
+/* ===== ORDER VIA WHATSAPP ===== */
+.order-pick{margin-top:44px;display:flex;flex-direction:column;align-items:center;gap:16px}
+.order-label{font-size:.62rem;font-weight:400;letter-spacing:.25em;text-transform:uppercase;color:var(--muted)}
+.order-chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.order-chip{font-family:var(--font);font-size:.78rem;font-weight:300;letter-spacing:.04em;padding:11px 22px;border-radius:100px;cursor:pointer;background:var(--accent-soft);border:1px solid rgba(232,201,122,.2);color:var(--fg);transition:all .35s var(--ease)}
+.order-chip:hover{border-color:var(--gold);color:var(--gold);transform:translateY(-2px)}
+.order-chip.sel{background:var(--gold);border-color:var(--gold);color:#08070a}
+.contact-cta svg{flex-shrink:0}
+
+/* ===== WORK CARD / PROJECT MODAL ===== */
+.work-view{position:absolute;top:16px;right:16px;font-size:.58rem;font-weight:400;letter-spacing:.18em;text-transform:uppercase;color:#08070a;background:var(--gold);padding:5px 12px;border-radius:100px;z-index:3;opacity:0;transform:translateY(-4px);transition:all .4s var(--ease);pointer-events:none}
+.work-card-inner:hover .work-view{opacity:1;transform:translateY(0)}
+html[dir="rtl"] .work-view{right:auto;left:16px}
+.work-ph-1{background:linear-gradient(135deg,#1c160c,#0c0a08);color:rgba(232,201,122,.22)!important}
+.work-ph-2{background:linear-gradient(135deg,#1a0f16,#0a0810);color:rgba(232,201,122,.2)!important}
+.work-ph-3{background:linear-gradient(135deg,#0f1418,#08070a);color:rgba(232,201,122,.16)!important}
+.work-modal{max-width:560px}
+.work-modal-hero{height:200px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:clamp(1rem,3vw,1.6rem);font-weight:100;letter-spacing:.18em;text-align:center;padding:0 20px;margin-bottom:28px;border:1px solid rgba(232,201,122,.12)}
+.work-modal-tags{font-size:.66rem;font-weight:400;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:18px}
+.work-modal-cta{margin-top:28px;font-size:.72rem}
+.work-modal-cta:hover{background:var(--gold);color:#08070a;border-color:var(--gold)}
 </style>
 </head>
 <body>
@@ -487,23 +543,25 @@ html.a11y-stop *{animation:none!important;transition:none!important}
   </div>
   <div class="work-track" id="workTrack">
     <div class="work-card">
-      <div class="work-card-inner">
+      <div class="work-card-inner" data-modal="work-1">
         <span class="work-card-num">01</span>
-        <div class="work-placeholder">COCKTAILS & DREAMS</div>
-        <div class="work-card-info"><h3>Cocktails & Dreams</h3><span>Website · Branding · Motion</span></div>
+        <div class="work-placeholder work-ph-1">THE START</div>
+        <div class="work-card-info"><h3>The Start</h3><span data-i18n="work1.tags">Website · Branding · Live</span></div>
+        <span class="work-view" data-i18n="work.view">View project</span>
       </div>
     </div>
     <div class="work-card">
-      <div class="work-card-inner">
+      <div class="work-card-inner" data-modal="work-2">
         <span class="work-card-num">02</span>
-        <div class="work-placeholder">PROJECT 02</div>
-        <div class="work-card-info"><h3 data-i18n="work.soon">Coming Soon</h3><span>Website · Design</span></div>
+        <div class="work-placeholder work-ph-2">COCKTAILS &amp; DREAMS</div>
+        <div class="work-card-info"><h3>Cocktails &amp; Dreams</h3><span data-i18n="work2.tags">Website · Branding · Motion</span></div>
+        <span class="work-view" data-i18n="work.view">View project</span>
       </div>
     </div>
     <div class="work-card">
       <div class="work-card-inner">
         <span class="work-card-num">03</span>
-        <div class="work-placeholder">PROJECT 03</div>
+        <div class="work-placeholder work-ph-3">PROJECT 03</div>
         <div class="work-card-info"><h3 data-i18n="work.soon">Coming Soon</h3><span>Website · Development</span></div>
       </div>
     </div>
@@ -529,14 +587,67 @@ html.a11y-stop *{animation:none!important;transition:none!important}
   </div>
 </section>
 
+<!-- FAQ -->
+<section id="faq" class="content-section">
+  <span class="section-bg-text">FAQ</span>
+  <span class="section-eyebrow reveal" data-i18n="faq.eyebrow">FAQ</span>
+  <h2 class="section-title reveal" data-i18n="faq.title">Questions, <em>answered</em></h2>
+  <div class="faq-list">
+    <div class="faq-item reveal">
+      <button class="faq-q" type="button" aria-expanded="false">
+        <span data-i18n="faq.q1">How does a project work, start to finish?</span>
+        <span class="faq-ico" aria-hidden="true"></span>
+      </button>
+      <div class="faq-a"><p data-i18n="faq.a1">Every project moves through four stages — Discovery, Design, Develop and Launch. You're involved at each step, and nothing ships until it feels right.</p></div>
+    </div>
+    <div class="faq-item reveal">
+      <button class="faq-q" type="button" aria-expanded="false">
+        <span data-i18n="faq.q2">How long does a website take?</span>
+        <span class="faq-ico" aria-hidden="true"></span>
+      </button>
+      <div class="faq-a"><p data-i18n="faq.a2">A focused landing page takes 2–3 weeks; a full custom site usually 4–8 weeks, depending on scope and content readiness.</p></div>
+    </div>
+    <div class="faq-item reveal">
+      <button class="faq-q" type="button" aria-expanded="false">
+        <span data-i18n="faq.q3">How much does it cost?</span>
+        <span class="faq-ico" aria-hidden="true"></span>
+      </button>
+      <div class="faq-a"><p data-i18n="faq.a3">Every project is priced individually. Tell us what you need on WhatsApp and you'll get a clear, no-obligation quote.</p></div>
+    </div>
+    <div class="faq-item reveal">
+      <button class="faq-q" type="button" aria-expanded="false">
+        <span data-i18n="faq.q4">Do you build in Hebrew and English?</span>
+        <span class="faq-ico" aria-hidden="true"></span>
+      </button>
+      <div class="faq-a"><p data-i18n="faq.a4">Yes — we design fully bilingual, RTL-ready sites that meet Israeli accessibility standards (IS 5568) out of the box.</p></div>
+    </div>
+    <div class="faq-item reveal">
+      <button class="faq-q" type="button" aria-expanded="false">
+        <span data-i18n="faq.q5">What happens after launch?</span>
+        <span class="faq-ico" aria-hidden="true"></span>
+      </button>
+      <div class="faq-a"><p data-i18n="faq.a5">We don't disappear. You get performance monitoring, analytics, SEO care and ongoing support whenever you need changes.</p></div>
+    </div>
+  </div>
+</section>
+
 <!-- DARK CONTACT -->
 <section id="contact" class="content-section contact contact-dark">
   <span class="section-eyebrow reveal" data-i18n="contact.eyebrow">Get in Touch</span>
   <h2 class="contact-title reveal" data-i18n="contact.title">Let's build<br/>something <em>great</em></h2>
   <p class="contact-sub reveal" data-i18n="contact.sub">Have a project in mind? We'd love to hear about it. Reach out and let's create something extraordinary together.</p>
-  <a class="contact-cta reveal" href="https://wa.me/972532748125?text=Hi%20MAROM%2C%20I%27m%20interested%20in%20a%20project">
-    <span data-i18n="contact.cta">Start a conversation</span>
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+  <div class="order-pick reveal" id="orderPick">
+    <span class="order-label" data-i18n="order.label">I'm interested in</span>
+    <div class="order-chips">
+      <button type="button" class="order-chip" data-service="web" data-i18n="order.web">Web Design</button>
+      <button type="button" class="order-chip" data-service="dev" data-i18n="order.dev">Development</button>
+      <button type="button" class="order-chip" data-service="brand" data-i18n="order.brand">Brand Identity</button>
+      <button type="button" class="order-chip" data-service="other" data-i18n="order.other">Something else</button>
+    </div>
+  </div>
+  <a class="contact-cta reveal" id="waCta" href="https://wa.me/972532748125?text=Hi%20MAROM%2C%20I%27m%20interested%20in%20a%20project">
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" width="18" height="18"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38c1.45.79 3.08 1.21 4.79 1.21 5.46 0 9.91-4.45 9.91-9.91C21.95 6.45 17.5 2 12.04 2zm5.8 14.01c-.24.68-1.2 1.27-1.97 1.42-.52.1-1.2.18-3.5-.74-2.94-1.21-4.83-4.17-4.98-4.36-.15-.19-1.2-1.59-1.2-3.03 0-1.44.76-2.15 1.03-2.44.27-.29.59-.36.78-.36.19 0 .39 0 .56.01.18.01.42-.07.66.5.24.58.82 2.01.89 2.16.07.15.12.32.02.51-.1.19-.15.31-.29.48-.15.17-.31.38-.44.51-.15.15-.3.31-.13.6.17.29.76 1.25 1.63 2.03 1.12 1 2.06 1.31 2.35 1.46.29.15.46.12.63-.07.17-.19.73-.85.92-1.14.19-.29.39-.24.66-.15.27.1 1.69.8 1.98.94.29.15.49.22.56.34.07.12.07.7-.17 1.38z"/></svg>
+    <span data-i18n="contact.cta">Order on WhatsApp</span>
   </a>
   <div class="contact-details reveal">
     <a href="mailto:marom7777@icloud.com">marom7777@icloud.com</a>
@@ -560,6 +671,29 @@ html.a11y-stop *{animation:none!important;transition:none!important}
 
 <!-- MODALS -->
 <div class="modal-overlay" id="modalOverlay"></div>
+
+<!-- PROJECT MODALS -->
+<div class="modal-box work-modal" id="work-1" role="dialog" aria-modal="true" aria-label="The Start">
+  <button class="modal-close" aria-label="Close">&times;</button>
+  <div class="work-modal-hero work-ph-1"><span>THE START</span></div>
+  <h3>The Start</h3>
+  <div class="work-modal-tags" data-i18n="work1.tags">Website · Branding · Live</div>
+  <p data-i18n="work1.desc">A bright, conversion-focused business website built for a friend's venture — clean layout, fast load, and a clear path to action. Designed and developed end to end.</p>
+  <a class="contact-cta work-modal-cta" href="https://maromcohen.github.io/the-start/" target="_blank" rel="noopener">
+    <span data-i18n="work.viewLive">View live site</span>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M7 17 17 7M9 7h8v8"/></svg>
+  </a>
+</div>
+<div class="modal-box work-modal" id="work-2" role="dialog" aria-modal="true" aria-label="Cocktails & Dreams">
+  <button class="modal-close" aria-label="Close">&times;</button>
+  <div class="work-modal-hero work-ph-2"><span>COCKTAILS &amp; DREAMS</span></div>
+  <h3>Cocktails &amp; Dreams</h3>
+  <div class="work-modal-tags" data-i18n="work2.tags">Website · Branding · Motion</div>
+  <p data-i18n="work2.desc">A cinematic brand experience for a cocktail concept — motion-led storytelling, rich visuals and a mood that lingers. Full identity and website.</p>
+  <a class="contact-cta work-modal-cta" href="https://wa.me/972532748125?text=Hi%20MAROM%2C%20I%20loved%20the%20Cocktails%20%26%20Dreams%20project" target="_blank" rel="noopener">
+    <span data-i18n="work.askSimilar">Want something like this?</span>
+  </a>
+</div>
 <div class="modal-box" id="m-accessibility" role="dialog" aria-modal="true" aria-label="Accessibility Statement">
   <button class="modal-close" aria-label="Close">&times;</button>
   <h3 data-i18n="m.access.h">Accessibility Statement</h3>
@@ -655,7 +789,17 @@ html.a11y-stop *{animation:none!important;transition:none!important}
       'contact.eyebrow':'בואו נדבר',
       'contact.title':'בואו נבנה<br/>משהו <em>מצוין</em>',
       'contact.sub':'יש לכם פרויקט בראש? נשמח לשמוע עליו. דברו איתנו וניצור יחד משהו יוצא דופן.',
-      'contact.cta':'התחילו שיחה','contact.loc':'תל אביב, ישראל',
+      'contact.cta':'הזמינו בוואטסאפ','contact.loc':'תל אביב, ישראל',
+      'order.label':'אני מעוניין/ת ב','order.web':'עיצוב אתרים','order.dev':'פיתוח','order.brand':'זהות מותג','order.other':'משהו אחר',
+      'faq.eyebrow':'שאלות נפוצות','faq.title':'שאלות, <em>תשובות</em>',
+      'faq.q1':'איך פרויקט עובד, מההתחלה ועד הסוף?','faq.a1':'כל פרויקט עובר ארבעה שלבים — גילוי, עיצוב, פיתוח והשקה. אתם מעורבים בכל שלב, ושום דבר לא עולה לאוויר עד שזה מרגיש מושלם.',
+      'faq.q2':'כמה זמן לוקח לבנות אתר?','faq.a2':'דף נחיתה ממוקד לוקח 2–3 שבועות; אתר מלא מותאם אישית בדרך כלל 4–8 שבועות, תלוי בהיקף ובמוכנות התוכן.',
+      'faq.q3':'כמה זה עולה?','faq.a3':'כל פרויקט מתומחר אישית. ספרו לנו מה אתם צריכים בוואטסאפ ותקבלו הצעת מחיר ברורה, ללא התחייבות.',
+      'faq.q4':'אתם בונים בעברית ובאנגלית?','faq.a4':'בהחלט — אנחנו מעצבים אתרים דו-לשוניים מלאים, מוכנים ל-RTL, שעומדים בתקן הנגישות הישראלי (ת"י 5568) מהרגע הראשון.',
+      'faq.q5':'מה קורה אחרי ההשקה?','faq.a5':'אנחנו לא נעלמים. אתם מקבלים ניטור ביצועים, אנליטיקס, טיפול ב-SEO ותמיכה מתמשכת בכל פעם שצריך שינויים.',
+      'work.view':'צפו בפרויקט','work.viewLive':'צפו באתר החי','work.askSimilar':'רוצים משהו כזה?',
+      'work1.tags':'אתר · מיתוג · חי','work1.desc':'אתר עסקי בהיר וממוקד-המרה שנבנה לעסק של חבר — פריסה נקייה, טעינה מהירה ונתיב ברור לפעולה. עיצוב ופיתוח מקצה לקצה.',
+      'work2.tags':'אתר · מיתוג · מושן','work2.desc':'חוויית מותג קולנועית לקונספט קוקטיילים — סיפור מבוסס-תנועה, ויזואלים עשירים ואווירה שנשארת. זהות מלאה ואתר.',
       'cookie.text':'אתר זה משתמש בעוגיות. ראו את <a href="#" data-modal="m-privacy">מדיניות הפרטיות</a> שלנו.',
       'cookie.accept':'אישור','cookie.decline':'דחייה',
       'footer.access':'נגישות','footer.privacy':'פרטיות','footer.terms':'תקנון',
@@ -1596,6 +1740,90 @@ setTimeout(function(){
     });
     el.addEventListener('mouseleave', function(){ el.style.transform = ''; });
   });
+})();
+</script>
+
+<!-- ===== FAQ ACCORDION + WHATSAPP ORDER + SCRAMBLE ===== -->
+<script>
+(function(){
+  /* ---- FAQ accordion (single-open) ---- */
+  var items = document.querySelectorAll('.faq-item');
+  items.forEach(function(item){
+    var q = item.querySelector('.faq-q');
+    var a = item.querySelector('.faq-a');
+    if(!q||!a) return;
+    q.addEventListener('click', function(){
+      var isOpen = item.classList.contains('open');
+      items.forEach(function(o){
+        o.classList.remove('open');
+        var oq=o.querySelector('.faq-q'), oa=o.querySelector('.faq-a');
+        if(oq) oq.setAttribute('aria-expanded','false');
+        if(oa) oa.style.maxHeight='0px';
+      });
+      if(!isOpen){
+        item.classList.add('open');
+        q.setAttribute('aria-expanded','true');
+        a.style.maxHeight = a.scrollHeight + 'px';
+      }
+    });
+  });
+  // keep open panel sized correctly on resize / lang change
+  window.addEventListener('resize', function(){
+    var open=document.querySelector('.faq-item.open .faq-a');
+    if(open) open.style.maxHeight = open.scrollHeight + 'px';
+  });
+
+  /* ---- WhatsApp order ---- */
+  var WA='https://wa.me/972532748125?text=';
+  var MSG={
+    he:{web:'שלום מרום, מעוניין/ת בעיצוב אתרים — אשמח לפרטים והצעת מחיר.',
+        dev:'שלום מרום, מעוניין/ת בפיתוח — אשמח לפרטים והצעת מחיר.',
+        brand:'שלום מרום, מעוניין/ת בזהות מותג — אשמח לפרטים והצעת מחיר.',
+        other:'שלום מרום, יש לי פרויקט בראש — אשמח לדבר על זה.'},
+    en:{web:"Hi MAROM, I'm interested in Web Design — I'd love details and a quote.",
+        dev:"Hi MAROM, I'm interested in Development — I'd love details and a quote.",
+        brand:"Hi MAROM, I'm interested in Brand Identity — I'd love details and a quote.",
+        other:"Hi MAROM, I have a project in mind — I'd love to talk about it."}
+  };
+  var cta=document.getElementById('waCta'), chips=document.querySelectorAll('.order-chip');
+  function lang(){ return document.documentElement.lang==='he'?'he':'en'; }
+  function setMsg(svc){ if(cta) cta.setAttribute('href', WA+encodeURIComponent(MSG[lang()][svc]||MSG[lang()].other)); }
+  setMsg('other');
+  chips.forEach(function(ch){
+    ch.addEventListener('click', function(){
+      chips.forEach(function(c){c.classList.remove('sel')});
+      ch.classList.add('sel');
+      setMsg(ch.getAttribute('data-service'));
+    });
+  });
+
+  /* ---- Scramble decode on section eyebrows ---- */
+  var GLY='ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#@%&אבגדהוזחטיכלמנסעפצקרשת';
+  function reduced(){ return document.documentElement.classList.contains('a11y-stop') ||
+    (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches); }
+  function scramble(el){
+    if(el.__scrambled) return; el.__scrambled=true;
+    var final=el.textContent, len=final.length;
+    if(reduced() || len>40){ return; }
+    var frame=0, total=Math.max(8,Math.round(len*1.6));
+    var iv=setInterval(function(){
+      frame++;
+      var out='';
+      for(var i=0;i<len;i++){
+        if(final[i]===' '){ out+=' '; continue; }
+        if(i < (frame/total)*len){ out+=final[i]; }
+        else out+=GLY[Math.floor(Math.random()*GLY.length)];
+      }
+      el.textContent=out;
+      if(frame>=total){ clearInterval(iv); el.textContent=final; }
+    }, 28);
+  }
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(e){ if(e.isIntersecting){ scramble(e.target); io.unobserve(e.target); } });
+    }, {threshold:.6});
+    document.querySelectorAll('.section-eyebrow').forEach(function(el){ io.observe(el); });
+  }
 })();
 </script>
 
