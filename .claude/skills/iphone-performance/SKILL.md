@@ -43,6 +43,80 @@ Every animation AND sound must honor **`prefers-reduced-motion`** and the site's
 
 Don't remove signature elements on mobile (e.g. the **Golden Thread stays**). Instead scale them down: fewer points, lower DPR, simpler blur, half-rate updates — keep the feel, cut the cost.
 
+---
+
+## 🔴 SCROLL ON MOBILE — CRITICAL LEARNINGS (researched & battle-tested)
+
+These patterns cause scroll to **freeze / feel stuck** on iPhone. Every one was found the hard way on this site.
+
+### 1. `touch-action:none` on fixed overlays — KILLS SCROLL
+Even with `pointer-events:none`, a fixed/absolute element with `touch-action:none` can block iOS Safari from initiating scroll. **Always use `touch-action:auto` on canvas/overlay elements.**
+```css
+/* ✅ correct */
+#scene3d { pointer-events:none; touch-action:auto; }
+/* ❌ kills iOS scroll */
+#scene3d { pointer-events:none; touch-action:none; }
+```
+
+### 2. touchmove listener feeding WebGL physics — SCATTERS PARTICLES ON SCROLL
+If you feed `e.touches[0].clientX/Y` into mouse-repel uniforms (`uMouse`), finger-scroll causes particles to explode outward from the touch point — feels like the page is broken. **Mouse repel is desktop-only. Never listen to touchmove for WebGL physics.**
+```js
+// ✅ desktop only
+if(!mobile) addEventListener('mousemove', function(e){ mx=e.clientX; my=e.clientY; });
+// ❌ never do this — scatters particles during scroll
+addEventListener('touchmove', function(e){ mx=e.touches[0].clientX; my=e.touches[0].clientY; });
+```
+
+### 3. Lenis smooth scroll on mobile — BLOCKS NATIVE MOMENTUM
+`new Lenis({ smoothWheel:true })` or `syncTouch:true` on mobile drives scroll through JS rAF, which fights iOS's native momentum scroll. Result: page snaps back, user can't scroll freely.
+```js
+// ✅ Lenis desktop-only
+var lenis = null;
+if(!isMobile){ lenis = new Lenis({...}); }
+// On mobile → use native scroll, just listen to window.addEventListener('scroll',...)
+```
+
+### 4. `position:sticky` hero with excessive height on mobile — FEELS BROKEN
+A sticky hero at `height:180vh` means 80vh of invisible scroll before content appears. User thinks the page is frozen.
+- **On mobile: set hero to `height:100vh` + `position:relative`** (no sticky scroll zone).
+- Desktop keeps the full cinematic `height:300vh` sticky experience.
+```css
+@media(max-width:767px){
+  .hero { height:100vh; }
+  .hero-pin { position:relative; top:auto; }
+}
+```
+
+### 5. GSAP ScrollTrigger + iOS Safari bugs
+- iOS Safari **misreports `scrollY` and `event.clientX/Y`** intermittently during scroll → causes jitter/jump.
+- `ScrollTrigger.normalizeScroll(true)` is GSAP's workaround: intercepts native scroll on the JS thread, skips every other touchmove. **Use on mobile only, with caution** — can cause scroll to stop early at page bottom.
+- Always add: `ScrollTrigger.config({ ignoreMobileResize: true })` on mobile to prevent unnecessary refreshes when Safari's address bar shows/hides.
+- **Never mix `scroll-behavior: smooth` with ScrollTrigger** — causes scroll-to-top bug on iOS 16+.
+- `position:sticky` pinning with ScrollTrigger causes bumpy scroll on Safari, especially with mousewheel. **Disable sticky scroll sections on mobile.**
+
+### 6. `overscroll-behavior` — NOT supported on iOS Safari
+`overscroll-behavior: contain` (prevents rubber-band/scroll-chain) works on Chrome/Firefox but **not iOS Safari**. Don't rely on it for mobile.
+
+### 7. WebGL canvas resize on iOS — memory leak
+Resizing canvas `width`/`height` properties on iOS Safari causes memory leak (no desktop equivalent). Safari address bar show/hide resizes the viewport → triggers resize events → can cause canvas jumps.
+- Use `100dvh` instead of `100vh` for the canvas/pin height to account for dynamic viewport.
+- Debounce resize handler (already done on this site).
+- Consider `ScrollTrigger.config({ ignoreMobileResize:true })` to avoid layout recalc on address bar toggle.
+
+### 8. WebGL uniform uploads on Apple Metal/Safari
+iOS uses Metal (not OpenGL) internally. GSAP-style uniform updates at the wrong moment can cause 150ms hitches. Keep uniform updates inside the rAF loop, not in scroll event handlers.
+
+### Scroll debugging checklist (when mobile scroll feels stuck/wrong)
+- [ ] Any `touch-action:none` on fixed/absolute overlays?
+- [ ] Any `touchmove` listener feeding mouse/physics coordinates?
+- [ ] Lenis or any smooth-scroll lib active on mobile?
+- [ ] Sticky section with large height requiring invisible scroll before content?
+- [ ] `scroll-behavior:smooth` anywhere in CSS?
+- [ ] ScrollTrigger pin on mobile causing jump?
+- [ ] Canvas resize loop causing constant repaints?
+
+---
+
 ## Pre-merge checklist (answer for every change)
 
 - [ ] What's the added per-frame cost on a phone (overdraw, layout reads, DOM writes, extra rAF loops)?
@@ -52,5 +126,6 @@ Don't remove signature elements on mobile (e.g. the **Golden Thread stays**). In
 - [ ] New lib loaded as UMD `<script src>` (no module/importmap)? Fallback present?
 - [ ] Honors reduced-motion and `a11y-stop`?
 - [ ] Verified the experience still looks the same on phone (just lighter)?
+- [ ] **Scroll checklist above passed?**
 
 If a feature can't hit 60fps on iPhone without gutting the experience, propose a lighter alternative in the plan — don't ship the lag.

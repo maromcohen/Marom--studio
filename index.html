@@ -952,6 +952,9 @@ gsap.registerPlugin(ScrollTrigger);
 
 /* ===== GLOBAL STATE ===== */
 var isMobile = window.innerWidth < 768;
+
+/* Prevent unnecessary ScrollTrigger refreshes when iOS Safari address bar toggles */
+if(isMobile){ ScrollTrigger.config({ ignoreMobileResize: true }); }
 var scrollVel = 0;
 var scrollDir = 1;
 var globalMx = 0, globalMy = 0;
