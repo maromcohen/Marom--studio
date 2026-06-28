@@ -1142,45 +1142,28 @@ document.addEventListener('mousemove', function(e){ globalMx = e.clientX; global
 
   window._heroEntrance = entrance;
 
-  gsap.timeline({
-    scrollTrigger:{trigger:'#heroWrap', start:'top top', end:'18% top', scrub:0.8}
-  })
-  .to([heroEyebrow, heroSub, heroScroll], {opacity:0, y:-30, duration:0.3}, 0);
+  // Desktop-only: cinematic scroll collapse/dissolve (hero is non-sticky 100vh on mobile)
+  if(!isMobile){
+    gsap.timeline({
+      scrollTrigger:{trigger:'#heroWrap', start:'top top', end:'18% top', scrub:0.8}
+    })
+    .to([heroEyebrow, heroSub, heroScroll], {opacity:0, y:-30, duration:0.3}, 0);
 
-  var collapse = gsap.timeline({
-    scrollTrigger:{trigger:'#heroWrap', start:'12% top', end:'48% top', scrub:0.8}
-  });
+    var collapse = gsap.timeline({
+      scrollTrigger:{trigger:'#heroWrap', start:'12% top', end:'48% top', scrub:0.8}
+    });
+    collapse.to(letters[1], {x:function(){ return letters[0].offsetLeft+letters[0].offsetWidth/2-(letters[1].offsetLeft+letters[1].offsetWidth/2) }, opacity:0, scale:0.2, rotationY:55, filter:'blur(14px)', duration:0.5}, 0.05);
+    collapse.to(letters[2], {x:function(){ return letters[0].offsetLeft+letters[0].offsetWidth/2-(letters[2].offsetLeft+letters[2].offsetWidth/2) }, opacity:0, scale:0.2, rotationY:-40, filter:'blur(14px)', duration:0.5}, 0.1);
+    collapse.to(letters[3], {x:function(){ return letters[0].offsetLeft+letters[0].offsetWidth/2-(letters[3].offsetLeft+letters[3].offsetWidth/2) }, opacity:0, scale:0.2, rotationY:65, filter:'blur(14px)', duration:0.5}, 0.15);
+    collapse.to(letters[4], {x:function(){ return letters[0].offsetLeft+letters[0].offsetWidth/2-(letters[4].offsetLeft+letters[4].offsetWidth/2) }, opacity:0, scale:0.2, rotationY:-50, filter:'blur(14px)', duration:0.5}, 0.2);
 
-  var blurProp = isMobile ? {} : {filter:'blur(14px)'};
-  var blurBig = isMobile ? {} : {filter:'blur(28px)'};
-  collapse.to(letters[1], Object.assign({
-    x: function(){ return letters[0].offsetLeft + letters[0].offsetWidth/2 - (letters[1].offsetLeft + letters[1].offsetWidth/2) },
-    opacity:0, scale:0.2, rotationY:55, duration:0.5
-  }, blurProp), 0.05);
-  collapse.to(letters[2], Object.assign({
-    x: function(){ return letters[0].offsetLeft + letters[0].offsetWidth/2 - (letters[2].offsetLeft + letters[2].offsetWidth/2) },
-    opacity:0, scale:0.2, rotationY:-40, duration:0.5
-  }, blurProp), 0.1);
-  collapse.to(letters[3], Object.assign({
-    x: function(){ return letters[0].offsetLeft + letters[0].offsetWidth/2 - (letters[3].offsetLeft + letters[3].offsetWidth/2) },
-    opacity:0, scale:0.2, rotationY:65, duration:0.5
-  }, blurProp), 0.15);
-  collapse.to(letters[4], Object.assign({
-    x: function(){ return letters[0].offsetLeft + letters[0].offsetWidth/2 - (letters[4].offsetLeft + letters[4].offsetWidth/2) },
-    opacity:0, scale:0.2, rotationY:-50, duration:0.5
-  }, blurProp), 0.2);
+    gsap.timeline({scrollTrigger:{trigger:'#heroWrap', start:'45% top', end:'78% top', scrub:0.8}})
+      .to(letters[0], {scale:2.5, duration:0.5}, 0)
+      .to(letters[0], {opacity:0, scale:3.5, filter:'blur(28px)', duration:0.4}, 0.35);
 
-  var mDissolve = gsap.timeline({
-    scrollTrigger:{trigger:'#heroWrap', start:'45% top', end:'78% top', scrub:0.8}
-  });
-  mDissolve
-    .to(letters[0], {scale:2.5, duration:0.5}, 0)
-    .to(letters[0], Object.assign({opacity:0, scale:3.5, duration:0.4}, blurBig), 0.35);
-
-  gsap.timeline({
-    scrollTrigger:{trigger:'#heroWrap', start:'72% top', end:'100% top', scrub:0.5}
-  })
-  .to('.hero-mesh', {opacity:0, scale:0.92, duration:0.5}, 0);
+    gsap.timeline({scrollTrigger:{trigger:'#heroWrap', start:'72% top', end:'100% top', scrub:0.5}})
+      .to('.hero-mesh', {opacity:0, scale:0.92, duration:0.5}, 0);
+  }
 })();
 
 /* ===== TEXT SPLIT REVEALS ===== */
@@ -1573,6 +1556,13 @@ document.getElementById('cookieDecline').addEventListener('click',function(){loc
 
 /* ===== CHARACTER-BY-CHARACTER REVEAL ===== */
 document.querySelectorAll('.char-reveal').forEach(function(p){
+  if(isMobile){
+    // On mobile skip per-frame DOM writes; simple fade-in instead
+    ScrollTrigger.create({trigger:p, start:'top 85%', once:true,
+      onEnter:function(){ gsap.to(p,{opacity:1,duration:0.8,ease:'power3.out'}); }});
+    gsap.set(p,{opacity:0});
+    return;
+  }
   var text = p.textContent;
   p.innerHTML = '';
   for(var i = 0; i < text.length; i++){
@@ -1605,15 +1595,17 @@ document.querySelectorAll('[data-reveal="clip"]').forEach(function(el){
   });
 });
 
-/* ===== BACKGROUND TEXT PARALLAX ===== */
-document.querySelectorAll('.section-bg-text').forEach(function(el){
-  gsap.fromTo(el,
-    {x: '10%'},
-    {x: '-20%', ease:'none',
-     scrollTrigger:{trigger:el.closest('.content-section'), start:'top bottom', end:'bottom top', scrub:true}
-    }
-  );
-});
+/* ===== BACKGROUND TEXT PARALLAX (desktop only) ===== */
+if(!isMobile){
+  document.querySelectorAll('.section-bg-text').forEach(function(el){
+    gsap.fromTo(el,
+      {x: '10%'},
+      {x: '-20%', ease:'none',
+       scrollTrigger:{trigger:el.closest('.content-section'), start:'top bottom', end:'bottom top', scrub:true}
+      }
+    );
+  });
+}
 
 /* ===== ENHANCED SERVICE CARD ENTRANCE + [#26] CONNECTOR + [#28] EXIT ===== */
 (function(){
@@ -1655,7 +1647,7 @@ document.querySelectorAll('.section-bg-text').forEach(function(el){
 /* ===== PROCESS: [#29] TIMELINE LINE + [#19] NUMBER COUNTERS + [#31] STAGGER ENTRANCE ===== */
 (function(){
   var processLine = document.getElementById('processLine');
-  if(processLine){
+  if(processLine && !isMobile){
     gsap.to(processLine, {
       scaleY: 1, ease: 'none',
       scrollTrigger:{trigger:'#process', start:'top 70%', end:'bottom 30%', scrub:true}
@@ -1693,18 +1685,19 @@ document.querySelectorAll('.section-bg-text').forEach(function(el){
   });
 })();
 
-/* [#32] CONTACT TITLE LETTER SPACING ANIMATION */
-ScrollTrigger.create({
-  trigger: '#contact',
-  start: 'top 70%',
-  end: 'top 20%',
-  scrub: true,
-  onUpdate: function(self){
-    var ls = self.progress * 0.1;
-    var ct = document.querySelector('.contact-title');
-    if(ct) ct.style.letterSpacing = ls + 'em';
-  }
-});
+/* [#32] CONTACT TITLE LETTER SPACING ANIMATION (desktop only — scrub per-frame) */
+if(!isMobile){
+  var _contactTitle = document.querySelector('.contact-title');
+  ScrollTrigger.create({
+    trigger: '#contact',
+    start: 'top 70%',
+    end: 'top 20%',
+    scrub: true,
+    onUpdate: function(self){
+      if(_contactTitle) _contactTitle.style.letterSpacing = (self.progress * 0.1) + 'em';
+    }
+  });
+}
 
 /* [#33] CONTACT CTA MAGNETIC BUTTON */
 (function(){
@@ -1987,6 +1980,7 @@ setTimeout(function(){
 <script>
 (function(){
   if(!window.gsap || !window.ScrollTrigger) return;
+  if(window.innerWidth < 768) return; // no scrub parallax on mobile
   function reduced(){ return document.documentElement.classList.contains('a11y-stop') ||
     (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches); }
   if(reduced()) return;
