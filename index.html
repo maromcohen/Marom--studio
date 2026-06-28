@@ -75,8 +75,18 @@ body{font-family:var(--font);background:var(--bg);color:var(--fg);overflow-x:hid
 /* ========== SECTION WRAP ========== */
 .section-wrap{position:relative;z-index:3;background:var(--bg);border-radius:40px 40px 0 0;box-shadow:0 -20px 80px rgba(0,0,0,.05)}
 
+/* MARQUEE STRIP */
+.marquee{overflow:hidden;white-space:nowrap;padding:28px 0;border-bottom:1px solid var(--subtle);position:relative}
+.marquee-track{display:inline-flex;animation:marqueeScroll 30s linear infinite}
+.marquee-item{font-size:clamp(.85rem,1.5vw,1.15rem);font-weight:200;letter-spacing:.18em;text-transform:uppercase;padding:0 40px;color:var(--muted);display:inline-flex;align-items:center;gap:40px}
+.marquee-dot{width:5px;height:5px;border-radius:50%;background:var(--subtle);flex-shrink:0}
+@keyframes marqueeScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* SECTION BG TEXT */
+.section-bg-text{position:absolute;top:50%;left:0;font-size:clamp(6rem,18vw,16rem);font-weight:100;color:rgba(0,0,0,.025);letter-spacing:.08em;white-space:nowrap;pointer-events:none;will-change:transform;user-select:none;line-height:1;transform:translateY(-50%)}
+
 /* SECTIONS */
-section.content-section{padding:clamp(80px,12vw,160px) clamp(24px,6vw,120px)}
+section.content-section{padding:clamp(80px,12vw,160px) clamp(24px,6vw,120px);position:relative;overflow:hidden}
 .section-eyebrow{font-size:.6rem;font-weight:400;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);margin-bottom:20px}
 .section-title{font-family:var(--font);font-size:clamp(2rem,4vw,3.5rem);font-weight:100;letter-spacing:.05em;line-height:1.3;max-width:800px}
 .section-title em{font-style:normal;font-weight:400}
@@ -94,7 +104,7 @@ section.content-section{padding:clamp(80px,12vw,160px) clamp(24px,6vw,120px)}
 .about-text p{font-size:.95rem;font-weight:300;line-height:2;color:#555;margin-top:24px}
 
 /* SERVICES */
-.services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:64px}
+.services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:64px;perspective:800px}
 .service-card{background:var(--accent-soft);padding:clamp(32px,4vw,56px);border-radius:12px;transition:all .7s var(--ease);position:relative;overflow:hidden}
 .service-card::before{content:"";position:absolute;inset:0;background:var(--fg);transform:scaleY(0);transform-origin:bottom;transition:transform .6s var(--ease);z-index:0}
 .service-card:hover::before{transform:scaleY(1)}
@@ -149,6 +159,15 @@ section.content-section{padding:clamp(80px,12vw,160px) clamp(24px,6vw,120px)}
 .contact-details a:hover{color:var(--fg)}
 .contact-dark .contact-details,.contact-dark .contact-details a{color:rgba(255,255,255,.35)}
 .contact-dark .contact-details a:hover{color:#fafafa}
+.contact-dark .contact-title{background:linear-gradient(90deg,#fafafa 0%,rgba(255,255,255,.4) 50%,#fafafa 100%);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:gradientShimmer 6s ease-in-out infinite}
+@keyframes gradientShimmer{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.contact-dark .contact-cta{position:relative;overflow:hidden}
+.contact-dark .contact-cta::before{content:"";position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);transform:skewX(-20deg);transition:none;pointer-events:none}
+.contact-dark .contact-cta:hover::before{animation:ctaShine .8s ease-out forwards}
+@keyframes ctaShine{0%{left:-100%}100%{left:150%}}
+
+/* CHAR REVEAL */
+.char-reveal span{opacity:.12;transition:opacity .05s}
 
 /* FOOTER — DARK */
 footer{padding:40px 48px;display:flex;align-items:center;justify-content:space-between;font-size:.7rem;font-weight:300;letter-spacing:.1em}
@@ -173,10 +192,11 @@ footer a{text-decoration:none;transition:color .3s}
 .grain{position:fixed;inset:0;pointer-events:none;z-index:9990;opacity:.025;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 
 /* PRELOADER */
-.preloader{position:fixed;inset:0;z-index:10000;background:var(--bg);display:flex;align-items:center;justify-content:center;transition:opacity .8s var(--ease),visibility .8s}
+.preloader{position:fixed;inset:0;z-index:10000;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:32px;transition:opacity .8s var(--ease),visibility .8s}
 .preloader.done{opacity:0;visibility:hidden;pointer-events:none}
 .preloader-path{stroke-dasharray:300;stroke-dashoffset:300;animation:drawM 1.8s cubic-bezier(.32,.72,0,1) forwards}
 @keyframes drawM{to{stroke-dashoffset:0}}
+.preloader-counter{font-size:.7rem;font-weight:300;letter-spacing:.3em;color:var(--muted);font-variant-numeric:tabular-nums}
 
 /* LEGAL MODALS */
 .modal-overlay{position:fixed;inset:0;z-index:8000;background:rgba(0,0,0,.5);backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:opacity .4s}
@@ -244,6 +264,8 @@ html.a11y-stop *{animation:none!important;transition:none!important}
   .work-drag-hint{display:none}
   .section-wrap{border-radius:24px 24px 0 0}
   #contact.contact-dark{border-radius:24px 24px 0 0}
+  .section-bg-text{font-size:clamp(4rem,16vw,8rem)}
+  .marquee-item{padding:0 24px;gap:24px}
 }
 @media(max-width:480px){
   .process-steps{grid-template-columns:1fr}
@@ -261,6 +283,7 @@ html.a11y-stop *{animation:none!important;transition:none!important}
   <svg viewBox="0 0 120 100" width="120" height="100">
     <path class="preloader-path" d="M15,85 L15,15 L50,55 L85,15 L85,85" fill="none" stroke="#111" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
   </svg>
+  <span class="preloader-counter" id="preloaderCount">0%</span>
 </div>
 
 <a class="skip" href="#main">Skip to content</a>
@@ -326,21 +349,41 @@ html.a11y-stop *{animation:none!important;transition:none!important}
 <!-- CONTENT SECTIONS -->
 <div class="section-wrap">
 
+<!-- MARQUEE -->
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track">
+    <span class="marquee-item">Web Design <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Development <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Brand Identity <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Motion Design <span class="marquee-dot"></span></span>
+    <span class="marquee-item">User Experience <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Creative Direction <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Web Design <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Development <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Brand Identity <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Motion Design <span class="marquee-dot"></span></span>
+    <span class="marquee-item">User Experience <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Creative Direction <span class="marquee-dot"></span></span>
+  </div>
+</div>
+
 <section id="about" class="content-section">
+  <span class="section-bg-text">DESIGN</span>
   <div class="about">
-    <div class="about-visual reveal">
+    <div class="about-visual" data-reveal="clip">
       <span class="monogram">M</span>
     </div>
     <div class="about-text">
       <span class="section-eyebrow reveal">About</span>
       <h2 class="section-title reveal">Crafting digital <em>with purpose</em></h2>
-      <p class="reveal">MAROM is a boutique digital studio based in Tel Aviv. We partner with brands and businesses to create websites that don't just look beautiful — they perform.</p>
-      <p class="reveal">Every pixel is intentional. Every animation serves the story. We believe the web should feel like an experience, not just a page.</p>
+      <p class="char-reveal">MAROM is a boutique digital studio based in Tel Aviv. We partner with brands and businesses to create websites that don't just look beautiful — they perform.</p>
+      <p class="char-reveal">Every pixel is intentional. Every animation serves the story. We believe the web should feel like an experience, not just a page.</p>
     </div>
   </div>
 </section>
 
 <section id="services" class="content-section">
+  <span class="section-bg-text">MAROM</span>
   <span class="section-eyebrow reveal">Services</span>
   <h2 class="section-title reveal">What we <em>do</em></h2>
   <div class="services-grid">
@@ -897,7 +940,95 @@ if(!localStorage.getItem('cookie-consent')){
 document.getElementById('cookieAccept').addEventListener('click',function(){localStorage.setItem('cookie-consent','accepted');document.getElementById('cookieBanner').classList.remove('show')});
 document.getElementById('cookieDecline').addEventListener('click',function(){localStorage.setItem('cookie-consent','declined');document.getElementById('cookieBanner').classList.remove('show')});
 
-/* ===== PRELOADER ===== */
+/* ===== 3D CARD TILT (desktop) ===== */
+(function(){
+  if(window.innerWidth <= 768) return;
+  document.querySelectorAll('.service-card, .work-card-inner').forEach(function(card){
+    card.addEventListener('mousemove', function(e){
+      var r = card.getBoundingClientRect();
+      var x = (e.clientX - r.left) / r.width - .5;
+      var y = (e.clientY - r.top) / r.height - .5;
+      card.style.transition = 'transform .12s ease-out';
+      card.style.transform = 'perspective(600px) rotateY('+(x*14)+'deg) rotateX('+(-y*14)+'deg) scale3d(1.03,1.03,1.03)';
+    });
+    card.addEventListener('mouseleave', function(){
+      card.style.transition = 'transform .6s cubic-bezier(.32,.72,0,1)';
+      card.style.transform = '';
+    });
+  });
+})();
+
+/* ===== CHARACTER-BY-CHARACTER REVEAL ===== */
+document.querySelectorAll('.char-reveal').forEach(function(p){
+  var text = p.textContent;
+  p.innerHTML = '';
+  for(var i = 0; i < text.length; i++){
+    var s = document.createElement('span');
+    s.textContent = text[i];
+    p.appendChild(s);
+  }
+  var chars = p.querySelectorAll('span');
+  ScrollTrigger.create({
+    trigger: p,
+    start: 'top 82%',
+    end: 'bottom 55%',
+    scrub: true,
+    onUpdate: function(self){
+      var prog = self.progress;
+      for(var i = 0; i < chars.length; i++){
+        chars[i].style.opacity = (i / chars.length) < prog ? '1' : '.12';
+      }
+    }
+  });
+});
+
+/* ===== ABOUT VISUAL CLIP REVEAL ===== */
+document.querySelectorAll('[data-reveal="clip"]').forEach(function(el){
+  gsap.from(el, {
+    clipPath: 'inset(100% 0% 0% 0%)',
+    duration: 1.8,
+    ease: 'power4.out',
+    scrollTrigger:{trigger:el, start:'top 82%', once:true}
+  });
+});
+
+/* ===== BACKGROUND TEXT PARALLAX ===== */
+document.querySelectorAll('.section-bg-text').forEach(function(el){
+  gsap.fromTo(el,
+    {x: '10%'},
+    {x: '-20%', ease:'none',
+     scrollTrigger:{trigger:el.closest('.content-section'), start:'top bottom', end:'bottom top', scrub:true}
+    }
+  );
+});
+
+/* ===== ENHANCED SERVICE CARD ENTRANCE ===== */
+document.querySelectorAll('.service-card.reveal').forEach(function(card, i){
+  card.classList.remove('reveal');
+  gsap.from(card, {
+    y: 80, rotationX: 8, scale: 0.9, opacity: 0, filter:'blur(8px)',
+    duration: 1.4, delay: i * 0.15, ease: 'power3.out',
+    scrollTrigger:{trigger:card, start:'top 90%', once:true}
+  });
+});
+
+/* ===== PROCESS STEP NUMBER ANIMATION ===== */
+document.querySelectorAll('.step-num').forEach(function(num){
+  gsap.from(num, {
+    scale: 0.3, opacity: 0, duration: 1.2, ease: 'elastic.out(1,0.5)',
+    scrollTrigger:{trigger:num, start:'top 88%', once:true}
+  });
+});
+
+/* ===== PRELOADER WITH COUNTER ===== */
+(function(){
+  var counterEl = document.getElementById('preloaderCount');
+  var count = {val: 0};
+  gsap.to(count, {
+    val: 100, duration: 2, ease: 'power2.inOut',
+    onUpdate: function(){ counterEl.textContent = Math.round(count.val) + '%' }
+  });
+})();
 setTimeout(function(){
   document.getElementById('preloader').classList.add('done');
   if(window._heroEntrance) window._heroEntrance.play();
