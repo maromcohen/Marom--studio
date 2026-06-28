@@ -65,7 +65,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--fg);overflow-x:hid
 .mobile-nav.open a:nth-child(4){transition-delay:.2s}
 
 /* AMBIENT CANVAS */
-#scene3d{position:fixed;top:0;left:0;width:100%;height:100%;z-index:1;pointer-events:none;touch-action:none}
+#scene3d{position:fixed;top:0;left:0;width:100%;height:100%;z-index:2;pointer-events:none;touch-action:none}
 
 /* ========== HERO ========== */
 .hero{height:300vh;position:relative}
@@ -90,7 +90,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--fg);overflow-x:hid
 @keyframes scrollBounce{0%,100%{transform:translateY(0);opacity:.6}50%{transform:translateY(8px);opacity:1}}
 
 /* ========== SECTION WRAP ========== */
-.section-wrap{position:relative;z-index:3;background:var(--bg);border-radius:40px 40px 0 0;box-shadow:0 -20px 80px rgba(0,0,0,.05)}
+.section-wrap{position:relative;z-index:3;background:rgba(250,250,250,0.85);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);border-radius:40px 40px 0 0;box-shadow:0 -20px 80px rgba(0,0,0,.05)}
 
 /* MARQUEE STRIP */
 .marquee{overflow:hidden;white-space:nowrap;padding:28px 0;border-bottom:1px solid var(--subtle);position:relative}
@@ -105,7 +105,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--fg);overflow-x:hid
 
 /* SECTIONS — OVERLAP TRANSITIONS */
 section.content-section{padding:clamp(80px,12vw,160px) clamp(24px,6vw,120px);position:relative;overflow:hidden}
-section.content-section+section.content-section{margin-top:-24px;border-radius:32px 32px 0 0;box-shadow:0 -10px 40px rgba(0,0,0,.03);background:var(--bg)}
+section.content-section+section.content-section{margin-top:-24px;border-radius:32px 32px 0 0;box-shadow:0 -10px 40px rgba(0,0,0,.03);background:rgba(250,250,250,0.85)}
 #about{z-index:1}#services{z-index:2}#work{z-index:3}#process{z-index:4}#contact{z-index:5}
 .section-snap-line{position:absolute;top:0;left:10%;right:10%;height:1px;background:var(--fg);opacity:0;pointer-events:none}
 .section-eyebrow{font-size:.6rem;font-weight:400;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);margin-bottom:20px}
@@ -175,7 +175,7 @@ section.content-section+section.content-section{margin-top:-24px;border-radius:3
 .step:hover .step-detail{max-height:80px;margin-top:8px}
 
 /* CONTACT — DARK */
-#contact.contact-dark{background:#0a0a0a;color:#fafafa;border-radius:40px 40px 0 0;padding-top:clamp(120px,15vw,200px)}
+#contact.contact-dark{background:rgba(10,10,10,0.88);color:#fafafa;border-radius:40px 40px 0 0;padding-top:clamp(120px,15vw,200px)}
 .contact-dark .section-eyebrow{color:rgba(255,255,255,.35)}
 .contact{text-align:center;display:flex;flex-direction:column;align-items:center}
 .contact-title{font-size:clamp(2.5rem,5vw,4.5rem);font-weight:100;letter-spacing:.1em;line-height:1.2}
@@ -206,7 +206,7 @@ section.content-section+section.content-section{margin-top:-24px;border-radius:3
 footer{padding:40px 48px;display:flex;align-items:center;justify-content:space-between;font-size:.7rem;font-weight:300;letter-spacing:.1em;position:relative}
 footer a{text-decoration:none;transition:color .3s,transform .4s var(--ease)}
 .footer-links{display:flex;gap:32px}
-.footer-dark{background:#0a0a0a;border-top:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.35)}
+.footer-dark{background:rgba(10,10,10,0.92);border-top:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.35)}
 .footer-dark a{color:rgba(255,255,255,.35)}
 .footer-dark a:hover{color:#fafafa}
 
@@ -1567,7 +1567,7 @@ void main(){
   vec3 fresnelColor = mix(vec3(0.6, 0.7, 0.9), vec3(0.5, 0.2, 0.8), uDark);
   vec3 finalColor = mix(baseColor, fresnelColor, fresnel * 0.6);
   finalColor += vDisplacement * 0.15;
-  float alpha = (0.12 + fresnel * 0.25) * uOpacity;
+  float alpha = (0.25 + fresnel * 0.4) * uOpacity;
   gl_FragColor = vec4(finalColor, alpha);
 }
 `;
@@ -1626,7 +1626,7 @@ void main(){
   float dist = length(mvPos.xyz);
   gl_PointSize = aSize * (80.0 / dist);
   gl_Position = projectionMatrix * mvPos;
-  vAlpha = 0.04 + 0.06 * sin(uTime * 0.5 + aRandom * 10.0);
+  vAlpha = 0.08 + 0.12 * sin(uTime * 0.5 + aRandom * 10.0);
   float starTwinkle = f > 3.0 ? 0.04 * sin(uTime * 2.0 + aRandom * 20.0) : 0.0;
   vAlpha += starTwinkle;
 }
@@ -1638,7 +1638,7 @@ varying float vAlpha;
 void main(){
   float d = length(gl_PointCoord - vec2(0.5));
   if(d > 0.5) discard;
-  float alpha = vAlpha * (1.0 - d * 2.0);
+  float alpha = vAlpha * (1.0 - d * 1.5);
   vec3 color = mix(vec3(0.0), vec3(1.0), uDark);
   gl_FragColor = vec4(color, alpha);
 }
@@ -1683,6 +1683,7 @@ const postShader = {
 (function init3D(){
   const canvas = document.getElementById('scene3d');
   if(!canvas) return;
+  canvas.__threeLoaded = true;
 
   const renderer = new THREE.WebGLRenderer({ canvas, alpha:true, antialias:false, powerPreference:'high-performance' });
   const dpr = Math.min(window.devicePixelRatio, mobile ? 1.5 : 2);
@@ -1719,9 +1720,9 @@ const postShader = {
   }
 
   const meshes = [
-    createOrgMesh('#a0b9dc','#c8b4a0','#3a1f5e','#1a5c5c', 1.3, [-2, 1.2, -1]),
-    createOrgMesh('#b4c8a0','#a0a8c8','#1f3a5e','#5c1a3a', 1.0, [2.5, -0.8, -2]),
-    createOrgMesh('#c8a0b4','#a0c8c0','#2e1a5c','#1a5c40', 0.8, [0, -0.3, -1.5])
+    createOrgMesh('#6b8db8','#b89878','#3a1f5e','#1a5c5c', 1.3, [-2, 1.2, -1]),
+    createOrgMesh('#7a9c6b','#6b78b8','#1f3a5e','#5c1a3a', 1.0, [2.5, -0.8, -2]),
+    createOrgMesh('#b86b8d','#6bb8b0','#2e1a5c','#1a5c40', 0.8, [0, -0.3, -1.5])
   ];
 
   const pCount = mobile ? 200 : 2000;
@@ -1940,6 +1941,14 @@ const postShader = {
     }, 200);
   });
 })();
+</script>
+<script>
+setTimeout(function(){
+  var c = document.getElementById('scene3d');
+  if(c && !c.__threeLoaded){
+    console.warn('Three.js module did not load — check CDN or browser console for errors');
+  }
+}, 5000);
 </script>
 </body>
 </html>
