@@ -1434,7 +1434,7 @@ document.querySelectorAll('.content-section').forEach(function(sec){
 /* ===== NAV + [#2] DARK SECTION INVERSION ===== */
 window.addEventListener('scroll', function(){
   navEl.classList.toggle('scrolled', window.scrollY > 60);
-});
+}, {passive:true});
 ScrollTrigger.create({
   trigger: '#contact',
   start: 'top 80%',
@@ -2119,7 +2119,7 @@ setTimeout(function(){
     var DEPTH = 420;
 
     /* ---- DUST (GPU shader physics) ---- */
-    var N = mobile ? 1500 : 14000;
+    var N = mobile ? 700 : 14000;
     var g = new THREE.BufferGeometry();
     var homes = new Float32Array(N*3), seeds = new Float32Array(N*3), sizes = new Float32Array(N), golds = new Float32Array(N);
     for(var i=0;i<N;i++){
@@ -2201,8 +2201,8 @@ setTimeout(function(){
     });
     var dust = new THREE.Points(g, mat); dust.frustumCulled=false; scene.add(dust);
 
-    /* ---- NODES (CPU Verlet physics) + constellation lines ---- */
-    var NN = mobile ? 34 : 120;
+    /* ---- NODES (CPU Verlet physics) + constellation lines — desktop only ---- */
+    var NN = mobile ? 0 : 120;
     var nx=new Float32Array(NN), ny=new Float32Array(NN), px=new Float32Array(NN), py=new Float32Array(NN);
     var hx=new Float32Array(NN), hy=new Float32Array(NN);
     for(var k=0;k<NN;k++){
