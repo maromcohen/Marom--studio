@@ -1456,191 +1456,96 @@ import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 
-/* ===== REACTIVE FLUID WORLD ENGINE ===== */
+/* ===== PARTICLE CONSTELLATION ENGINE ===== */
 
 const mobile = window.innerWidth < 768;
+const PCOUNT = mobile ? 600 : 1500;
+const FSIZE = mobile ? 100 : 180;
+const PTBASE = mobile ? 40.0 : 60.0;
 
-class Spring {
-  constructor(val, stiffness = 0.03, damping = 0.85) {
-    this.value = val; this.target = val; this.velocity = 0;
-    this.stiffness = stiffness; this.damping = damping;
+/* ===== TEXT SAMPLING ===== */
+function sampleText(text, sz, n) {
+  const c = document.createElement('canvas'), ctx = c.getContext('2d');
+  const font = '700 ' + sz + 'px Inter,Arial,sans-serif';
+  ctx.font = font;
+  const tw = Math.ceil(ctx.measureText(text).width) + 20;
+  const th = Math.ceil(sz * 1.3);
+  c.width = tw; c.height = th;
+  ctx.font = font; ctx.fillStyle = '#fff'; ctx.textBaseline = 'middle';
+  ctx.fillText(text, 10, th / 2);
+  const d = ctx.getImageData(0, 0, tw, th).data;
+  const pts = [];
+  const step = mobile ? 3 : 2;
+  for (let y = 0; y < th; y += step)
+    for (let x = 0; x < tw; x += step)
+      if (d[(y * tw + x) * 4 + 3] > 128) pts.push([x, y]);
+  if (!pts.length) pts.push([tw / 2, th / 2]);
+  const out = [];
+  for (let i = 0; i < n; i++) out.push(pts[Math.floor(Math.random() * pts.length)]);
+  return { p: out, w: tw, h: th };
+}
+
+function getLetterRanges(text, sz) {
+  const ctx = document.createElement('canvas').getContext('2d');
+  ctx.font = '700 ' + sz + 'px Inter,Arial,sans-serif';
+  const ranges = []; let x = 10;
+  for (let i = 0; i < text.length; i++) {
+    const w = ctx.measureText(text[i]).width;
+    ranges.push({ s: x, e: x + w }); x += w;
   }
-  update() {
-    if (mobile) { this.value += (this.target - this.value) * 0.08; return this.value; }
-    const force = (this.target - this.value) * this.stiffness;
-    this.velocity = (this.velocity + force) * this.damping;
-    this.value += this.velocity;
-    return this.value;
-  }
+  return ranges;
 }
 
-const snoise3D = `
-vec3 mod289(vec3 x){return x-floor(x*(1.0/289.0))*289.0;}
-vec4 mod289(vec4 x){return x-floor(x*(1.0/289.0))*289.0;}
-vec4 permute(vec4 x){return mod289(((x*34.0)+1.0)*x);}
-vec4 taylorInvSqrt(vec4 r){return 1.79284291400159-0.85373472095314*r;}
-float snoise(vec3 v){
-  const vec2 C=vec2(1.0/6.0,1.0/3.0);
-  const vec4 D=vec4(0.0,0.5,1.0,2.0);
-  vec3 i=floor(v+dot(v,C.yyy));
-  vec3 x0=v-i+dot(i,C.xxx);
-  vec3 g=step(x0.yzx,x0.xyz);
-  vec3 l=1.0-g;
-  vec3 i1=min(g.xyz,l.zxy);
-  vec3 i2=max(g.xyz,l.zxy);
-  vec3 x1=x0-i1+C.xxx;
-  vec3 x2=x0-i2+C.yyy;
-  vec3 x3=x0-D.yyy;
-  i=mod289(i);
-  vec4 p=permute(permute(permute(
-    i.z+vec4(0.0,i1.z,i2.z,1.0))
-    +i.y+vec4(0.0,i1.y,i2.y,1.0))
-    +i.x+vec4(0.0,i1.x,i2.x,1.0));
-  float n_=0.142857142857;
-  vec3 ns=n_*D.wyz-D.xzx;
-  vec4 j=p-49.0*floor(p*ns.z*ns.z);
-  vec4 x_=floor(j*ns.z);
-  vec4 y_=floor(j-7.0*x_);
-  vec4 x=x_*ns.x+ns.yyyy;
-  vec4 y=y_*ns.x+ns.yyyy;
-  vec4 h=1.0-abs(x)-abs(y);
-  vec4 b0=vec4(x.xy,y.xy);
-  vec4 b1=vec4(x.zw,y.zw);
-  vec4 s0=floor(b0)*2.0+1.0;
-  vec4 s1=floor(b1)*2.0+1.0;
-  vec4 sh=-step(h,vec4(0.0));
-  vec4 a0=b0.xzyw+s0.xzyw*sh.xxyy;
-  vec4 a1=b1.xzyw+s1.xzyw*sh.zzww;
-  vec3 p0=vec3(a0.xy,h.x);
-  vec3 p1=vec3(a0.zw,h.y);
-  vec3 p2=vec3(a1.xy,h.z);
-  vec3 p3=vec3(a1.zw,h.w);
-  vec4 norm=taylorInvSqrt(vec4(dot(p0,p0),dot(p1,p1),dot(p2,p2),dot(p3,p3)));
-  p0*=norm.x;p1*=norm.y;p2*=norm.z;p3*=norm.w;
-  vec4 m=max(0.6-vec4(dot(x0,x0),dot(x1,x1),dot(x2,x2),dot(x3,x3)),0.0);
-  m=m*m;
-  return 42.0*dot(m*m,vec4(dot(p0,x0),dot(p1,x1),dot(p2,x2),dot(p3,x3)));
-}
-`;
-
-const meshVertexShader = snoise3D + `
+/* ===== SHADERS ===== */
+const vShader = `
+attribute vec3 aFrom;
+attribute vec3 aTo;
+attribute vec3 aScatter;
+attribute float aLetter;
+attribute float aRand;
+attribute float aGold;
+attribute float aSz;
+uniform float uMerge;
+uniform float uExplode;
 uniform float uTime;
-uniform float uScroll;
-uniform float uNoiseAmp;
-uniform vec3 uTouch;
-uniform float uTouchStrength;
-varying vec3 vNormal;
-varying vec3 vPosition;
-varying float vDisplacement;
-void main(){
-  vNormal = normal;
-  vPosition = position;
-  float noise = snoise(position * 1.5 + uTime * 0.3 + uScroll * 0.5);
-  float displacement = noise * uNoiseAmp;
-  vec3 newPos = position + normal * displacement;
-  float touchDist = distance(position, uTouch);
-  float ripple = sin(touchDist * 8.0 - uTime * 4.0) * exp(-touchDist * 2.0) * uTouchStrength;
-  newPos += normal * ripple * 0.15;
-  vDisplacement = displacement + ripple * 0.1;
-  gl_Position = projectionMatrix * modelViewMatrix * vec4(newPos, 1.0);
-}
-`;
-
-const meshFragmentShader = `
-uniform float uTime;
-uniform float uDark;
 uniform float uOpacity;
-uniform vec3 uColor1Light;
-uniform vec3 uColor2Light;
-uniform vec3 uColor1Dark;
-uniform vec3 uColor2Dark;
-varying vec3 vNormal;
-varying vec3 vPosition;
-varying float vDisplacement;
-void main(){
-  vec3 viewDir = normalize(cameraPosition - vPosition);
-  float fresnel = pow(1.0 - max(dot(viewDir, vNormal), 0.0), 3.0);
-  float gradient = vNormal.y * 0.5 + 0.5;
-  vec3 col1 = mix(uColor1Light, uColor1Dark, uDark);
-  vec3 col2 = mix(uColor2Light, uColor2Dark, uDark);
-  vec3 baseColor = mix(col1, col2, gradient);
-  vec3 fresnelColor = mix(vec3(0.6, 0.7, 0.9), vec3(0.5, 0.2, 0.8), uDark);
-  vec3 finalColor = mix(baseColor, fresnelColor, fresnel * 0.6);
-  finalColor += vDisplacement * 0.15;
-  float alpha = (0.25 + fresnel * 0.4) * uOpacity;
-  gl_FragColor = vec4(finalColor, alpha);
-}
-`;
-
-const particleVertexShader = `
-attribute float aRandom;
-attribute float aSize;
-uniform float uTime;
-uniform float uScroll;
-uniform float uVelocity;
-uniform float uFormation;
-uniform float uFormBlend;
-uniform vec2 uMouse;
-varying float vAlpha;
-void main(){
-  vec3 pos = position;
-  float angle = uTime * 0.08 + aRandom * 6.2832;
-
-  vec3 orbitPos = pos;
-  orbitPos.x += sin(angle) * (1.0 + aRandom * 2.0);
-  orbitPos.y += cos(angle * 0.7) * (0.8 + aRandom * 1.5);
-  orbitPos.z += sin(angle * 0.5 + aRandom * 3.14) * 1.5;
-
-  vec3 flowPos = pos;
-  flowPos.x *= 0.6;
-  flowPos.y = pos.y - uTime * 0.4 + aRandom * 6.0;
-  flowPos.y = mod(flowPos.y + 8.0, 16.0) - 8.0;
-  flowPos.z *= 0.5;
-
-  vec3 trailPos = pos;
-  trailPos.x = pos.x + uTime * 0.25 + aRandom * 4.0;
-  trailPos.x = mod(trailPos.x + 8.0, 16.0) - 8.0;
-  trailPos.y *= 0.15;
-  trailPos.z *= 0.15;
-
-  vec3 starsPos = pos * 1.8;
-  starsPos.x += sin(uTime * 0.02 + aRandom * 3.0) * 0.3;
-  starsPos.y += cos(uTime * 0.015 + aRandom * 5.0) * 0.2;
-
-  float f = uFormation;
-  vec3 finalPos;
-  if(f < 1.0){
-    finalPos = mix(orbitPos, flowPos, smoothstep(0.0, 1.0, f));
-  } else if(f < 2.0){
-    finalPos = mix(flowPos, orbitPos, smoothstep(1.0, 2.0, f));
-  } else if(f < 3.0){
-    finalPos = mix(orbitPos, trailPos, smoothstep(2.0, 3.0, f));
-  } else {
-    finalPos = mix(trailPos, starsPos, smoothstep(3.0, 4.0, f));
-  }
-
-  finalPos *= 1.0 + uScroll * 0.3;
-  finalPos.y += uVelocity * aRandom * 0.5;
-
-  vec4 mvPos = modelViewMatrix * vec4(finalPos, 1.0);
-  float dist = length(mvPos.xyz);
-  gl_PointSize = aSize * (80.0 / dist);
-  gl_Position = projectionMatrix * mvPos;
-  vAlpha = 0.08 + 0.12 * sin(uTime * 0.5 + aRandom * 10.0);
-  float starTwinkle = f > 3.0 ? 0.04 * sin(uTime * 2.0 + aRandom * 20.0) : 0.0;
-  vAlpha += starTwinkle;
-}
-`;
-
-const particleFragmentShader = `
+uniform float uVel;
 uniform float uDark;
+varying float vGold;
 varying float vAlpha;
+varying float vDark;
 void main(){
-  float d = length(gl_PointCoord - vec2(0.5));
-  if(d > 0.5) discard;
-  float alpha = vAlpha * (1.0 - d * 1.5);
-  vec3 color = mix(vec3(0.0), vec3(1.0), uDark);
-  gl_FragColor = vec4(color, alpha);
+  float delay=(4.0-aLetter)*0.12;
+  float lm=smoothstep(delay,delay+0.25,uMerge);
+  vec3 merged=mix(aFrom,aTo,lm);
+  vec3 p=mix(merged,aScatter,uExplode);
+  float dr=1.0+uExplode*2.0;
+  p.x+=sin(uTime*0.15+aRand*6.283)*0.04*dr;
+  p.y+=cos(uTime*0.12+aRand*3.141)*0.04*dr;
+  p.z+=sin(uTime*0.1+aRand*4.712)*0.03*dr;
+  p.y-=uExplode*uExplode*aRand*2.5;
+  p.y-=uVel*aRand*0.3;
+  vGold=aGold;
+  vDark=uDark;
+  vAlpha=mix(0.85,0.3+0.25*sin(uTime*0.4+aRand*8.0),uExplode)*uOpacity;
+  vec4 mv=modelViewMatrix*vec4(p,1.0);
+  gl_PointSize=aSz*(` + PTBASE + `/length(mv.xyz));
+  gl_Position=projectionMatrix*mv;
+}
+`;
+
+const fShader = `
+varying float vGold;
+varying float vAlpha;
+varying float vDark;
+void main(){
+  float d=length(gl_PointCoord-vec2(0.5));
+  if(d>0.5) discard;
+  vec3 base=mix(vec3(0.07),vec3(0.88),vDark);
+  vec3 gold=vec3(0.78,0.66,0.2);
+  vec3 col=mix(base,gold,vGold);
+  float a=vAlpha*(1.0-d*1.6);
+  gl_FragColor=vec4(col,a);
 }
 `;
 
@@ -1648,42 +1553,38 @@ const postShader = {
   uniforms: {
     tDiffuse: { value: null },
     uTime: { value: 0 },
-    uVignetteStrength: { value: 0.25 },
-    uChromaticAberration: { value: 0.001 }
+    uVignetteStrength: { value: 0.3 },
+    uChromaticAberration: { value: 0.002 }
   },
-  vertexShader: `
-    varying vec2 vUv;
-    void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }
-  `,
+  vertexShader: 'varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}',
   fragmentShader: `
-    uniform sampler2D tDiffuse;
-    uniform float uTime;
-    uniform float uVignetteStrength;
-    uniform float uChromaticAberration;
+    uniform sampler2D tDiffuse;uniform float uTime;
+    uniform float uVignetteStrength;uniform float uChromaticAberration;
     varying vec2 vUv;
-    float rand(vec2 co){ return fract(sin(dot(co,vec2(12.9898,78.233)))*43758.5453); }
+    float rand(vec2 co){return fract(sin(dot(co,vec2(12.9898,78.233)))*43758.5453);}
     void main(){
-      vec2 uv = vUv;
-      vec2 dir = uv - vec2(0.5);
-      float ca = uChromaticAberration * length(dir);
-      float r = texture2D(tDiffuse, uv + dir * ca).r;
-      float g = texture2D(tDiffuse, uv).g;
-      float b = texture2D(tDiffuse, uv - dir * ca).b;
-      float a = texture2D(tDiffuse, uv).a;
-      vec3 color = vec3(r, g, b);
-      float vignette = 1.0 - length(dir) * uVignetteStrength * 1.4;
-      color *= vignette;
-      float grain = rand(uv * uTime) * 0.03;
-      color += grain;
-      gl_FragColor = vec4(color, a);
+      vec2 uv=vUv;vec2 dir=uv-vec2(0.5);
+      float ca=uChromaticAberration*length(dir);
+      float r=texture2D(tDiffuse,uv+dir*ca).r;
+      float g=texture2D(tDiffuse,uv).g;
+      float b=texture2D(tDiffuse,uv-dir*ca).b;
+      float a=texture2D(tDiffuse,uv).a;
+      vec3 color=vec3(r,g,b);
+      color*=1.0-length(dir)*uVignetteStrength*1.4;
+      color+=rand(uv*uTime)*0.02;
+      gl_FragColor=vec4(color,a);
     }
   `
 };
 
-(function init3D(){
+function init3D(){
   const canvas = document.getElementById('scene3d');
   if(!canvas) return;
   canvas.__threeLoaded = true;
+
+  document.querySelectorAll('.hero-letter').forEach(function(el){
+    el.style.cssText += ';visibility:hidden !important';
+  });
 
   const renderer = new THREE.WebGLRenderer({ canvas, alpha:true, antialias:false, powerPreference:'high-performance' });
   const dpr = Math.min(window.devicePixelRatio, mobile ? 1.5 : 2);
@@ -1695,252 +1596,160 @@ const postShader = {
   const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 100);
   camera.position.set(0, 0, 5);
 
-  const noiseAmp = mobile ? 0.15 : 0.35;
-  const meshDetail = mobile ? 16 : 64;
+  const vH = 2 * Math.tan(Math.PI / 6) * 5;
+  const vW = vH * (window.innerWidth / window.innerHeight);
 
-  function createOrgMesh(c1L, c2L, c1D, c2D, scale, pos){
-    const geo = new THREE.IcosahedronGeometry(1, meshDetail);
-    const mat = new THREE.ShaderMaterial({
-      vertexShader: meshVertexShader,
-      fragmentShader: meshFragmentShader,
-      uniforms: {
-        uTime:{value:0}, uScroll:{value:0}, uDark:{value:0}, uOpacity:{value:0},
-        uNoiseAmp:{value:noiseAmp},
-        uTouch:{value:new THREE.Vector3(0,0,0)}, uTouchStrength:{value:0},
-        uColor1Light:{value:new THREE.Color(c1L)}, uColor2Light:{value:new THREE.Color(c2L)},
-        uColor1Dark:{value:new THREE.Color(c1D)}, uColor2Dark:{value:new THREE.Color(c2D)}
-      },
-      transparent:true, depthWrite:false, side:THREE.DoubleSide
-    });
-    const mesh = new THREE.Mesh(geo, mat);
-    mesh.scale.setScalar(scale);
-    mesh.position.set(pos[0], pos[1], pos[2]);
-    scene.add(mesh);
-    return mesh;
-  }
+  const maromData = sampleText('MAROM', FSIZE, PCOUNT);
+  const mData = sampleText('M', Math.floor(FSIZE * 1.3), PCOUNT);
+  const ranges = getLetterRanges('MAROM', FSIZE);
 
-  const meshes = [
-    createOrgMesh('#6b8db8','#b89878','#3a1f5e','#1a5c5c', 1.3, [-2, 1.2, -1]),
-    createOrgMesh('#7a9c6b','#6b78b8','#1f3a5e','#5c1a3a', 1.0, [2.5, -0.8, -2]),
-    createOrgMesh('#b86b8d','#6bb8b0','#2e1a5c','#1a5c40', 0.8, [0, -0.3, -1.5])
-  ];
+  const fromArr = new Float32Array(PCOUNT * 3);
+  const toArr = new Float32Array(PCOUNT * 3);
+  const scatterArr = new Float32Array(PCOUNT * 3);
+  const letterArr = new Float32Array(PCOUNT);
+  const randArr = new Float32Array(PCOUNT);
+  const goldArr = new Float32Array(PCOUNT);
+  const sizeArr = new Float32Array(PCOUNT);
+  const posArr = new Float32Array(PCOUNT * 3);
 
-  const pCount = mobile ? 200 : 2000;
-  const pPos = new Float32Array(pCount * 3);
-  const pRand = new Float32Array(pCount);
-  const pSize = new Float32Array(pCount);
-  for(let i = 0; i < pCount; i++){
+  for(let i = 0; i < PCOUNT; i++){
+    const mp = maromData.p[i];
+    fromArr[i*3] = (mp[0] / maromData.w - 0.5) * vW * 0.65;
+    fromArr[i*3+1] = -(mp[1] / maromData.h - 0.5) * vH * 0.22;
+    fromArr[i*3+2] = (Math.random() - 0.5) * 0.2;
+
+    const tp = mData.p[i];
+    toArr[i*3] = (tp[0] / mData.w - 0.5) * vW * 0.18;
+    toArr[i*3+1] = -(tp[1] / mData.h - 0.5) * vH * 0.25;
+    toArr[i*3+2] = (Math.random() - 0.5) * 0.2;
+
     const theta = Math.random() * Math.PI * 2;
     const phi = Math.acos(2 * Math.random() - 1);
-    const r = 3 + Math.random() * 5;
-    pPos[i*3] = r * Math.sin(phi) * Math.cos(theta);
-    pPos[i*3+1] = r * Math.sin(phi) * Math.sin(theta);
-    pPos[i*3+2] = r * Math.cos(phi);
-    pRand[i] = Math.random();
-    pSize[i] = 0.5 + Math.random() * 1.5;
+    const r = 2 + Math.random() * 5;
+    scatterArr[i*3] = r * Math.sin(phi) * Math.cos(theta);
+    scatterArr[i*3+1] = r * Math.sin(phi) * Math.sin(theta);
+    scatterArr[i*3+2] = (Math.random() - 0.5) * 3;
+
+    let li = 0;
+    for(let j = 0; j < ranges.length; j++){
+      if(mp[0] >= ranges[j].s && mp[0] < ranges[j].e){ li = j; break; }
+    }
+    letterArr[i] = li;
+    randArr[i] = Math.random();
+    goldArr[i] = Math.random() < 0.38 ? 1.0 : 0.0;
+    sizeArr[i] = 1.2 + Math.random() * 2.0;
+    posArr[i*3] = fromArr[i*3];
+    posArr[i*3+1] = fromArr[i*3+1];
+    posArr[i*3+2] = fromArr[i*3+2];
   }
-  const pGeo = new THREE.BufferGeometry();
-  pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
-  pGeo.setAttribute('aRandom', new THREE.BufferAttribute(pRand, 1));
-  pGeo.setAttribute('aSize', new THREE.BufferAttribute(pSize, 1));
-  const pMat = new THREE.ShaderMaterial({
-    vertexShader: particleVertexShader,
-    fragmentShader: particleFragmentShader,
+
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(posArr, 3));
+  geo.setAttribute('aFrom', new THREE.BufferAttribute(fromArr, 3));
+  geo.setAttribute('aTo', new THREE.BufferAttribute(toArr, 3));
+  geo.setAttribute('aScatter', new THREE.BufferAttribute(scatterArr, 3));
+  geo.setAttribute('aLetter', new THREE.BufferAttribute(letterArr, 1));
+  geo.setAttribute('aRand', new THREE.BufferAttribute(randArr, 1));
+  geo.setAttribute('aGold', new THREE.BufferAttribute(goldArr, 1));
+  geo.setAttribute('aSz', new THREE.BufferAttribute(sizeArr, 1));
+
+  const mat = new THREE.ShaderMaterial({
+    vertexShader: vShader,
+    fragmentShader: fShader,
     uniforms: {
-      uTime:{value:0}, uScroll:{value:0}, uVelocity:{value:0},
-      uFormation:{value:0}, uFormBlend:{value:0},
-      uMouse:{value:new THREE.Vector2(0.5,0.5)}, uDark:{value:0}
+      uMerge: { value: 0 }, uExplode: { value: 0 }, uTime: { value: 0 },
+      uOpacity: { value: 0 }, uVel: { value: 0 }, uDark: { value: 0 }
     },
-    transparent:true, depthWrite:false, blending:THREE.AdditiveBlending
+    transparent: true, depthWrite: false
   });
-  const particles = new THREE.Points(pGeo, pMat);
-  scene.add(particles);
+
+  const pts = new THREE.Points(geo, mat);
+  pts.frustumCulled = false;
+  scene.add(pts);
 
   let composer, bloomPass, customPass;
   if(!mobile){
     composer = new EffectComposer(renderer);
     composer.addPass(new RenderPass(scene, camera));
-    bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 0.3, 0.8, 0.6);
+    bloomPass = new UnrealBloomPass(
+      new THREE.Vector2(window.innerWidth, window.innerHeight), 0.5, 0.6, 0.5
+    );
     composer.addPass(bloomPass);
     customPass = new ShaderPass(postShader);
     customPass.renderToScreen = true;
     composer.addPass(customPass);
   }
 
-  let sceneOpacity = 0, targetOpacity = 0;
-  const preloaderEl = document.getElementById('preloader');
-  const checkPreloader = () => {
-    if(preloaderEl && preloaderEl.classList.contains('done')) targetOpacity = 1;
-    else requestAnimationFrame(checkPreloader);
-  };
-  checkPreloader();
+  let opacity = 0, targetOp = 0;
+  const preEl = document.getElementById('preloader');
+  (function checkPre(){
+    if(preEl && preEl.classList.contains('done')) targetOp = 1;
+    else requestAnimationFrame(checkPre);
+  })();
 
-  const basePositions = meshes.map(m => m.position.clone());
-  const baseScales = meshes.map(m => m.scale.x);
-
-  const springs = {
-    camX: new Spring(0, 0.02, 0.88),
-    camY: new Spring(0, 0.02, 0.88),
-    camZ: new Spring(5, 0.025, 0.87),
-    fov: new Spring(60, 0.02, 0.9),
-    bloom: new Spring(0.3, 0.02, 0.92),
-    chromatic: new Spring(0.001, 0.02, 0.92),
-    vignette: new Spring(0.25, 0.02, 0.92),
-    formation: new Spring(0, 0.015, 0.9),
-    touchStr: new Spring(0, 0.06, 0.8)
-  };
-  const meshSprings = meshes.map(() => ({
-    x: new Spring(0, 0.025, 0.88),
-    y: new Spring(0, 0.025, 0.88),
-    z: new Spring(0, 0.025, 0.88),
-    scale: new Spring(1, 0.03, 0.85)
-  }));
-
-  const raycaster = new THREE.Raycaster();
-  const pointer = new THREE.Vector2();
-  let touchPoint = new THREE.Vector3();
-  let hasTouchHit = false;
-
-  const zoneStarts = [0, 0.15, 0.35, 0.55, 0.75];
-  const zoneEnds   = [0.15, 0.35, 0.55, 0.75, 1.0];
-  const zoneScales = [
-    [1.3, 1.0, 0.8],
-    [0.9, 0.7, 0.6],
-    [0.8, 0.8, 0.8],
-    [0.6, 0.9, 0.5],
-    [1.1, 1.1, 1.1]
-  ];
-  const zoneSpreads = [
-    [[-2,1.2,-1],[2.5,-0.8,-2],[0,-0.3,-1.5]],
-    [[-3,0.5,-2],[3,-0.5,-3],[0,1.5,-2]],
-    [[-2.5,0,-1.5],[0,0,-1.5],[2.5,0,-1.5]],
-    [[-1.5,1,-3],[2,-1,-4],[0,0,-2]],
-    [[-0.8,0.5,-1],[0.8,-0.3,-1],[0,0.1,-0.5]]
-  ];
-  const zoneFormations = [0, 1, 1.5, 2.5, 3.5];
-  const zoneBlooms = [0.3, 0.2, 0.45, 0.35, 0.15];
-  const zoneChromas = [0.001, 0.001, 0.002, 0.004, 0.001];
-  const zoneVignettes = [0.25, 0.2, 0.3, 0.25, 0.5];
-
-  const rotSpeeds = [{x:0.0003,y:0.0005},{x:0.0006,y:0.0004},{x:0.0004,y:0.0007}];
-
+  const heroEl = document.querySelector('.hero');
   let w = window.innerWidth, h = window.innerHeight;
   let lastFrame = 0;
-  const frameInterval = mobile ? 33 : 0;
+  const frameInt = mobile ? 33 : 0;
 
   function animate(time){
     requestAnimationFrame(animate);
     if(document.hidden) return;
-    if(mobile && time - lastFrame < frameInterval) return;
+    if(mobile && time - lastFrame < frameInt) return;
     lastFrame = time;
 
     const t = time * 0.001;
+    opacity += (targetOp - opacity) * 0.025;
+
+    const heroH = heroEl ? heroEl.offsetHeight : h * 3;
+    const sy = window.scrollY || 0;
+    const hp = Math.min(1, sy / Math.max(1, heroH - h));
+
+    const mergeTarget = Math.min(1, Math.max(0, (hp - 0.1) / 0.55));
+    const explTarget = Math.min(1, Math.max(0, (hp - 0.7) / 0.3));
+
     const sv = window.scrollVel || 0;
-    const sp = window.scrollProgress || 0;
+    const dark = window.inDarkSection ? 1 : 0;
+
+    const u = mat.uniforms;
+    u.uMerge.value += (mergeTarget - u.uMerge.value) * 0.06;
+    u.uExplode.value += (explTarget - u.uExplode.value) * 0.06;
+    u.uTime.value = t;
+    u.uOpacity.value = opacity;
+    u.uVel.value += (sv * 0.4 - u.uVel.value) * 0.05;
+    u.uDark.value += (dark - u.uDark.value) * 0.05;
+
     const mx = window.globalMx || w * 0.5;
     const my = window.globalMy || h * 0.5;
-    const dark = window.inDarkSection ? 1 : 0;
-    const velEffect = Math.min(Math.abs(sv) * 0.15, 1.0);
-
-    sceneOpacity += (targetOpacity - sceneOpacity) * 0.02;
-
-    const zone = sp < 0.15 ? 0 : sp < 0.35 ? 1 : sp < 0.55 ? 2 : sp < 0.75 ? 3 : 4;
-
-    if(!mobile){
-      pointer.x = (mx / w) * 2 - 1;
-      pointer.y = -(my / h) * 2 + 1;
-      raycaster.setFromCamera(pointer, camera);
-      const hits = raycaster.intersectObjects(meshes);
-      if(hits.length > 0){
-        touchPoint.copy(hits[0].object.worldToLocal(hits[0].point.clone()));
-        hasTouchHit = true;
-        springs.touchStr.target = 1;
-      } else {
-        springs.touchStr.target = 0;
-      }
-    } else {
-      touchPoint.set(0, 0, 0);
-      springs.touchStr.target = 0;
-    }
-    const tStr = springs.touchStr.update();
-
-    meshes.forEach((mesh, i) => {
-      const u = mesh.material.uniforms;
-      u.uTime.value = t;
-      u.uScroll.value = sp;
-      u.uDark.value += (dark - u.uDark.value) * 0.05;
-      u.uOpacity.value = sceneOpacity;
-      u.uTouch.value.copy(touchPoint);
-      u.uTouchStrength.value = tStr;
-
-      const speedMult = 1 + Math.abs(sv) * 0.3;
-      mesh.rotation.x += rotSpeeds[i].x * speedMult;
-      mesh.rotation.y += rotSpeeds[i].y * speedMult;
-
-      const zp = zoneSpreads[zone][i];
-      meshSprings[i].x.target = zp[0] + Math.sin(t * 0.3 + i * 2) * 0.3;
-      meshSprings[i].y.target = zp[1] + Math.cos(t * 0.25 + i * 1.5) * 0.2;
-      meshSprings[i].z.target = zp[2];
-      meshSprings[i].scale.target = zoneScales[zone][i] * (1 - velEffect * 0.08);
-
-      mesh.position.x = meshSprings[i].x.update();
-      mesh.position.y = meshSprings[i].y.update();
-      mesh.position.z = meshSprings[i].z.update();
-      const s = meshSprings[i].scale.update();
-      mesh.scale.set(s, s * (1 - velEffect * 0.06), s);
-    });
-
-    springs.formation.target = zoneFormations[zone];
-    pMat.uniforms.uTime.value = t;
-    pMat.uniforms.uScroll.value = sp;
-    pMat.uniforms.uVelocity.value += (sv * 0.3 - pMat.uniforms.uVelocity.value) * 0.05;
-    pMat.uniforms.uFormation.value = springs.formation.update();
-    pMat.uniforms.uMouse.value.set(mx / w, 1 - my / h);
-    pMat.uniforms.uDark.value += (dark - pMat.uniforms.uDark.value) * 0.05;
-
-    particles.rotation.y = t * 0.02;
-    particles.rotation.x = Math.sin(t * 0.01) * 0.1;
-
-    springs.camX.target = (mx / w - 0.5) * 0.8;
-    springs.camY.target = (0.5 - my / h) * 0.5;
-    springs.camZ.target = 5 - sp * 1.5;
-    springs.fov.target = 60 + velEffect * 8;
-
-    camera.position.x = springs.camX.update();
-    camera.position.y = springs.camY.update();
-    camera.position.z = springs.camZ.update();
-    camera.fov = springs.fov.update();
-    camera.updateProjectionMatrix();
+    camera.position.x += ((mx / w - 0.5) * 0.5 - camera.position.x) * 0.03;
+    camera.position.y += ((0.5 - my / h) * 0.3 - camera.position.y) * 0.03;
     camera.lookAt(0, 0, 0);
 
-    if(composer && bloomPass && customPass){
-      springs.bloom.target = zoneBlooms[zone];
-      springs.chromatic.target = zoneChromas[zone];
-      springs.vignette.target = zoneVignettes[zone];
-      bloomPass.strength = springs.bloom.update();
-      customPass.uniforms.uChromaticAberration.value = springs.chromatic.update();
-      customPass.uniforms.uVignetteStrength.value = springs.vignette.update();
+    if(bloomPass) bloomPass.strength = 0.4 + u.uMerge.value * 0.2 + u.uExplode.value * 0.3;
+    if(customPass){
       customPass.uniforms.uTime.value = t;
-      composer.render();
-    } else {
-      renderer.render(scene, camera);
+      customPass.uniforms.uVignetteStrength.value = 0.2 + u.uExplode.value * 0.15;
     }
+
+    if(composer) composer.render();
+    else renderer.render(scene, camera);
   }
   requestAnimationFrame(animate);
 
   let resizeTimer;
-  window.addEventListener('resize', () => {
+  window.addEventListener('resize', function(){
     clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(() => {
-      w = window.innerWidth;
-      h = window.innerHeight;
+    resizeTimer = setTimeout(function(){
+      w = window.innerWidth; h = window.innerHeight;
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
       renderer.setSize(w, h);
       if(composer) composer.setSize(w, h);
     }, 200);
   });
-})();
+}
+
+document.fonts.ready.then(init3D);
 </script>
 <script>
 setTimeout(function(){
