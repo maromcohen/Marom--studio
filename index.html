@@ -485,10 +485,10 @@ html[dir="rtl"] .work-view{right:auto;left:16px}
 
 <!-- MOBILE CSS-ONLY AMBIENT (no JS, no rAF, compositor thread only) -->
 <div id="mobile-fx" aria-hidden="true">
-  <!-- soft gold orbs -->
-  <div class="mfx-orb" style="width:55vw;height:55vw;left:80%;top:-10%;background:radial-gradient(circle,rgba(232,201,122,.28) 0%,transparent 70%);animation:orbA 22s ease-in-out infinite;filter:blur(38px)"></div>
-  <div class="mfx-orb" style="width:50vw;height:50vw;left:-10%;top:55%;background:radial-gradient(circle,rgba(200,150,70,.22) 0%,transparent 70%);animation:orbB 28s ease-in-out infinite;filter:blur(32px)"></div>
-  <div class="mfx-orb" style="width:38vw;height:38vw;left:50%;top:40%;background:radial-gradient(circle,rgba(170,120,40,.16) 0%,transparent 70%);animation:orbA 18s ease-in-out infinite 4s;filter:blur(28px)"></div>
+  <!-- soft gold orbs — NO filter:blur (fixed+blur = repaint every scroll frame on iOS) -->
+  <div class="mfx-orb" style="width:70vw;height:70vw;left:75%;top:-15%;background:radial-gradient(circle,rgba(232,201,122,.18) 0%,rgba(232,201,122,.06) 50%,transparent 75%);animation:orbA 22s ease-in-out infinite"></div>
+  <div class="mfx-orb" style="width:65vw;height:65vw;left:-15%;top:50%;background:radial-gradient(circle,rgba(200,150,70,.14) 0%,rgba(200,150,70,.04) 50%,transparent 75%);animation:orbB 28s ease-in-out infinite"></div>
+  <div class="mfx-orb" style="width:50vw;height:50vw;left:45%;top:35%;background:radial-gradient(circle,rgba(170,120,40,.10) 0%,transparent 70%);animation:orbA 18s ease-in-out infinite 4s"></div>
   <!-- floating gold particles -->
   <div class="mfx-dot" style="width:2px;height:2px;left:12%;top:18%;background:#e8c97a;opacity:.45;animation:mfx1 14s ease-in-out infinite,mfxPulse 7s ease-in-out infinite"></div>
   <div class="mfx-dot" style="width:3px;height:3px;left:78%;top:8%;background:#f3e0a0;opacity:.35;animation:mfx2 17s ease-in-out infinite 1s,mfxPulse 9s ease-in-out infinite 2s"></div>
@@ -1036,7 +1036,7 @@ if(!isMobile){
     var y = window.scrollY, now = performance.now(), dt = Math.max(16, now - _lt);
     handleScroll((y - _ly)/dt, y >= _ly ? 1 : -1);
     _ly = y; _lt = now;
-    ScrollTrigger.update();
+    // No ScrollTrigger.update() on mobile — all triggers are once:true, no scrub
   }, {passive:true});
 }
 
@@ -1070,17 +1070,26 @@ if(!isMobile){
 })();
 
 /* ===== SCROLL PROGRESS BAR ===== */
-gsap.to('#scrollProgress', {
-  scaleX: 1,
-  ease: 'none',
-  scrollTrigger: {
-    trigger: document.documentElement,
-    start: 'top top',
-    end: 'bottom bottom',
-    scrub: 0.3,
-    onUpdate: function(self){ scrollProgress = self.progress; }
-  }
-});
+if(isMobile){
+  // On mobile: direct DOM update in scroll listener, zero GSAP ticker
+  var _spEl = document.getElementById('scrollProgress');
+  window.addEventListener('scroll', function(){
+    var max = document.documentElement.scrollHeight - window.innerHeight;
+    if(_spEl && max > 0) _spEl.style.transform = 'scaleX(' + (window.scrollY/max) + ')';
+  }, {passive:true});
+} else {
+  gsap.to('#scrollProgress', {
+    scaleX: 1,
+    ease: 'none',
+    scrollTrigger: {
+      trigger: document.documentElement,
+      start: 'top top',
+      end: 'bottom bottom',
+      scrub: 0.3,
+      onUpdate: function(self){ scrollProgress = self.progress; }
+    }
+  });
+}
 
 /* ===== GLOBAL MOUSE TRACKING ===== */
 document.addEventListener('mousemove', function(e){ globalMx = e.clientX; globalMy = e.clientY; });
