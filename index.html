@@ -958,7 +958,7 @@ var inDarkSection = false;
 var scrollProgress = 0;
 
 /* ===== LENIS SMOOTH SCROLL ===== */
-var lenis = new Lenis(isMobile ? {lerp:0.06, touchMultiplier:1.0, smoothWheel:true, syncTouch:true, syncTouchLerp:0.04} : {lerp:0.06, wheelMultiplier:0.7, smoothWheel:true});
+var lenis = new Lenis(isMobile ? {lerp:0.1, smoothWheel:true, syncTouch:false} : {lerp:0.06, wheelMultiplier:0.7, smoothWheel:true});
 lenis.on('scroll', ScrollTrigger.update);
 gsap.ticker.add(function(t){ lenis.raf(t*1000) });
 gsap.ticker.lagSmoothing(0);
@@ -2105,7 +2105,7 @@ setTimeout(function(){
     var DEPTH = 420;
 
     /* ---- DUST (GPU shader physics) ---- */
-    var N = mobile ? 2400 : 14000;
+    var N = mobile ? 1500 : 14000;
     var g = new THREE.BufferGeometry();
     var homes = new Float32Array(N*3), seeds = new Float32Array(N*3), sizes = new Float32Array(N), golds = new Float32Array(N);
     for(var i=0;i<N;i++){
@@ -2188,7 +2188,7 @@ setTimeout(function(){
     var dust = new THREE.Points(g, mat); dust.frustumCulled=false; scene.add(dust);
 
     /* ---- NODES (CPU Verlet physics) + constellation lines ---- */
-    var NN = mobile ? 50 : 120;
+    var NN = mobile ? 34 : 120;
     var nx=new Float32Array(NN), ny=new Float32Array(NN), px=new Float32Array(NN), py=new Float32Array(NN);
     var hx=new Float32Array(NN), hy=new Float32Array(NN);
     for(var k=0;k<NN;k++){
@@ -2225,10 +2225,11 @@ setTimeout(function(){
     canvas.__particleLoaded = true;
     console.log('[MAROM] WebGL running');
 
-    var firstShown=false, frozenT=0;
+    var firstShown=false, frozenT=0, wfc=0;
     function loop(){
       requestAnimationFrame(loop);
       if(document.hidden) return;
+      wfc++;
       var t = (performance.now()-t0)*0.001;
       var isPaused = paused();
       if(isPaused){ t = frozenT; } else { frozenT = t; }
@@ -2253,8 +2254,8 @@ setTimeout(function(){
       cam.position.y += ((smY*0.04) - cam.position.y)*0.04;
       cam.lookAt(0,0,0);
 
-      if(!isPaused){
-        // ---- CPU node physics (Verlet) ----
+      if(!isPaused && (!mobile || (wfc&1)===0)){
+        // ---- CPU node physics (Verlet) ----  (half-rate on mobile)
         var damp=0.92, k, j;
         var mr = uniforms.uMouseR.value*1.2, mr2=mr*mr;
         for(k=0;k<NN;k++){
