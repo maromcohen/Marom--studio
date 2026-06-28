@@ -7,7 +7,7 @@
 <meta name="description" content="Premium web design & development studio. We craft cinematic digital experiences."/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700&family=Marcellus&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700&family=Heebo:wght@100;200;300;400;500;600;700&family=Marcellus&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{
@@ -18,6 +18,20 @@
 }
 html{font-size:16px;overflow-x:hidden}
 body{font-family:var(--font);background:var(--bg);color:var(--fg);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+/* ===== HEBREW / RTL ===== */
+html[lang="he"]{--font:'Heebo','Inter',sans-serif}
+html[lang="he"] body{letter-spacing:0}
+html[lang="he"] .hero-eyebrow,html[lang="he"] .section-eyebrow,html[lang="he"] .hero-scroll,html[lang="he"] .nav-links a,html[lang="he"] .mobile-nav a{letter-spacing:.08em}
+html[lang="he"] .section-title,html[lang="he"] .contact-title,html[lang="he"] .service-name,html[lang="he"] .step h3{letter-spacing:0;font-weight:300}
+html[lang="he"] .nav-logo{letter-spacing:.4em}
+html[dir="rtl"] .a11y-fab{left:auto;right:24px}
+html[dir="rtl"] .a11y-panel{left:auto;right:24px}
+html[dir="rtl"] .skip{left:auto;right:16px}
+html[dir="rtl"] .cookie-banner{direction:rtl}
+html[dir="rtl"] .service-num,html[dir="rtl"] .step-num,html[dir="rtl"] .work-card-num{direction:ltr}
+html[dir="rtl"] .marquee-track{direction:ltr}
+html[dir="rtl"] .contact-details{direction:ltr}
+html[dir="rtl"] .contact-cta svg{transform:scaleX(-1)}
 ::selection{background:#111;color:#fff}
 
 /* SKIP */
@@ -324,14 +338,6 @@ html.a11y-stop *{animation:none!important;transition:none!important}
 }
 :focus-visible{outline:3px solid var(--fg);outline-offset:4px}
 </style>
-<script type="importmap">
-{
-  "imports": {
-    "three": "https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js",
-    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/"
-  }
-}
-</script>
 </head>
 <body>
 
@@ -369,10 +375,10 @@ html.a11y-stop *{animation:none!important;transition:none!important}
 <nav class="nav" role="navigation">
   <a href="#" class="nav-logo">MAROM</a>
   <div class="nav-links">
-    <a href="#about">About</a>
-    <a href="#services">Services</a>
-    <a href="#work">Work</a>
-    <a href="#contact">Contact</a>
+    <a href="#about" data-i18n="nav.about">About</a>
+    <a href="#services" data-i18n="nav.services">Services</a>
+    <a href="#work" data-i18n="nav.work">Work</a>
+    <a href="#contact" data-i18n="nav.contact">Contact</a>
     <a href="#" class="lang-switch" data-lang="he">עברית</a>
   </div>
   <button class="burger" type="button" id="burger" aria-expanded="false">
@@ -381,10 +387,11 @@ html.a11y-stop *{animation:none!important;transition:none!important}
 </nav>
 
 <div class="mobile-nav" id="mobileNav">
-  <a href="#about">About</a>
-  <a href="#services">Services</a>
-  <a href="#work">Work</a>
-  <a href="#contact">Contact</a>
+  <a href="#about" data-i18n="nav.about">About</a>
+  <a href="#services" data-i18n="nav.services">Services</a>
+  <a href="#work" data-i18n="nav.work">Work</a>
+  <a href="#contact" data-i18n="nav.contact">Contact</a>
+  <a href="#" class="lang-switch lang-switch-mobile" data-lang="he">עברית</a>
 </div>
 
 <main id="main">
@@ -397,7 +404,7 @@ html.a11y-stop *{animation:none!important;transition:none!important}
       <div class="hero-orb hero-orb--2"></div>
       <div class="hero-orb hero-orb--3"></div>
     </div>
-    <span class="hero-eyebrow" id="heroEyebrow">Digital Studio · Tel Aviv</span>
+    <span class="hero-eyebrow" id="heroEyebrow" data-i18n="hero.eyebrow">Digital Studio · Tel Aviv</span>
     <div class="hero-letters" id="heroLetters">
       <span class="hero-letter" data-char="M">M</span>
       <span class="hero-letter" data-char="A">A</span>
@@ -405,8 +412,8 @@ html.a11y-stop *{animation:none!important;transition:none!important}
       <span class="hero-letter" data-char="O">O</span>
       <span class="hero-letter" data-char="M2">M</span>
     </div>
-    <p class="hero-sub" id="heroSub">We design and develop premium digital experiences that elevate brands beyond the ordinary.</p>
-    <span class="hero-scroll" id="heroScroll">Scroll to explore</span>
+    <p class="hero-sub" id="heroSub" data-i18n="hero.sub">We design and develop premium digital experiences that elevate brands beyond the ordinary.</p>
+    <span class="hero-scroll" id="heroScroll" data-i18n="hero.scroll">Scroll to explore</span>
   </div>
 </div>
 
@@ -438,33 +445,33 @@ html.a11y-stop *{animation:none!important;transition:none!important}
       <span class="monogram">M</span>
     </div>
     <div class="about-text">
-      <span class="section-eyebrow reveal">About</span>
-      <h2 class="section-title reveal">Crafting digital <em>with purpose</em></h2>
-      <p class="char-reveal">MAROM is a boutique digital studio based in Tel Aviv. We partner with brands and businesses to create websites that don't just look beautiful — they perform.</p>
-      <p class="char-reveal">Every pixel is intentional. Every animation serves the story. We believe the web should feel like an experience, not just a page.</p>
+      <span class="section-eyebrow reveal" data-i18n="about.eyebrow">About</span>
+      <h2 class="section-title reveal" data-i18n="about.title">Crafting digital <em>with purpose</em></h2>
+      <p class="char-reveal" data-i18n="about.p1">MAROM is a boutique digital studio based in Tel Aviv. We partner with brands and businesses to create websites that don't just look beautiful — they perform.</p>
+      <p class="char-reveal" data-i18n="about.p2">Every pixel is intentional. Every animation serves the story. We believe the web should feel like an experience, not just a page.</p>
     </div>
   </div>
 </section>
 
 <section id="services" class="content-section">
   <span class="section-bg-text">MAROM</span>
-  <span class="section-eyebrow reveal">Services</span>
-  <h2 class="section-title reveal">What we <em>do</em></h2>
+  <span class="section-eyebrow reveal" data-i18n="services.eyebrow">Services</span>
+  <h2 class="section-title reveal" data-i18n="services.title">What we <em>do</em></h2>
   <div class="services-grid">
     <div class="service-card reveal">
       <span class="service-num">01</span>
-      <h3 class="service-name">Web Design</h3>
-      <p class="service-desc">Cinematic, award-level website design with custom animations, scroll experiences, and immersive interactions.</p>
+      <h3 class="service-name" data-i18n="svc1.name">Web Design</h3>
+      <p class="service-desc" data-i18n="svc1.desc">Cinematic, award-level website design with custom animations, scroll experiences, and immersive interactions.</p>
     </div>
     <div class="service-card reveal">
       <span class="service-num">02</span>
-      <h3 class="service-name">Development</h3>
-      <p class="service-desc">Clean, performant code. Built for speed, accessibility, and SEO. No templates — everything from scratch.</p>
+      <h3 class="service-name" data-i18n="svc2.name">Development</h3>
+      <p class="service-desc" data-i18n="svc2.desc">Clean, performant code. Built for speed, accessibility, and SEO. No templates — everything from scratch.</p>
     </div>
     <div class="service-card reveal">
       <span class="service-num">03</span>
-      <h3 class="service-name">Brand Identity</h3>
-      <p class="service-desc">Logo, typography, color systems, and visual language that make your brand unmistakable.</p>
+      <h3 class="service-name" data-i18n="svc3.name">Brand Identity</h3>
+      <p class="service-desc" data-i18n="svc3.desc">Logo, typography, color systems, and visual language that make your brand unmistakable.</p>
     </div>
   </div>
   <div class="services-connector"></div>
@@ -472,8 +479,8 @@ html.a11y-stop *{animation:none!important;transition:none!important}
 
 <section id="work" class="content-section work-section">
   <div class="work-header">
-    <span class="section-eyebrow reveal">Selected Work</span>
-    <h2 class="section-title reveal">Projects that <em>speak</em></h2>
+    <span class="section-eyebrow reveal" data-i18n="work.eyebrow">Selected Work</span>
+    <h2 class="section-title reveal" data-i18n="work.title">Projects that <em>speak</em></h2>
   </div>
   <div class="work-track" id="workTrack">
     <div class="work-card">
@@ -487,51 +494,51 @@ html.a11y-stop *{animation:none!important;transition:none!important}
       <div class="work-card-inner">
         <span class="work-card-num">02</span>
         <div class="work-placeholder">PROJECT 02</div>
-        <div class="work-card-info"><h3>Coming Soon</h3><span>Website · Design</span></div>
+        <div class="work-card-info"><h3 data-i18n="work.soon">Coming Soon</h3><span>Website · Design</span></div>
       </div>
     </div>
     <div class="work-card">
       <div class="work-card-inner">
         <span class="work-card-num">03</span>
         <div class="work-placeholder">PROJECT 03</div>
-        <div class="work-card-info"><h3>Coming Soon</h3><span>Website · Development</span></div>
+        <div class="work-card-info"><h3 data-i18n="work.soon">Coming Soon</h3><span>Website · Development</span></div>
       </div>
     </div>
   </div>
   <div class="work-progress" id="workProgress"></div>
   <div class="work-meta">
     <div class="work-counter"><span class="current" id="workCurrent">01</span> / <span id="workTotal">03</span></div>
-    <span class="work-drag-hint" id="workHint">Scroll to explore</span>
+    <span class="work-drag-hint" id="workHint" data-i18n="work.hint">Scroll to explore</span>
   </div>
 </section>
 
 <section id="process" class="content-section">
-  <span class="section-eyebrow reveal">Process</span>
-  <h2 class="section-title reveal">How we <em>work</em></h2>
+  <span class="section-eyebrow reveal" data-i18n="process.eyebrow">Process</span>
+  <h2 class="section-title reveal" data-i18n="process.title">How we <em>work</em></h2>
   <div class="process-wrap">
     <div class="process-line" id="processLine"></div>
     <div class="process-steps">
-      <div class="step reveal"><span class="step-num">01</span><h3>Discovery</h3><p>We learn about your brand, goals, and audience. Every great project starts with understanding.</p><div class="step-detail">Research, competitor analysis, user personas, and strategic positioning.</div></div>
-      <div class="step reveal"><span class="step-num">02</span><h3>Design</h3><p>Visual concepts, wireframes, and interactive prototypes. We iterate until it feels perfect.</p><div class="step-detail">Moodboards, high-fidelity mockups, motion studies, and design systems.</div></div>
-      <div class="step reveal"><span class="step-num">03</span><h3>Develop</h3><p>Pixel-perfect implementation with custom animations. Performance-optimized and responsive.</p><div class="step-detail">Custom code, scroll choreography, interaction engineering, and QA testing.</div></div>
-      <div class="step reveal"><span class="step-num">04</span><h3>Launch</h3><p>Deployment, testing, and ongoing support. We don't disappear after delivery.</p><div class="step-detail">Performance audits, analytics setup, SEO optimization, and post-launch care.</div></div>
+      <div class="step reveal"><span class="step-num">01</span><h3 data-i18n="step1.h">Discovery</h3><p data-i18n="step1.p">We learn about your brand, goals, and audience. Every great project starts with understanding.</p><div class="step-detail" data-i18n="step1.d">Research, competitor analysis, user personas, and strategic positioning.</div></div>
+      <div class="step reveal"><span class="step-num">02</span><h3 data-i18n="step2.h">Design</h3><p data-i18n="step2.p">Visual concepts, wireframes, and interactive prototypes. We iterate until it feels perfect.</p><div class="step-detail" data-i18n="step2.d">Moodboards, high-fidelity mockups, motion studies, and design systems.</div></div>
+      <div class="step reveal"><span class="step-num">03</span><h3 data-i18n="step3.h">Develop</h3><p data-i18n="step3.p">Pixel-perfect implementation with custom animations. Performance-optimized and responsive.</p><div class="step-detail" data-i18n="step3.d">Custom code, scroll choreography, interaction engineering, and QA testing.</div></div>
+      <div class="step reveal"><span class="step-num">04</span><h3 data-i18n="step4.h">Launch</h3><p data-i18n="step4.p">Deployment, testing, and ongoing support. We don't disappear after delivery.</p><div class="step-detail" data-i18n="step4.d">Performance audits, analytics setup, SEO optimization, and post-launch care.</div></div>
     </div>
   </div>
 </section>
 
 <!-- DARK CONTACT -->
 <section id="contact" class="content-section contact contact-dark">
-  <span class="section-eyebrow reveal">Get in Touch</span>
-  <h2 class="contact-title reveal">Let's build<br/>something <em>great</em></h2>
-  <p class="contact-sub reveal">Have a project in mind? We'd love to hear about it. Reach out and let's create something extraordinary together.</p>
+  <span class="section-eyebrow reveal" data-i18n="contact.eyebrow">Get in Touch</span>
+  <h2 class="contact-title reveal" data-i18n="contact.title">Let's build<br/>something <em>great</em></h2>
+  <p class="contact-sub reveal" data-i18n="contact.sub">Have a project in mind? We'd love to hear about it. Reach out and let's create something extraordinary together.</p>
   <a class="contact-cta reveal" href="https://wa.me/972532748125?text=Hi%20MAROM%2C%20I%27m%20interested%20in%20a%20project">
-    Start a conversation
+    <span data-i18n="contact.cta">Start a conversation</span>
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
   </a>
   <div class="contact-details reveal">
     <a href="mailto:marom7777@icloud.com">marom7777@icloud.com</a>
     <a href="tel:+972532748125">053-274-8125</a>
-    <span>Tel Aviv, Israel</span>
+    <span data-i18n="contact.loc">Tel Aviv, Israel</span>
   </div>
 </section>
 
@@ -542,9 +549,9 @@ html.a11y-stop *{animation:none!important;transition:none!important}
 <footer class="footer-dark">
   <span>&copy; 2026 MAROM Digital Studio</span>
   <div class="footer-links">
-    <a href="#" data-modal="m-accessibility">Accessibility</a>
-    <a href="#" data-modal="m-privacy">Privacy</a>
-    <a href="#" data-modal="m-terms">Terms</a>
+    <a href="#" data-modal="m-accessibility" data-i18n="footer.access">Accessibility</a>
+    <a href="#" data-modal="m-privacy" data-i18n="footer.privacy">Privacy</a>
+    <a href="#" data-modal="m-terms" data-i18n="footer.terms">Terms</a>
   </div>
 </footer>
 
@@ -552,22 +559,22 @@ html.a11y-stop *{animation:none!important;transition:none!important}
 <div class="modal-overlay" id="modalOverlay"></div>
 <div class="modal-box" id="m-accessibility" role="dialog" aria-modal="true" aria-label="Accessibility Statement">
   <button class="modal-close" aria-label="Close">&times;</button>
-  <h3>Accessibility Statement</h3>
-  <p>MAROM Digital Studio is committed to ensuring digital accessibility for people with disabilities. We strive to meet WCAG 2.0 Level AA standards and Israeli Standard IS 5568.</p>
-  <p><strong>Accessibility Coordinator:</strong><br/>Marom Cohen · 053-274-8125 · marom7777@icloud.com</p>
-  <p><strong>Last updated:</strong> June 2026</p>
+  <h3 data-i18n="m.access.h">Accessibility Statement</h3>
+  <p data-i18n="m.access.p1">MAROM Digital Studio is committed to ensuring digital accessibility for people with disabilities. We strive to meet WCAG 2.0 Level AA standards and Israeli Standard IS 5568.</p>
+  <p data-i18n="m.access.p2"><strong>Accessibility Coordinator:</strong><br/>Marom Cohen · 053-274-8125 · marom7777@icloud.com</p>
+  <p data-i18n="m.updated"><strong>Last updated:</strong> June 2026</p>
 </div>
 <div class="modal-box" id="m-privacy" role="dialog" aria-modal="true" aria-label="Privacy Policy">
   <button class="modal-close" aria-label="Close">&times;</button>
-  <h3>Privacy Policy</h3>
-  <p>Published in accordance with the Privacy Protection Law, 5741-1981. We collect voluntary data (name, email, phone) and automatic data (IP, browser type) via cookies. We do not sell personal data. Contact: marom7777@icloud.com</p>
-  <p><strong>Last updated:</strong> June 2026</p>
+  <h3 data-i18n="m.privacy.h">Privacy Policy</h3>
+  <p data-i18n="m.privacy.p">Published in accordance with the Privacy Protection Law, 5741-1981. We collect voluntary data (name, email, phone) and automatic data (IP, browser type) via cookies. We do not sell personal data. Contact: marom7777@icloud.com</p>
+  <p data-i18n="m.updated"><strong>Last updated:</strong> June 2026</p>
 </div>
 <div class="modal-box" id="m-terms" role="dialog" aria-modal="true" aria-label="Terms of Service">
   <button class="modal-close" aria-label="Close">&times;</button>
-  <h3>Terms of Service</h3>
-  <p>All content is protected under the Copyright Law, 5768-2007. These terms are governed by Israeli law. Disputes are subject to Tel Aviv district courts.</p>
-  <p><strong>Last updated:</strong> June 2026</p>
+  <h3 data-i18n="m.terms.h">Terms of Service</h3>
+  <p data-i18n="m.terms.p">All content is protected under the Copyright Law, 5768-2007. These terms are governed by Israeli law. Disputes are subject to Tel Aviv district courts.</p>
+  <p data-i18n="m.updated"><strong>Last updated:</strong> June 2026</p>
 </div>
 
 <!-- A11Y WIDGET -->
@@ -575,44 +582,147 @@ html.a11y-stop *{animation:none!important;transition:none!important}
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1.2"/><circle cx="12" cy="5.5" r="1.6" fill="currentColor"/><path d="M8 9.5h8M12 9.5v4.5m0 0l-2.5 4.5m2.5-4.5l2.5 4.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
 </button>
 <div class="a11y-panel" id="a11yPanel">
-  <h4>Accessibility</h4>
-  <h5>Display Size</h5>
+  <h4 data-i18n="a11y.title">Accessibility</h4>
+  <h5 data-i18n="a11y.h.size">Display Size</h5>
   <div class="a11y-grid">
-    <button type="button" data-a11y="fontUp"><span class="a11y-ico">A+</span>Increase Text</button>
-    <button type="button" data-a11y="fontDown"><span class="a11y-ico">A-</span>Decrease Text</button>
-    <button type="button" data-a11y="spacing"><span class="a11y-ico">&#9776;</span>Line Spacing</button>
-    <button type="button" data-a11y="letters"><span class="a11y-ico">a&#8229;b</span>Letter Spacing</button>
+    <button type="button" data-a11y="fontUp"><span class="a11y-ico">A+</span><span data-i18n="a11y.fontUp">Increase Text</span></button>
+    <button type="button" data-a11y="fontDown"><span class="a11y-ico">A-</span><span data-i18n="a11y.fontDown">Decrease Text</span></button>
+    <button type="button" data-a11y="spacing"><span class="a11y-ico">&#9776;</span><span data-i18n="a11y.spacing">Line Spacing</span></button>
+    <button type="button" data-a11y="letters"><span class="a11y-ico">a&#8229;b</span><span data-i18n="a11y.letters">Letter Spacing</span></button>
   </div>
-  <h5>Colors & Display</h5>
+  <h5 data-i18n="a11y.h.colors">Colors & Display</h5>
   <div class="a11y-grid">
-    <button type="button" data-a11y="contrast"><span class="a11y-ico">&#9681;</span>High Contrast</button>
-    <button type="button" data-a11y="gray"><span class="a11y-ico">&#9680;</span>Grayscale</button>
-    <button type="button" data-a11y="invert"><span class="a11y-ico">&#9685;</span>Invert Colors</button>
-    <button type="button" data-a11y="noimages"><span class="a11y-ico">&#8856;</span>Hide Images</button>
+    <button type="button" data-a11y="contrast"><span class="a11y-ico">&#9681;</span><span data-i18n="a11y.contrast">High Contrast</span></button>
+    <button type="button" data-a11y="gray"><span class="a11y-ico">&#9680;</span><span data-i18n="a11y.gray">Grayscale</span></button>
+    <button type="button" data-a11y="invert"><span class="a11y-ico">&#9685;</span><span data-i18n="a11y.invert">Invert Colors</span></button>
+    <button type="button" data-a11y="noimages"><span class="a11y-ico">&#8856;</span><span data-i18n="a11y.noimages">Hide Images</span></button>
   </div>
-  <h5>Navigation</h5>
+  <h5 data-i18n="a11y.h.nav">Navigation</h5>
   <div class="a11y-grid">
-    <button type="button" data-a11y="links"><span class="a11y-ico">&#128279;</span>Highlight Links</button>
-    <button type="button" data-a11y="headings"><span class="a11y-ico">H</span>Highlight Headings</button>
-    <button type="button" data-a11y="focus"><span class="a11y-ico">&#8865;</span>Focus Highlight</button>
-    <button type="button" data-a11y="guide"><span class="a11y-ico">&#9472;</span>Reading Guide</button>
-    <button type="button" data-a11y="bigcur"><span class="a11y-ico">&#8598;</span>Large Cursor</button>
-    <button type="button" data-a11y="readable"><span class="a11y-ico">Aa</span>Readable Font</button>
-    <button type="button" data-a11y="dyslexia"><span class="a11y-ico">Dy</span>Dyslexia Font</button>
-    <button type="button" data-a11y="stop"><span class="a11y-ico">&#9208;</span>Stop Animations</button>
+    <button type="button" data-a11y="links"><span class="a11y-ico">&#128279;</span><span data-i18n="a11y.links">Highlight Links</span></button>
+    <button type="button" data-a11y="headings"><span class="a11y-ico">H</span><span data-i18n="a11y.headings">Highlight Headings</span></button>
+    <button type="button" data-a11y="focus"><span class="a11y-ico">&#8865;</span><span data-i18n="a11y.focus">Focus Highlight</span></button>
+    <button type="button" data-a11y="guide"><span class="a11y-ico">&#9472;</span><span data-i18n="a11y.guide">Reading Guide</span></button>
+    <button type="button" data-a11y="bigcur"><span class="a11y-ico">&#8598;</span><span data-i18n="a11y.bigcur">Large Cursor</span></button>
+    <button type="button" data-a11y="readable"><span class="a11y-ico">Aa</span><span data-i18n="a11y.readable">Readable Font</span></button>
+    <button type="button" data-a11y="dyslexia"><span class="a11y-ico">Dy</span><span data-i18n="a11y.dyslexia">Dyslexia Font</span></button>
+    <button type="button" data-a11y="stop"><span class="a11y-ico">&#9208;</span><span data-i18n="a11y.stop">Stop Animations</span></button>
   </div>
   <div class="a11y-grid" style="margin-top:10px">
-    <button type="button" class="a11y-reset" data-a11y="reset"><span class="a11y-ico">&#8634;</span>Reset All</button>
+    <button type="button" class="a11y-reset" data-a11y="reset"><span class="a11y-ico">&#8634;</span><span data-i18n="a11y.reset">Reset All</span></button>
   </div>
 </div>
 <div class="a11y-reading-guide" id="a11yGuide"></div>
 
 <!-- COOKIE -->
 <div class="cookie-banner" id="cookieBanner">
-  <p>This website uses cookies. See our <a href="#" data-modal="m-privacy">Privacy Policy</a>.</p>
-  <button class="cookie-btn cookie-accept" id="cookieAccept">Accept</button>
-  <button class="cookie-btn cookie-decline" id="cookieDecline">Decline</button>
+  <p data-i18n="cookie.text">This website uses cookies. See our <a href="#" data-modal="m-privacy">Privacy Policy</a>.</p>
+  <button class="cookie-btn cookie-accept" id="cookieAccept" data-i18n="cookie.accept">Accept</button>
+  <button class="cookie-btn cookie-decline" id="cookieDecline" data-i18n="cookie.decline">Decline</button>
 </div>
+
+<!-- ===== I18N — HEBREW / ENGLISH ===== -->
+<script>
+(function(){
+  var I18N = {
+    en: {},
+    he: {
+      'nav.about':'אודות','nav.services':'שירותים','nav.work':'עבודות','nav.contact':'צור קשר',
+      'hero.eyebrow':'סטודיו דיגיטלי · תל אביב',
+      'hero.sub':'אנחנו מעצבים ומפתחים חוויות דיגיטליות פרימיום שמרוממות מותגים מעבר לרגיל.',
+      'hero.scroll':'גללו לגילוי',
+      'about.eyebrow':'אודות',
+      'about.title':'יוצרים דיגיטל <em>עם כוונה</em>',
+      'about.p1':'MAROM הוא סטודיו דיגיטלי בוטיק מתל אביב. אנחנו שותפים למותגים ולעסקים ביצירת אתרים שלא רק נראים יפים — הם מבצעים.',
+      'about.p2':'כל פיקסל מכוון. כל אנימציה משרתת את הסיפור. אנחנו מאמינים שהאינטרנט צריך להרגיש כמו חוויה, לא רק עמוד.',
+      'services.eyebrow':'שירותים',
+      'services.title':'מה אנחנו <em>עושים</em>',
+      'svc1.name':'עיצוב אתרים','svc1.desc':'עיצוב אתרים קולנועי ברמת פרסים, עם אנימציות מותאמות, חוויות גלילה ואינטראקציות סוחפות.',
+      'svc2.name':'פיתוח','svc2.desc':'קוד נקי ומהיר. בנוי למהירות, נגישות ו-SEO. בלי תבניות — הכול מאפס.',
+      'svc3.name':'זהות מותג','svc3.desc':'לוגו, טיפוגרפיה, מערכות צבע ושפה ויזואלית שהופכים את המותג שלכם לבלתי נשכח.',
+      'work.eyebrow':'עבודות נבחרות',
+      'work.title':'פרויקטים ש<em>מדברים</em>',
+      'work.hint':'גללו לגילוי','work.soon':'בקרוב',
+      'process.eyebrow':'תהליך',
+      'process.title':'איך אנחנו <em>עובדים</em>',
+      'step1.h':'גילוי','step1.p':'אנחנו לומדים על המותג, המטרות והקהל שלכם. כל פרויקט מעולה מתחיל בהבנה.','step1.d':'מחקר, ניתוח מתחרים, פרסונות משתמש ומיצוב אסטרטגי.',
+      'step2.h':'עיצוב','step2.p':'קונספטים ויזואליים, סקיצות ואבות-טיפוס אינטראקטיביים. מלטשים עד שזה מרגיש מושלם.','step2.d':'מוד-בורדים, מוקאפים ברזולוציה גבוהה, מחקרי תנועה ומערכות עיצוב.',
+      'step3.h':'פיתוח','step3.p':'מימוש מדויק לפיקסל עם אנימציות מותאמות. ממוטב לביצועים ורספונסיבי.','step3.d':'קוד מותאם, כוריאוגרפיית גלילה, הנדסת אינטראקציה ובדיקות איכות.',
+      'step4.h':'השקה','step4.p':'העלאה לאוויר, בדיקות ותמיכה מתמשכת. אנחנו לא נעלמים אחרי המסירה.','step4.d':'בדיקות ביצועים, הגדרת אנליטיקס, אופטימיזציית SEO וליווי לאחר ההשקה.',
+      'contact.eyebrow':'בואו נדבר',
+      'contact.title':'בואו נבנה<br/>משהו <em>מצוין</em>',
+      'contact.sub':'יש לכם פרויקט בראש? נשמח לשמוע עליו. דברו איתנו וניצור יחד משהו יוצא דופן.',
+      'contact.cta':'התחילו שיחה','contact.loc':'תל אביב, ישראל',
+      'cookie.text':'אתר זה משתמש בעוגיות. ראו את <a href="#" data-modal="m-privacy">מדיניות הפרטיות</a> שלנו.',
+      'cookie.accept':'אישור','cookie.decline':'דחייה',
+      'footer.access':'נגישות','footer.privacy':'פרטיות','footer.terms':'תקנון',
+      'm.updated':'<strong>עודכן לאחרונה:</strong> יוני 2026',
+      'm.access.h':'הצהרת נגישות',
+      'm.access.p1':'סטודיו MAROM מחויב להבטחת נגישות דיגיטלית לאנשים עם מוגבלויות. אנו שואפים לעמוד בתקן WCAG 2.0 רמה AA ובתקן הישראלי ת"י 5568.',
+      'm.access.p2':'<strong>רכז הנגישות:</strong><br/>מרום כהן · 053-274-8125 · marom7777@icloud.com',
+      'm.privacy.h':'מדיניות פרטיות',
+      'm.privacy.p':'מתפרסם בהתאם לחוק הגנת הפרטיות, התשמ"א-1981. אנו אוספים נתונים מרצון (שם, אימייל, טלפון) ונתונים אוטומטיים (כתובת IP, סוג דפדפן) באמצעות עוגיות. איננו מוכרים מידע אישי. ליצירת קשר: marom7777@icloud.com',
+      'm.terms.h':'תקנון',
+      'm.terms.p':'כל התכנים מוגנים תחת חוק זכות יוצרים, התשס"ח-2007. תקנון זה כפוף לדין הישראלי. סכסוכים יידונו בבתי המשפט במחוז תל אביב.',
+      'a11y.title':'נגישות','a11y.h.size':'גודל תצוגה','a11y.h.colors':'צבעים ותצוגה','a11y.h.nav':'ניווט',
+      'a11y.fontUp':'הגדל טקסט','a11y.fontDown':'הקטן טקסט','a11y.spacing':'מרווח שורות','a11y.letters':'מרווח אותיות',
+      'a11y.contrast':'ניגודיות גבוהה','a11y.gray':'גווני אפור','a11y.invert':'היפוך צבעים','a11y.noimages':'הסתר תמונות',
+      'a11y.links':'הדגש קישורים','a11y.headings':'הדגש כותרות','a11y.focus':'הדגשת פוקוס','a11y.guide':'מדריך קריאה',
+      'a11y.bigcur':'סמן גדול','a11y.readable':'גופן קריא','a11y.dyslexia':'גופן דיסלקציה','a11y.stop':'עצור אנימציות','a11y.reset':'אפס הכול'
+    }
+  };
+
+  // capture original EN strings so toggling back restores them
+  var enFilled = false;
+  function captureEN(){
+    if(enFilled) return; enFilled = true;
+    document.querySelectorAll('[data-i18n]').forEach(function(el){
+      var k = el.getAttribute('data-i18n');
+      if(I18N.en[k] == null) I18N.en[k] = el.innerHTML;
+    });
+  }
+
+  function setLang(l){
+    captureEN();
+    var root = document.documentElement;
+    root.lang = l;
+    root.dir = (l === 'he') ? 'rtl' : 'ltr';
+    var dict = I18N[l] || I18N.en;
+    document.querySelectorAll('[data-i18n]').forEach(function(el){
+      var v = dict[el.getAttribute('data-i18n')];
+      if(v != null) el.innerHTML = v;
+    });
+    document.querySelectorAll('.lang-switch').forEach(function(sw){
+      sw.textContent = (l === 'he') ? 'English' : 'עברית';
+      sw.setAttribute('data-lang', l === 'he' ? 'en' : 'he');
+    });
+    try{ localStorage.setItem('lang', l); }catch(e){}
+  }
+
+  function detectLang(){
+    try{ var saved = localStorage.getItem('lang'); if(saved === 'he' || saved === 'en') return saved; }catch(e){}
+    try{
+      var tz = (Intl.DateTimeFormat().resolvedOptions().timeZone || '');
+      if(tz === 'Asia/Jerusalem' || tz === 'Asia/Tel_Aviv') return 'he';
+    }catch(e){}
+    if((navigator.language || '').toLowerCase().indexOf('he') === 0) return 'he';
+    return 'en';
+  }
+
+  function bind(){
+    document.querySelectorAll('.lang-switch').forEach(function(sw){
+      sw.addEventListener('click', function(e){
+        e.preventDefault();
+        setLang(document.documentElement.lang === 'he' ? 'en' : 'he');
+      });
+    });
+  }
+
+  setLang(detectLang());
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bind);
+  else bind();
+})();
+</script>
 
 <!-- SCRIPTS (no Three.js) -->
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
@@ -1449,319 +1559,113 @@ setTimeout(function(){
 }, 2200);
 </script>
 
-<script type="module">
-import * as THREE from 'three';
-import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
-import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
-import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
-import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
+<script>
+(function(){
+  var canvas = document.getElementById('scene3d');
+  if(!canvas){ return; }
+  var ctx = canvas.getContext('2d');
+  var mobile = window.innerWidth < 768;
+  var dpr = mobile ? 1 : Math.min(window.devicePixelRatio || 1, 2);
+  var PCOUNT = mobile ? 500 : 1400;
+  var FSIZE  = mobile ? 90 : 150;
 
-/* ===== PARTICLE CONSTELLATION ENGINE ===== */
-
-const mobile = window.innerWidth < 768;
-const PCOUNT = mobile ? 400 : 1500;
-const FSIZE = mobile ? 100 : 180;
-const PTBASE = mobile ? 55.0 : 80.0;
-console.log('[MAROM] Three.js module loaded, mobile:', mobile, 'particles:', PCOUNT);
-
-/* ===== TEXT SAMPLING ===== */
-function sampleText(text, sz, n) {
-  const c = document.createElement('canvas'), ctx = c.getContext('2d');
-  const font = '700 ' + sz + 'px Inter,Arial,sans-serif';
-  ctx.font = font;
-  const tw = Math.ceil(ctx.measureText(text).width) + 20;
-  const th = Math.ceil(sz * 1.3);
-  c.width = tw; c.height = th;
-  ctx.font = font; ctx.fillStyle = '#fff'; ctx.textBaseline = 'middle';
-  ctx.fillText(text, 10, th / 2);
-  const d = ctx.getImageData(0, 0, tw, th).data;
-  const pts = [];
-  const step = mobile ? 3 : 2;
-  for (let y = 0; y < th; y += step)
-    for (let x = 0; x < tw; x += step)
-      if (d[(y * tw + x) * 4 + 3] > 128) pts.push([x, y]);
-  if (!pts.length) pts.push([tw / 2, th / 2]);
-  const out = [];
-  for (let i = 0; i < n; i++) out.push(pts[Math.floor(Math.random() * pts.length)]);
-  return { p: out, w: tw, h: th };
-}
-
-function getLetterRanges(text, sz) {
-  const ctx = document.createElement('canvas').getContext('2d');
-  ctx.font = '700 ' + sz + 'px Inter,Arial,sans-serif';
-  const ranges = []; let x = 10;
-  for (let i = 0; i < text.length; i++) {
-    const w = ctx.measureText(text[i]).width;
-    ranges.push({ s: x, e: x + w }); x += w;
+  function sampleText(text, sz, n){
+    var tc=document.createElement('canvas'), x=tc.getContext('2d');
+    var font='700 '+sz+'px Inter,Arial,sans-serif'; x.font=font;
+    var tw=Math.ceil(x.measureText(text).width)+20, th=Math.ceil(sz*1.3);
+    tc.width=tw; tc.height=th; x.font=font; x.fillStyle='#fff'; x.textBaseline='middle';
+    x.fillText(text,10,th/2);
+    var d=x.getImageData(0,0,tw,th).data, pts=[], step=mobile?3:2;
+    for(var y=0;y<th;y+=step) for(var xx=0;xx<tw;xx+=step)
+      if(d[(y*tw+xx)*4+3]>128) pts.push([xx,y]);
+    if(!pts.length) pts.push([tw/2,th/2]);
+    var out=[]; for(var i=0;i<n;i++) out.push(pts[Math.floor(Math.random()*pts.length)]);
+    return {p:out,w:tw,h:th};
   }
-  return ranges;
-}
+  function ranges(text, sz){
+    var x=document.createElement('canvas').getContext('2d');
+    x.font='700 '+sz+'px Inter,Arial,sans-serif'; var r=[],cx=10;
+    for(var i=0;i<text.length;i++){ var w=x.measureText(text[i]).width; r.push({s:cx,e:cx+w}); cx+=w; }
+    return r;
+  }
+  function ss(e0,e1,v){ var t=Math.max(0,Math.min(1,(v-e0)/(e1-e0))); return t*t*(3-2*t); }
 
-/* ===== SHADERS ===== */
-const vShader = `
-attribute vec3 aFrom;
-attribute vec3 aTo;
-attribute vec3 aScatter;
-attribute float aLetter;
-attribute float aRand;
-attribute float aGold;
-attribute float aSz;
-uniform float uMerge;
-uniform float uExplode;
-uniform float uTime;
-uniform float uOpacity;
-uniform float uVel;
-uniform float uDark;
-varying float vGold;
-varying float vAlpha;
-varying float vDark;
-void main(){
-  float delay=(4.0-aLetter)*0.12;
-  float lm=smoothstep(delay,delay+0.25,uMerge);
-  vec3 merged=mix(aFrom,aTo,lm);
-  vec3 p=mix(merged,aScatter,uExplode);
-  float dr=1.0+uExplode*2.0;
-  p.x+=sin(uTime*0.15+aRand*6.283)*0.04*dr;
-  p.y+=cos(uTime*0.12+aRand*3.141)*0.04*dr;
-  p.z+=sin(uTime*0.1+aRand*4.712)*0.03*dr;
-  p.y-=uExplode*uExplode*aRand*2.5;
-  p.y-=uVel*aRand*0.3;
-  vGold=aGold;
-  vDark=uDark;
-  vAlpha=mix(0.85,0.3+0.25*sin(uTime*0.4+aRand*8.0),uExplode)*uOpacity;
-  vec4 mv=modelViewMatrix*vec4(p,1.0);
-  gl_PointSize=aSz*(` + PTBASE + `/length(mv.xyz));
-  gl_Position=projectionMatrix*mv;
-}
-`;
+  document.querySelectorAll('.hero-letter').forEach(function(el){ el.style.cssText+=';visibility:hidden !important'; });
+  canvas.__particleLoaded=true;
 
-const fShader = `
-varying float vGold;
-varying float vAlpha;
-varying float vDark;
-void main(){
-  float d=length(gl_PointCoord-vec2(0.5));
-  if(d>0.5) discard;
-  vec3 base=mix(vec3(0.07),vec3(0.88),vDark);
-  vec3 gold=vec3(0.85,0.7,0.15);
-  vec3 col=mix(base,gold,vGold);
-  float a=vAlpha*(1.0-d*1.6);
-  gl_FragColor=vec4(col,a);
-}
-`;
+  var cw,ch;
+  function size(){ cw=canvas.width=innerWidth*dpr; ch=canvas.height=innerHeight*dpr;
+    canvas.style.width=innerWidth+'px'; canvas.style.height=innerHeight+'px'; }
+  size();
 
-const postShader = {
-  uniforms: {
-    tDiffuse: { value: null },
-    uTime: { value: 0 },
-    uVignetteStrength: { value: 0.3 },
-    uChromaticAberration: { value: 0.002 }
-  },
-  vertexShader: 'varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}',
-  fragmentShader: `
-    uniform sampler2D tDiffuse;uniform float uTime;
-    uniform float uVignetteStrength;uniform float uChromaticAberration;
-    varying vec2 vUv;
-    float rand(vec2 co){return fract(sin(dot(co,vec2(12.9898,78.233)))*43758.5453);}
-    void main(){
-      vec2 uv=vUv;vec2 dir=uv-vec2(0.5);
-      float ca=uChromaticAberration*length(dir);
-      float r=texture2D(tDiffuse,uv+dir*ca).r;
-      float g=texture2D(tDiffuse,uv).g;
-      float b=texture2D(tDiffuse,uv-dir*ca).b;
-      float a=texture2D(tDiffuse,uv).a;
-      vec3 color=vec3(r,g,b);
-      color*=1.0-length(dir)*uVignetteStrength*1.4;
-      color+=rand(uv*uTime)*0.02;
-      gl_FragColor=vec4(color,a);
-    }
-  `
-};
-
-function init3D(){
-  const canvas = document.getElementById('scene3d');
-  if(!canvas) return;
-  canvas.__threeLoaded = true;
-  console.log('[MAROM] init3D started');
-
-  document.querySelectorAll('.hero-letter').forEach(function(el){
-    el.style.cssText += ';visibility:hidden !important';
-  });
-
-  const renderer = new THREE.WebGLRenderer({ canvas, alpha:true, antialias:false, powerPreference:'high-performance' });
-  const dpr = Math.min(window.devicePixelRatio, mobile ? 1.0 : 2);
-  renderer.setPixelRatio(dpr);
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setClearColor(0x000000, 0);
-
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 100);
-  camera.position.set(0, 0, 5);
-
-  const vH = 2 * Math.tan(Math.PI / 6) * 5;
-  const vW = vH * (window.innerWidth / window.innerHeight);
-
-  const maromData = sampleText('MAROM', FSIZE, PCOUNT);
-  const mData = sampleText('M', Math.floor(FSIZE * 1.3), PCOUNT);
-  const ranges = getLetterRanges('MAROM', FSIZE);
-  console.log('[MAROM] Text sampled, MAROM points:', maromData.p.length, 'M points:', mData.p.length);
-
-  const fromArr = new Float32Array(PCOUNT * 3);
-  const toArr = new Float32Array(PCOUNT * 3);
-  const scatterArr = new Float32Array(PCOUNT * 3);
-  const letterArr = new Float32Array(PCOUNT);
-  const randArr = new Float32Array(PCOUNT);
-  const goldArr = new Float32Array(PCOUNT);
-  const sizeArr = new Float32Array(PCOUNT);
-  const posArr = new Float32Array(PCOUNT * 3);
-
-  for(let i = 0; i < PCOUNT; i++){
-    const mp = maromData.p[i];
-    fromArr[i*3] = (mp[0] / maromData.w - 0.5) * vW * 0.65;
-    fromArr[i*3+1] = -(mp[1] / maromData.h - 0.5) * vH * 0.22;
-    fromArr[i*3+2] = (Math.random() - 0.5) * 0.2;
-
-    const tp = mData.p[i];
-    toArr[i*3] = (tp[0] / mData.w - 0.5) * vW * 0.18;
-    toArr[i*3+1] = -(tp[1] / mData.h - 0.5) * vH * 0.25;
-    toArr[i*3+2] = (Math.random() - 0.5) * 0.2;
-
-    const theta = Math.random() * Math.PI * 2;
-    const phi = Math.acos(2 * Math.random() - 1);
-    const r = 2 + Math.random() * 5;
-    scatterArr[i*3] = r * Math.sin(phi) * Math.cos(theta);
-    scatterArr[i*3+1] = r * Math.sin(phi) * Math.sin(theta);
-    scatterArr[i*3+2] = (Math.random() - 0.5) * 3;
-
-    let li = 0;
-    for(let j = 0; j < ranges.length; j++){
-      if(mp[0] >= ranges[j].s && mp[0] < ranges[j].e){ li = j; break; }
-    }
-    letterArr[i] = li;
-    randArr[i] = Math.random();
-    goldArr[i] = Math.random() < 0.38 ? 1.0 : 0.0;
-    sizeArr[i] = 1.5 + Math.random() * 2.5;
-    posArr[i*3] = fromArr[i*3];
-    posArr[i*3+1] = fromArr[i*3+1];
-    posArr[i*3+2] = fromArr[i*3+2];
+  var A=sampleText('MAROM',FSIZE,PCOUNT), B=sampleText('M',Math.floor(FSIZE*1.3),PCOUNT), R=ranges('MAROM',FSIZE);
+  var P=[];
+  function place(p,i){
+    var a=A.p[i], b=B.p[i];
+    p.fx=(a[0]/A.w-0.5)*cw*0.7+cw*0.5;  p.fy=(a[1]/A.h-0.5)*ch*0.25+ch*0.42;
+    p.tx=(b[0]/B.w-0.5)*cw*0.2+cw*0.5;  p.ty=(b[1]/B.h-0.5)*ch*0.28+ch*0.42;
+    var ang=Math.random()*Math.PI*2, rad=0.4+Math.random()*0.6;
+    p.sx=cw*0.5+Math.cos(ang)*cw*rad;
+    p.sy=ch*0.5+Math.sin(ang)*Math.abs(Math.sin(ang))*ch*rad*1.5;
+  }
+  for(var i=0;i<PCOUNT;i++){
+    var a=A.p[i], li=0;
+    for(var j=0;j<R.length;j++) if(a[0]>=R[j].s&&a[0]<R[j].e){ li=j; break; }
+    var p={letter:li, rand:Math.random(), gold:Math.random()<0.38, size:(1.5+Math.random()*2.0)*dpr};
+    place(p,i); P.push(p);
   }
 
-  const geo = new THREE.BufferGeometry();
-  geo.setAttribute('position', new THREE.BufferAttribute(posArr, 3));
-  geo.setAttribute('aFrom', new THREE.BufferAttribute(fromArr, 3));
-  geo.setAttribute('aTo', new THREE.BufferAttribute(toArr, 3));
-  geo.setAttribute('aScatter', new THREE.BufferAttribute(scatterArr, 3));
-  geo.setAttribute('aLetter', new THREE.BufferAttribute(letterArr, 1));
-  geo.setAttribute('aRand', new THREE.BufferAttribute(randArr, 1));
-  geo.setAttribute('aGold', new THREE.BufferAttribute(goldArr, 1));
-  geo.setAttribute('aSz', new THREE.BufferAttribute(sizeArr, 1));
+  var op=0, target=0, merge=0, expl=0;
+  var hero=document.querySelector('.hero'), pre=document.getElementById('preloader');
+  (function chk(){ if(pre&&pre.classList.contains('done')) target=1; else requestAnimationFrame(chk); })();
 
-  const mat = new THREE.ShaderMaterial({
-    vertexShader: vShader,
-    fragmentShader: fShader,
-    uniforms: {
-      uMerge: { value: 0 }, uExplode: { value: 0 }, uTime: { value: 0 },
-      uOpacity: { value: 0 }, uVel: { value: 0 }, uDark: { value: 0 }
-    },
-    transparent: true, depthWrite: false
-  });
+  var glow=document.createElement('canvas'); glow.width=glow.height=32;
+  var g=glow.getContext('2d'), rg=g.createRadialGradient(16,16,0,16,16,16);
+  rg.addColorStop(0,'rgba(217,170,30,0.9)'); rg.addColorStop(0.3,'rgba(200,155,20,0.5)'); rg.addColorStop(1,'rgba(180,130,0,0)');
+  g.fillStyle=rg; g.fillRect(0,0,32,32);
 
-  const pts = new THREE.Points(geo, mat);
-  pts.frustumCulled = false;
-  scene.add(pts);
-
-  let composer, bloomPass, customPass;
-  if(!mobile){
-    composer = new EffectComposer(renderer);
-    composer.addPass(new RenderPass(scene, camera));
-    bloomPass = new UnrealBloomPass(
-      new THREE.Vector2(window.innerWidth, window.innerHeight), 0.5, 0.6, 0.5
-    );
-    composer.addPass(bloomPass);
-    customPass = new ShaderPass(postShader);
-    customPass.renderToScreen = true;
-    composer.addPass(customPass);
-  }
-
-  let opacity = 0.3, targetOp = 0;
-  const preEl = document.getElementById('preloader');
-  (function checkPre(){
-    if(preEl && preEl.classList.contains('done')) targetOp = 1;
-    else requestAnimationFrame(checkPre);
-  })();
-
-  const heroEl = document.querySelector('.hero');
-  let w = window.innerWidth, h = window.innerHeight;
-  let firstFrame = true;
-
-  function animate(time){
-    requestAnimationFrame(animate);
+  var first=true;
+  function frame(){
+    requestAnimationFrame(frame);
     if(document.hidden) return;
-    if(firstFrame){ firstFrame = false; console.log('[MAROM] Animation running at 60fps'); }
-
-    const t = time * 0.001;
-    opacity += (targetOp - opacity) * 0.08;
-
-    const heroH = heroEl ? heroEl.offsetHeight : h * 3;
-    const sy = window.scrollY || 0;
-    const hp = Math.min(1, sy / Math.max(1, heroH - h));
-
-    const mergeTarget = Math.min(1, Math.max(0, (hp - 0.1) / 0.55));
-    const explTarget = Math.min(1, Math.max(0, (hp - 0.7) / 0.3));
-
-    const sv = window.scrollVel || 0;
-    const dark = window.inDarkSection ? 1 : 0;
-
-    const u = mat.uniforms;
-    u.uMerge.value += (mergeTarget - u.uMerge.value) * 0.06;
-    u.uExplode.value += (explTarget - u.uExplode.value) * 0.06;
-    u.uTime.value = t;
-    u.uOpacity.value = opacity;
-    u.uVel.value += (sv * 0.4 - u.uVel.value) * 0.05;
-    u.uDark.value += (dark - u.uDark.value) * 0.05;
-
-    const mx = window.globalMx || w * 0.5;
-    const my = window.globalMy || h * 0.5;
-    camera.position.x += ((mx / w - 0.5) * 0.5 - camera.position.x) * 0.03;
-    camera.position.y += ((0.5 - my / h) * 0.3 - camera.position.y) * 0.03;
-    camera.lookAt(0, 0, 0);
-
-    if(bloomPass) bloomPass.strength = 0.4 + u.uMerge.value * 0.2 + u.uExplode.value * 0.3;
-    if(customPass){
-      customPass.uniforms.uTime.value = t;
-      customPass.uniforms.uVignetteStrength.value = 0.2 + u.uExplode.value * 0.15;
+    if(first){ first=false; console.log('[MAROM] Canvas 2D running'); }
+    op+=(target-op)*0.06;
+    var hh=hero?hero.offsetHeight:ch*3, sy=scrollY||0, hp=Math.min(1,sy/Math.max(1,hh-innerHeight));
+    merge+=(Math.min(1,Math.max(0,(hp-0.1)/0.55))-merge)*0.06;
+    expl +=(Math.min(1,Math.max(0,(hp-0.7)/0.3 ))-expl )*0.06;
+    var t=performance.now()*0.001;
+    ctx.clearRect(0,0,cw,ch);
+    var k,p,lm,xx,yy;
+    for(k=0;k<PCOUNT;k++){ p=P[k]; if(!p.gold) continue;
+      lm=ss((4-p.letter)*0.12,(4-p.letter)*0.12+0.25,merge);
+      xx=p.fx+(p.tx-p.fx)*lm; yy=p.fy+(p.ty-p.fy)*lm;
+      xx+=(p.sx-xx)*expl+Math.sin(t*0.15+p.rand*6.28)*3*(1+expl*2);
+      yy+=(p.sy-yy)*expl+Math.cos(t*0.12+p.rand*3.14)*3*(1+expl*2)+expl*expl*p.rand*ch*0.4;
+      var gs2=p.size*10; ctx.globalAlpha=op*0.18; ctx.drawImage(glow,xx-gs2*0.5,yy-gs2*0.5,gs2,gs2);
     }
-
-    if(composer) composer.render();
-    else renderer.render(scene, camera);
+    for(k=0;k<PCOUNT;k++){ p=P[k];
+      lm=ss((4-p.letter)*0.12,(4-p.letter)*0.12+0.25,merge);
+      xx=p.fx+(p.tx-p.fx)*lm; yy=p.fy+(p.ty-p.fy)*lm;
+      xx+=(p.sx-xx)*expl+Math.sin(t*0.15+p.rand*6.28)*3*(1+expl*2);
+      yy+=(p.sy-yy)*expl+Math.cos(t*0.12+p.rand*3.14)*3*(1+expl*2)+expl*expl*p.rand*ch*0.4;
+      var a=(0.8+0.2*Math.sin(t*0.4+p.rand*8))*(1-expl*0.3);
+      ctx.globalAlpha=op*Math.max(0.1,a);
+      ctx.fillStyle=p.gold?'#c8a020':'#111111';
+      ctx.beginPath(); ctx.arc(xx,yy,p.size,0,6.2832); ctx.fill();
+    }
+    ctx.globalAlpha=1;
   }
-  requestAnimationFrame(animate);
+  requestAnimationFrame(frame);
 
-  let resizeTimer;
-  window.addEventListener('resize', function(){
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(function(){
-      w = window.innerWidth; h = window.innerHeight;
-      camera.aspect = w / h;
-      camera.updateProjectionMatrix();
-      renderer.setSize(w, h);
-      if(composer) composer.setSize(w, h);
-    }, 200);
-  });
-}
-
-document.fonts.ready.then(init3D);
+  var rt; addEventListener('resize',function(){ clearTimeout(rt); rt=setTimeout(function(){
+    size(); for(var i=0;i<PCOUNT;i++) place(P[i],i);
+  },200); });
+})();
 </script>
 <script>
-setTimeout(function(){
-  var c = document.getElementById('scene3d');
-  if(c && !c.__threeLoaded){
-    console.warn('[MAROM] Three.js did not load — showing fallback DOM letters');
-    document.querySelectorAll('.hero-letter').forEach(function(el){
-      el.style.visibility = 'visible';
-    });
-  }
-}, 5000);
+setTimeout(function(){ var c=document.getElementById('scene3d');
+  if(c&&!c.__particleLoaded){ document.querySelectorAll('.hero-letter').forEach(function(el){ el.style.visibility='visible'; }); }
+},3000);
 </script>
 </body>
 </html>
