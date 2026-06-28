@@ -261,6 +261,13 @@ footer a{text-decoration:none;transition:color .3s,transform .4s var(--ease)}
 .grain{position:fixed;inset:0;pointer-events:none;z-index:9990;opacity:.05;mix-blend-mode:overlay;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 /* CINEMATIC VIGNETTE */
 .vignette{position:fixed;inset:0;pointer-events:none;z-index:4;background:radial-gradient(ellipse at center,transparent 50%,rgba(0,0,0,.55) 100%)}
+/* GOLDEN THREAD */
+.thread{position:fixed;top:0;left:22px;width:84px;height:100vh;height:100dvh;z-index:5;pointer-events:none;opacity:0;transition:opacity 1.2s var(--ease);overflow:visible}
+.thread.on{opacity:1}
+html[dir="rtl"] .thread{left:auto;right:22px}
+.thread-comet{position:fixed;top:0;left:0;width:9px;height:9px;border-radius:50%;background:#fff6e0;z-index:5;pointer-events:none;opacity:0;transform:translate(-50%,-50%);box-shadow:0 0 8px 2px rgba(232,201,122,.9),0 0 18px 6px rgba(232,201,122,.45);transition:opacity 1.2s var(--ease)}
+.thread.on ~ .thread-comet,.thread-comet.on{opacity:1}
+@media(max-width:768px){.thread{left:6px;width:40px}html[dir="rtl"] .thread{left:auto;right:6px}}
 
 /* PRELOADER — CURTAIN REVEAL */
 .preloader{position:fixed;inset:0;z-index:10000;pointer-events:auto}
@@ -428,6 +435,21 @@ html[dir="rtl"] .work-view{right:auto;left:16px}
 <div class="scroll-progress" id="scrollProgress"></div>
 
 <div class="vignette"></div>
+<!-- GOLDEN THREAD — signature companion -->
+<svg class="thread" id="goldThread" viewBox="0 0 80 1000" preserveAspectRatio="none" aria-hidden="true">
+  <defs>
+    <linearGradient id="threadGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e8c97a" stop-opacity="0"/>
+      <stop offset=".12" stop-color="#e8c97a" stop-opacity=".85"/>
+      <stop offset=".88" stop-color="#c8a04a" stop-opacity=".85"/>
+      <stop offset="1" stop-color="#c8a04a" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="threadGlow" x="-200%" y="-50%" width="500%" height="200%"><feGaussianBlur stdDeviation="2.4"/></filter>
+  </defs>
+  <path id="threadPath" fill="none" stroke="url(#threadGrad)" stroke-width="1.4" filter="url(#threadGlow)" stroke-linecap="round"/>
+  <path id="threadPathCore" fill="none" stroke="url(#threadGrad)" stroke-width="0.7" stroke-linecap="round"/>
+</svg>
+<i class="thread-comet" id="threadComet" aria-hidden="true"></i>
 <div class="grain"></div>
 
 <!-- NAV -->
@@ -545,23 +567,22 @@ html[dir="rtl"] .work-view{right:auto;left:16px}
     <div class="work-card">
       <div class="work-card-inner" data-modal="work-1">
         <span class="work-card-num">01</span>
-        <div class="work-placeholder work-ph-1">THE START</div>
-        <div class="work-card-info"><h3>The Start</h3><span data-i18n="work1.tags">Website · Branding · Live</span></div>
-        <span class="work-view" data-i18n="work.view">View project</span>
-      </div>
-    </div>
-    <div class="work-card">
-      <div class="work-card-inner" data-modal="work-2">
-        <span class="work-card-num">02</span>
         <div class="work-placeholder work-ph-2">COCKTAILS &amp; DREAMS</div>
-        <div class="work-card-info"><h3>Cocktails &amp; Dreams</h3><span data-i18n="work2.tags">Website · Branding · Motion</span></div>
+        <div class="work-card-info"><h3>Cocktails &amp; Dreams</h3><span data-i18n="work1.tags">Website · Branding · Live</span></div>
         <span class="work-view" data-i18n="work.view">View project</span>
       </div>
     </div>
     <div class="work-card">
       <div class="work-card-inner">
+        <span class="work-card-num">02</span>
+        <div class="work-placeholder work-ph-1">COMING SOON</div>
+        <div class="work-card-info"><h3 data-i18n="work.soon">Coming Soon</h3><span>Website · Design</span></div>
+      </div>
+    </div>
+    <div class="work-card">
+      <div class="work-card-inner">
         <span class="work-card-num">03</span>
-        <div class="work-placeholder work-ph-3">PROJECT 03</div>
+        <div class="work-placeholder work-ph-3">COMING SOON</div>
         <div class="work-card-info"><h3 data-i18n="work.soon">Coming Soon</h3><span>Website · Development</span></div>
       </div>
     </div>
@@ -673,25 +694,15 @@ html[dir="rtl"] .work-view{right:auto;left:16px}
 <div class="modal-overlay" id="modalOverlay"></div>
 
 <!-- PROJECT MODALS -->
-<div class="modal-box work-modal" id="work-1" role="dialog" aria-modal="true" aria-label="The Start">
-  <button class="modal-close" aria-label="Close">&times;</button>
-  <div class="work-modal-hero work-ph-1"><span>THE START</span></div>
-  <h3>The Start</h3>
-  <div class="work-modal-tags" data-i18n="work1.tags">Website · Branding · Live</div>
-  <p data-i18n="work1.desc">A bright, conversion-focused business website built for a friend's venture — clean layout, fast load, and a clear path to action. Designed and developed end to end.</p>
-  <a class="contact-cta work-modal-cta" href="https://maromcohen.github.io/the-start/" target="_blank" rel="noopener">
-    <span data-i18n="work.viewLive">View live site</span>
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M7 17 17 7M9 7h8v8"/></svg>
-  </a>
-</div>
-<div class="modal-box work-modal" id="work-2" role="dialog" aria-modal="true" aria-label="Cocktails & Dreams">
+<div class="modal-box work-modal" id="work-1" role="dialog" aria-modal="true" aria-label="Cocktails & Dreams">
   <button class="modal-close" aria-label="Close">&times;</button>
   <div class="work-modal-hero work-ph-2"><span>COCKTAILS &amp; DREAMS</span></div>
   <h3>Cocktails &amp; Dreams</h3>
-  <div class="work-modal-tags" data-i18n="work2.tags">Website · Branding · Motion</div>
-  <p data-i18n="work2.desc">A cinematic brand experience for a cocktail concept — motion-led storytelling, rich visuals and a mood that lingers. Full identity and website.</p>
-  <a class="contact-cta work-modal-cta" href="https://wa.me/972532748125?text=Hi%20MAROM%2C%20I%20loved%20the%20Cocktails%20%26%20Dreams%20project" target="_blank" rel="noopener">
-    <span data-i18n="work.askSimilar">Want something like this?</span>
+  <div class="work-modal-tags" data-i18n="work1.tags">Website · Branding · Live</div>
+  <p data-i18n="work1.desc">A bright, characterful brand site designed and developed end to end — clean layout, fast load, and a clear path to action. Built and shipped live.</p>
+  <a class="contact-cta work-modal-cta" href="https://maromcohen.github.io/the-start/" target="_blank" rel="noopener">
+    <span data-i18n="work.viewLive">View live site</span>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M7 17 17 7M9 7h8v8"/></svg>
   </a>
 </div>
 <div class="modal-box" id="m-accessibility" role="dialog" aria-modal="true" aria-label="Accessibility Statement">
@@ -797,9 +808,8 @@ html[dir="rtl"] .work-view{right:auto;left:16px}
       'faq.q3':'כמה זה עולה?','faq.a3':'כל פרויקט מתומחר אישית. ספרו לנו מה אתם צריכים בוואטסאפ ותקבלו הצעת מחיר ברורה, ללא התחייבות.',
       'faq.q4':'אתם בונים בעברית ובאנגלית?','faq.a4':'בהחלט — אנחנו מעצבים אתרים דו-לשוניים מלאים, מוכנים ל-RTL, שעומדים בתקן הנגישות הישראלי (ת"י 5568) מהרגע הראשון.',
       'faq.q5':'מה קורה אחרי ההשקה?','faq.a5':'אנחנו לא נעלמים. אתם מקבלים ניטור ביצועים, אנליטיקס, טיפול ב-SEO ותמיכה מתמשכת בכל פעם שצריך שינויים.',
-      'work.view':'צפו בפרויקט','work.viewLive':'צפו באתר החי','work.askSimilar':'רוצים משהו כזה?',
-      'work1.tags':'אתר · מיתוג · חי','work1.desc':'אתר עסקי בהיר וממוקד-המרה שנבנה לעסק של חבר — פריסה נקייה, טעינה מהירה ונתיב ברור לפעולה. עיצוב ופיתוח מקצה לקצה.',
-      'work2.tags':'אתר · מיתוג · מושן','work2.desc':'חוויית מותג קולנועית לקונספט קוקטיילים — סיפור מבוסס-תנועה, ויזואלים עשירים ואווירה שנשארת. זהות מלאה ואתר.',
+      'work.view':'צפו בפרויקט','work.viewLive':'צפו באתר החי',
+      'work1.tags':'אתר · מיתוג · חי','work1.desc':'אתר מותג בהיר ואופייני שעוצב ופותח מקצה לקצה — פריסה נקייה, טעינה מהירה ונתיב ברור לפעולה. נבנה ועלה לאוויר.',
       'cookie.text':'אתר זה משתמש בעוגיות. ראו את <a href="#" data-modal="m-privacy">מדיניות הפרטיות</a> שלנו.',
       'cookie.accept':'אישור','cookie.decline':'דחייה',
       'footer.access':'נגישות','footer.privacy':'פרטיות','footer.terms':'תקנון',
@@ -1824,6 +1834,57 @@ setTimeout(function(){
     }, {threshold:.6});
     document.querySelectorAll('.section-eyebrow').forEach(function(el){ io.observe(el); });
   }
+})();
+</script>
+
+<!-- ===== GOLDEN THREAD — signature companion ===== -->
+<script>
+(function(){
+  var svg=document.getElementById('goldThread');
+  var path=document.getElementById('threadPath');
+  var core=document.getElementById('threadPathCore');
+  var comet=document.getElementById('threadComet');
+  if(!svg||!path||!comet) return;
+  function reduced(){ return document.documentElement.classList.contains('a11y-stop') ||
+    (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches); }
+  var W=80,H=1000,CX=40,AMP=22,WAVES=3.4;
+  var ph=0, mouseX=window.innerWidth*0.5, curOff=0, pulse=0;
+  function buildPath(p){
+    var d='', n=48;
+    for(var i=0;i<=n;i++){
+      var y=i/n*H, x=CX+AMP*Math.sin(y/H*WAVES*Math.PI*2+p);
+      d+=(i?'L':'M')+x.toFixed(2)+' '+y.toFixed(1)+' ';
+    }
+    return d;
+  }
+  function xAt(yVB,p){ return CX+AMP*Math.sin(yVB/H*WAVES*Math.PI*2+p); }
+  addEventListener('mousemove',function(e){ mouseX=e.clientX; },{passive:true});
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){ es.forEach(function(en){ if(en.isIntersecting && !reduced()) pulse=1; }); }, {threshold:.5});
+    document.querySelectorAll('main section, #faq').forEach(function(s){ io.observe(s); });
+  }
+  setTimeout(function(){ svg.classList.add('on'); comet.classList.add('on'); }, 1800);
+  function loop(){
+    requestAnimationFrame(loop);
+    if(document.hidden) return;
+    if(!reduced()) ph+=0.006;
+    var d=buildPath(ph);
+    path.setAttribute('d',d); core.setAttribute('d',d);
+    var max=document.documentElement.scrollHeight-innerHeight;
+    var p=max>0?Math.min(1,Math.max(0,(window.scrollY||0)/max)):0;
+    var targetOff=((mouseX/innerWidth)-0.5)*14;
+    curOff+=(targetOff-curOff)*0.05;
+    svg.style.transform='translateX('+curOff.toFixed(1)+'px)';
+    var rect=svg.getBoundingClientRect();
+    var yVB=p*H, xVB=xAt(yVB,ph);
+    var sx=rect.left + xVB/W*rect.width;
+    var sy=p*innerHeight;
+    comet.style.left=sx.toFixed(1)+'px';
+    comet.style.top=sy.toFixed(1)+'px';
+    if(pulse>0.01){ pulse*=0.92; comet.style.transform='translate(-50%,-50%) scale('+(1+pulse*1.4).toFixed(2)+')'; }
+    else comet.style.transform='translate(-50%,-50%)';
+  }
+  requestAnimationFrame(loop);
 })();
 </script>
 
