@@ -95,25 +95,7 @@ html[dir="rtl"] .contact-details{direction:ltr}
 .mobile-nav.open a:nth-child(4){transition-delay:.2s}
 
 /* AMBIENT CANVAS */
-#scene3d{position:fixed;top:0;left:0;width:100%;height:100%;z-index:2;pointer-events:none;touch-action:auto;will-change:transform}
-
-/* ===== MOBILE CSS-ONLY AMBIENT FX (replaces WebGL — compositor thread, zero JS) ===== */
-#mobile-fx{display:none;position:fixed;inset:0;z-index:2;pointer-events:none;overflow:hidden}
-@media(max-width:767px){
-  #scene3d{display:none!important}
-  #mobile-fx{display:block}
-}
-.mfx-dot{position:absolute;border-radius:50%;will-change:transform,opacity}
-@keyframes mfx1{0%{transform:translate(0,0) scale(1)}33%{transform:translate(18px,-28px) scale(1.15)}66%{transform:translate(-12px,16px) scale(0.9)}100%{transform:translate(0,0) scale(1)}}
-@keyframes mfx2{0%{transform:translate(0,0) scale(1)}40%{transform:translate(-22px,14px) scale(1.1)}80%{transform:translate(10px,-20px) scale(0.85)}100%{transform:translate(0,0) scale(1)}}
-@keyframes mfx3{0%{transform:translate(0,0) scale(1)}50%{transform:translate(16px,22px) scale(1.2)}100%{transform:translate(0,0) scale(1)}}
-@keyframes mfx4{0%{transform:translate(0,0) scale(1)}30%{transform:translate(-14px,-18px) scale(0.9)}70%{transform:translate(20px,10px) scale(1.1)}100%{transform:translate(0,0) scale(1)}}
-@keyframes mfxPulse{0%,100%{opacity:.18}50%{opacity:.5}}
-@keyframes mfxGlow{0%,100%{transform:scale(1) translate(-50%,-50%)}50%{transform:scale(1.3) translate(-38%,-38%)}}
-.mfx-orb{position:absolute;border-radius:50%;pointer-events:none;will-change:transform,opacity}
-@keyframes orbA{0%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.18)}100%{transform:translate(-50%,-50%) scale(1)}}
-@keyframes orbB{0%{transform:translate(-50%,-50%) scale(1.1)}50%{transform:translate(-50%,-50%) scale(0.88)}100%{transform:translate(-50%,-50%) scale(1.1)}}
-@media(prefers-reduced-motion:reduce){.mfx-dot,.mfx-orb{animation:none!important}}
+#scene3d{position:fixed;top:0;left:0;width:100%;height:100%;z-index:2;pointer-events:none;touch-action:none;will-change:transform}
 
 /* ========== HERO ========== */
 .hero{height:300vh;position:relative}
@@ -364,8 +346,7 @@ html.a11y-stop *{animation:none!important;transition:none!important}
   .nav.nav-hidden{transform:translateY(-120%)}
   .nav-links{display:none}
   .burger{display:flex}
-  .hero{height:100svh}
-  .hero-pin{position:relative;top:auto}
+  .hero{height:180vh}
   .about{grid-template-columns:1fr}
   .services-grid{grid-template-columns:1fr}
   .services-connector{display:none}
@@ -384,15 +365,6 @@ html.a11y-stop *{animation:none!important;transition:none!important}
   #contact.contact-dark{border-radius:24px 24px 0 0}
   .section-bg-text{font-size:clamp(4rem,16vw,8rem)}
   .marquee-item{padding:0 24px;gap:24px}
-  /* Mobile reveals: skip JS animations, use CSS transitions via IntersectionObserver */
-  .split-line-inner{transform:translateY(105%);opacity:0;transition:transform 0.7s cubic-bezier(.32,.72,0,1),opacity 0.7s ease}
-  .split-line-inner.vis{transform:translateY(0);opacity:1}
-  .char-reveal{opacity:0;transition:opacity 0.8s ease}
-  .char-reveal.visible{opacity:1}
-  [data-reveal="clip"]{opacity:0;transition:opacity 0.6s ease}
-  [data-reveal="clip"].visible{opacity:1}
-  .step.reveal,.service-card.reveal{opacity:0;transform:translateY(30px);transition:opacity 0.6s ease,transform 0.6s ease}
-  .step.visible,.service-card.visible{opacity:1;transform:none}
 }
 @media(max-width:480px){
   .process-steps{grid-template-columns:1fr}
@@ -491,26 +463,6 @@ html[dir="rtl"] .work-view{right:auto;left:16px}
 <div class="cursor-trail" id="trail3"></div>
 
 <canvas id="scene3d"></canvas>
-
-<!-- MOBILE CSS-ONLY AMBIENT (no JS, no rAF, compositor thread only) -->
-<div id="mobile-fx" aria-hidden="true">
-  <!-- soft gold orbs — NO filter:blur (fixed+blur = repaint every scroll frame on iOS) -->
-  <div class="mfx-orb" style="width:70vw;height:70vw;left:75%;top:-15%;background:radial-gradient(circle,rgba(232,201,122,.18) 0%,rgba(232,201,122,.06) 50%,transparent 75%);animation:orbA 22s ease-in-out infinite"></div>
-  <div class="mfx-orb" style="width:65vw;height:65vw;left:-15%;top:50%;background:radial-gradient(circle,rgba(200,150,70,.14) 0%,rgba(200,150,70,.04) 50%,transparent 75%);animation:orbB 28s ease-in-out infinite"></div>
-  <div class="mfx-orb" style="width:50vw;height:50vw;left:45%;top:35%;background:radial-gradient(circle,rgba(170,120,40,.10) 0%,transparent 70%);animation:orbA 18s ease-in-out infinite 4s"></div>
-  <!-- floating gold particles -->
-  <div class="mfx-dot" style="width:2px;height:2px;left:12%;top:18%;background:#e8c97a;opacity:.45;animation:mfx1 14s ease-in-out infinite,mfxPulse 7s ease-in-out infinite"></div>
-  <div class="mfx-dot" style="width:3px;height:3px;left:78%;top:8%;background:#f3e0a0;opacity:.35;animation:mfx2 17s ease-in-out infinite 1s,mfxPulse 9s ease-in-out infinite 2s"></div>
-  <div class="mfx-dot" style="width:2px;height:2px;left:55%;top:25%;background:#e8c97a;opacity:.5;animation:mfx3 11s ease-in-out infinite 3s,mfxPulse 6s ease-in-out infinite 1s"></div>
-  <div class="mfx-dot" style="width:4px;height:4px;left:25%;top:62%;background:#c8a04a;opacity:.3;animation:mfx4 19s ease-in-out infinite 2s,mfxPulse 11s ease-in-out infinite 4s"></div>
-  <div class="mfx-dot" style="width:2px;height:2px;left:88%;top:45%;background:#e8c97a;opacity:.4;animation:mfx1 16s ease-in-out infinite 5s,mfxPulse 8s ease-in-out infinite 3s"></div>
-  <div class="mfx-dot" style="width:3px;height:3px;left:40%;top:80%;background:#f0d88a;opacity:.28;animation:mfx2 13s ease-in-out infinite 1.5s,mfxPulse 10s ease-in-out infinite"></div>
-  <div class="mfx-dot" style="width:2px;height:2px;left:65%;top:70%;background:#e8c97a;opacity:.42;animation:mfx3 20s ease-in-out infinite 4s,mfxPulse 7s ease-in-out infinite 2s"></div>
-  <div class="mfx-dot" style="width:3px;height:3px;left:8%;top:85%;background:#c8a04a;opacity:.32;animation:mfx4 15s ease-in-out infinite 3s,mfxPulse 9s ease-in-out infinite 1s"></div>
-  <div class="mfx-dot" style="width:2px;height:2px;left:92%;top:30%;background:#f3e0a0;opacity:.38;animation:mfx1 18s ease-in-out infinite 6s,mfxPulse 12s ease-in-out infinite 5s"></div>
-  <div class="mfx-dot" style="width:4px;height:4px;left:33%;top:42%;background:#e8c97a;opacity:.22;animation:mfx2 22s ease-in-out infinite 0.5s,mfxPulse 14s ease-in-out infinite 3s"></div>
-  <div class="mfx-dot" style="width:2px;height:2px;left:72%;top:92%;background:#c8a04a;opacity:.36;animation:mfx3 12s ease-in-out infinite 2.5s,mfxPulse 8s ease-in-out infinite 4s"></div>
-</div>
 
 <!-- SCROLL PROGRESS -->
 <div class="scroll-progress" id="scrollProgress"></div>
@@ -999,9 +951,6 @@ gsap.registerPlugin(ScrollTrigger);
 
 /* ===== GLOBAL STATE ===== */
 var isMobile = window.innerWidth < 768;
-
-/* Prevent unnecessary ScrollTrigger refreshes when iOS Safari address bar toggles */
-if(isMobile){ ScrollTrigger.config({ ignoreMobileResize: true }); }
 var scrollVel = 0;
 var scrollDir = 1;
 var globalMx = 0, globalMy = 0;
@@ -1045,7 +994,7 @@ if(!isMobile){
     var y = window.scrollY, now = performance.now(), dt = Math.max(16, now - _lt);
     handleScroll((y - _ly)/dt, y >= _ly ? 1 : -1);
     _ly = y; _lt = now;
-    // No ScrollTrigger.update() on mobile — all triggers are once:true, no scrub
+    ScrollTrigger.update();
   }, {passive:true});
 }
 
@@ -1079,26 +1028,17 @@ if(!isMobile){
 })();
 
 /* ===== SCROLL PROGRESS BAR ===== */
-if(isMobile){
-  // On mobile: direct DOM update in scroll listener, zero GSAP ticker
-  var _spEl = document.getElementById('scrollProgress');
-  window.addEventListener('scroll', function(){
-    var max = document.documentElement.scrollHeight - window.innerHeight;
-    if(_spEl && max > 0) _spEl.style.transform = 'scaleX(' + (window.scrollY/max) + ')';
-  }, {passive:true});
-} else {
-  gsap.to('#scrollProgress', {
-    scaleX: 1,
-    ease: 'none',
-    scrollTrigger: {
-      trigger: document.documentElement,
-      start: 'top top',
-      end: 'bottom bottom',
-      scrub: 0.3,
-      onUpdate: function(self){ scrollProgress = self.progress; }
-    }
-  });
-}
+gsap.to('#scrollProgress', {
+  scaleX: 1,
+  ease: 'none',
+  scrollTrigger: {
+    trigger: document.documentElement,
+    start: 'top top',
+    end: 'bottom bottom',
+    scrub: 0.3,
+    onUpdate: function(self){ scrollProgress = self.progress; }
+  }
+});
 
 /* ===== GLOBAL MOUSE TRACKING ===== */
 document.addEventListener('mousemove', function(e){ globalMx = e.clientX; globalMy = e.clientY; });
@@ -1198,28 +1138,45 @@ document.addEventListener('mousemove', function(e){ globalMx = e.clientX; global
 
   window._heroEntrance = entrance;
 
-  // Desktop-only: cinematic scroll collapse/dissolve (hero is non-sticky 100vh on mobile)
-  if(!isMobile){
-    gsap.timeline({
-      scrollTrigger:{trigger:'#heroWrap', start:'top top', end:'18% top', scrub:0.8}
-    })
-    .to([heroEyebrow, heroSub, heroScroll], {opacity:0, y:-30, duration:0.3}, 0);
+  gsap.timeline({
+    scrollTrigger:{trigger:'#heroWrap', start:'top top', end:'18% top', scrub:0.8}
+  })
+  .to([heroEyebrow, heroSub, heroScroll], {opacity:0, y:-30, duration:0.3}, 0);
 
-    var collapse = gsap.timeline({
-      scrollTrigger:{trigger:'#heroWrap', start:'12% top', end:'48% top', scrub:0.8}
-    });
-    collapse.to(letters[1], {x:function(){ return letters[0].offsetLeft+letters[0].offsetWidth/2-(letters[1].offsetLeft+letters[1].offsetWidth/2) }, opacity:0, scale:0.2, rotationY:55, filter:'blur(14px)', duration:0.5}, 0.05);
-    collapse.to(letters[2], {x:function(){ return letters[0].offsetLeft+letters[0].offsetWidth/2-(letters[2].offsetLeft+letters[2].offsetWidth/2) }, opacity:0, scale:0.2, rotationY:-40, filter:'blur(14px)', duration:0.5}, 0.1);
-    collapse.to(letters[3], {x:function(){ return letters[0].offsetLeft+letters[0].offsetWidth/2-(letters[3].offsetLeft+letters[3].offsetWidth/2) }, opacity:0, scale:0.2, rotationY:65, filter:'blur(14px)', duration:0.5}, 0.15);
-    collapse.to(letters[4], {x:function(){ return letters[0].offsetLeft+letters[0].offsetWidth/2-(letters[4].offsetLeft+letters[4].offsetWidth/2) }, opacity:0, scale:0.2, rotationY:-50, filter:'blur(14px)', duration:0.5}, 0.2);
+  var collapse = gsap.timeline({
+    scrollTrigger:{trigger:'#heroWrap', start:'12% top', end:'48% top', scrub:0.8}
+  });
 
-    gsap.timeline({scrollTrigger:{trigger:'#heroWrap', start:'45% top', end:'78% top', scrub:0.8}})
-      .to(letters[0], {scale:2.5, duration:0.5}, 0)
-      .to(letters[0], {opacity:0, scale:3.5, filter:'blur(28px)', duration:0.4}, 0.35);
+  var blurProp = isMobile ? {} : {filter:'blur(14px)'};
+  var blurBig = isMobile ? {} : {filter:'blur(28px)'};
+  collapse.to(letters[1], Object.assign({
+    x: function(){ return letters[0].offsetLeft + letters[0].offsetWidth/2 - (letters[1].offsetLeft + letters[1].offsetWidth/2) },
+    opacity:0, scale:0.2, rotationY:55, duration:0.5
+  }, blurProp), 0.05);
+  collapse.to(letters[2], Object.assign({
+    x: function(){ return letters[0].offsetLeft + letters[0].offsetWidth/2 - (letters[2].offsetLeft + letters[2].offsetWidth/2) },
+    opacity:0, scale:0.2, rotationY:-40, duration:0.5
+  }, blurProp), 0.1);
+  collapse.to(letters[3], Object.assign({
+    x: function(){ return letters[0].offsetLeft + letters[0].offsetWidth/2 - (letters[3].offsetLeft + letters[3].offsetWidth/2) },
+    opacity:0, scale:0.2, rotationY:65, duration:0.5
+  }, blurProp), 0.15);
+  collapse.to(letters[4], Object.assign({
+    x: function(){ return letters[0].offsetLeft + letters[0].offsetWidth/2 - (letters[4].offsetLeft + letters[4].offsetWidth/2) },
+    opacity:0, scale:0.2, rotationY:-50, duration:0.5
+  }, blurProp), 0.2);
 
-    gsap.timeline({scrollTrigger:{trigger:'#heroWrap', start:'72% top', end:'100% top', scrub:0.5}})
-      .to('.hero-mesh', {opacity:0, scale:0.92, duration:0.5}, 0);
-  }
+  var mDissolve = gsap.timeline({
+    scrollTrigger:{trigger:'#heroWrap', start:'45% top', end:'78% top', scrub:0.8}
+  });
+  mDissolve
+    .to(letters[0], {scale:2.5, duration:0.5}, 0)
+    .to(letters[0], Object.assign({opacity:0, scale:3.5, duration:0.4}, blurBig), 0.35);
+
+  gsap.timeline({
+    scrollTrigger:{trigger:'#heroWrap', start:'72% top', end:'100% top', scrub:0.5}
+  })
+  .to('.hero-mesh', {opacity:0, scale:0.92, duration:0.5}, 0);
 })();
 
 /* ===== TEXT SPLIT REVEALS ===== */
@@ -1230,52 +1187,26 @@ document.querySelectorAll('.section-title,.contact-title').forEach(function(titl
     return '<span class="split-line"><span class="split-line-inner">' + line.trim() + '</span></span>';
   }).join('');
 
-  if(isMobile){
-    // CSS transition via IntersectionObserver (zero GSAP scroll listener)
-    var inners = title.querySelectorAll('.split-line-inner');
-    var io = new IntersectionObserver(function(entries){
-      if(entries[0].isIntersecting){
-        var delay = 0;
-        inners.forEach(function(inner){
-          setTimeout(function(){ inner.classList.add('vis'); }, delay);
-          delay += 120;
-        });
-        io.disconnect();
-      }
-    }, {threshold:0.2});
-    io.observe(title);
-  } else {
-    var inners = title.querySelectorAll('.split-line-inner');
-    ScrollTrigger.create({
-      trigger: title,
-      start: 'top 85%',
-      onEnter: function(){
-        gsap.to(inners, {y:'0%', filter:'blur(0px)', duration:1.4, stagger:0.15, ease:'power3.out'});
-      },
-      once: true
-    });
-  }
+  var inners = title.querySelectorAll('.split-line-inner');
+  ScrollTrigger.create({
+    trigger: title,
+    start: 'top 85%',
+    onEnter: function(){
+      gsap.to(inners, {y:'0%', filter:'blur(0px)', duration:1.4, stagger:0.15, ease:'power3.out'});
+    },
+    once: true
+  });
 });
 
 /* ===== REVEALS ===== */
-if(!isMobile){
-  document.querySelectorAll('.reveal').forEach(function(el){
-    if(el.classList.contains('step') || el.classList.contains('service-card')) return;
-    ScrollTrigger.create({
-      trigger:el, start:'top 85%',
-      onEnter:function(){el.classList.add('visible')},
-      once:true
-    });
+document.querySelectorAll('.reveal').forEach(function(el){
+  if(el.classList.contains('step') || el.classList.contains('service-card')) return;
+  ScrollTrigger.create({
+    trigger:el, start:'top 85%',
+    onEnter:function(){el.classList.add('visible')},
+    once:true
   });
-} else {
-  // Single IntersectionObserver for all .reveal elements on mobile — zero GSAP overhead
-  var _mRevealIO = new IntersectionObserver(function(entries){
-    entries.forEach(function(e){
-      if(e.isIntersecting){ e.target.classList.add('visible'); _mRevealIO.unobserve(e.target); }
-    });
-  }, {threshold:0.12});
-  document.querySelectorAll('.reveal').forEach(function(el){ _mRevealIO.observe(el); });
-}
+});
 
 /* [#17] TEXT SCRAMBLE ON SECTION EYEBROWS */
 (function(){
@@ -1312,31 +1243,29 @@ if(!isMobile){
   });
 })();
 
-/* ===== SECTION PARALLAX (desktop only — scrub per-frame kills mobile scroll) ===== */
-if(!isMobile){
-  document.querySelectorAll('.section-eyebrow').forEach(function(el){
-    gsap.to(el, {
-      y: -25,
-      scrollTrigger:{
-        trigger: el.closest('.content-section') || el.closest('.work-header'),
-        start:'top bottom',
-        end:'bottom top',
-        scrub: true
-      }
-    });
+/* ===== SECTION PARALLAX ===== */
+document.querySelectorAll('.section-eyebrow').forEach(function(el){
+  gsap.to(el, {
+    y: -25,
+    scrollTrigger:{
+      trigger: el.closest('.content-section') || el.closest('.work-header'),
+      start:'top bottom',
+      end:'bottom top',
+      scrub: true
+    }
   });
-  document.querySelectorAll('.about-visual').forEach(function(el){
-    gsap.to(el, {
-      y: -40,
-      scrollTrigger:{
-        trigger: el.closest('.content-section'),
-        start:'top bottom',
-        end:'bottom top',
-        scrub: true
-      }
-    });
+});
+document.querySelectorAll('.about-visual').forEach(function(el){
+  gsap.to(el, {
+    y: -40,
+    scrollTrigger:{
+      trigger: el.closest('.content-section'),
+      start:'top bottom',
+      end:'bottom top',
+      scrub: true
+    }
   });
-}
+});
 
 /* [#11] SMOOTH SECTION BACKGROUND COLOR TRANSITIONS */
 (function(){
@@ -1518,24 +1447,16 @@ document.querySelectorAll('.content-section').forEach(function(sec){
 /* ===== NAV + [#2] DARK SECTION INVERSION ===== */
 window.addEventListener('scroll', function(){
   navEl.classList.toggle('scrolled', window.scrollY > 60);
-}, {passive:true});
-if(!isMobile){
-  ScrollTrigger.create({
-    trigger: '#contact',
-    start: 'top 80%',
-    end: 'bottom top',
-    onEnter: function(){ navEl.classList.add('inverted'); inDarkSection = true; },
-    onLeave: function(){ navEl.classList.remove('inverted'); inDarkSection = false; },
-    onEnterBack: function(){ navEl.classList.add('inverted'); inDarkSection = true; },
-    onLeaveBack: function(){ navEl.classList.remove('inverted'); inDarkSection = false; }
-  });
-} else {
-  new IntersectionObserver(function(entries){
-    var inv = entries[0].isIntersecting;
-    navEl.classList.toggle('inverted', inv);
-    inDarkSection = inv;
-  }, {threshold:0, rootMargin:'-80px 0px 0px 0px'}).observe(document.getElementById('contact'));
-}
+});
+ScrollTrigger.create({
+  trigger: '#contact',
+  start: 'top 80%',
+  end: 'bottom top',
+  onEnter: function(){ navEl.classList.add('inverted'); inDarkSection = true; },
+  onLeave: function(){ navEl.classList.remove('inverted'); inDarkSection = false; },
+  onEnterBack: function(){ navEl.classList.add('inverted'); inDarkSection = true; },
+  onLeaveBack: function(){ navEl.classList.remove('inverted'); inDarkSection = false; }
+});
 
 /* ===== BURGER ===== */
 var burger=document.getElementById('burger'), mobileNav=document.getElementById('mobileNav');
@@ -1648,12 +1569,6 @@ document.getElementById('cookieDecline').addEventListener('click',function(){loc
 
 /* ===== CHARACTER-BY-CHARACTER REVEAL ===== */
 document.querySelectorAll('.char-reveal').forEach(function(p){
-  if(isMobile){
-    ScrollTrigger.create({trigger:p, start:'top 85%', once:true,
-      onEnter:function(){ gsap.to(p,{opacity:1,duration:0.8,ease:'power3.out'}); }});
-    gsap.set(p,{opacity:0});
-    return;
-  }
   var text = p.textContent;
   p.innerHTML = '';
   for(var i = 0; i < text.length; i++){
@@ -1686,17 +1601,15 @@ document.querySelectorAll('[data-reveal="clip"]').forEach(function(el){
   });
 });
 
-/* ===== BACKGROUND TEXT PARALLAX (desktop only) ===== */
-if(!isMobile){
-  document.querySelectorAll('.section-bg-text').forEach(function(el){
-    gsap.fromTo(el,
-      {x: '10%'},
-      {x: '-20%', ease:'none',
-       scrollTrigger:{trigger:el.closest('.content-section'), start:'top bottom', end:'bottom top', scrub:true}
-      }
-    );
-  });
-}
+/* ===== BACKGROUND TEXT PARALLAX ===== */
+document.querySelectorAll('.section-bg-text').forEach(function(el){
+  gsap.fromTo(el,
+    {x: '10%'},
+    {x: '-20%', ease:'none',
+     scrollTrigger:{trigger:el.closest('.content-section'), start:'top bottom', end:'bottom top', scrub:true}
+    }
+  );
+});
 
 /* ===== ENHANCED SERVICE CARD ENTRANCE + [#26] CONNECTOR + [#28] EXIT ===== */
 (function(){
@@ -1704,9 +1617,8 @@ if(!isMobile){
   serviceCards.forEach(function(card, i){
     card.classList.remove('reveal');
     gsap.from(card, {
-      y: isMobile ? 40 : 80, scale: isMobile ? 0.96 : 0.9, opacity: 0,
-      filter: isMobile ? 'blur(4px)' : 'blur(8px)',
-      duration: isMobile ? 0.9 : 1.4, delay: i * 0.1, ease: 'power3.out',
+      y: 80, rotationX: 8, scale: 0.9, opacity: 0, filter:'blur(8px)',
+      duration: 1.4, delay: i * 0.15, ease: 'power3.out',
       scrollTrigger:{trigger:card, start:'top 90%', once:true}
     });
   });
@@ -1719,7 +1631,7 @@ if(!isMobile){
     });
   }
 
-  if(!isMobile) ScrollTrigger.create({
+  ScrollTrigger.create({
     trigger: '#services',
     start: 'bottom 20%',
     end: 'bottom top',
@@ -1739,7 +1651,7 @@ if(!isMobile){
 /* ===== PROCESS: [#29] TIMELINE LINE + [#19] NUMBER COUNTERS + [#31] STAGGER ENTRANCE ===== */
 (function(){
   var processLine = document.getElementById('processLine');
-  if(processLine && !isMobile){
+  if(processLine){
     gsap.to(processLine, {
       scaleY: 1, ease: 'none',
       scrollTrigger:{trigger:'#process', start:'top 70%', end:'bottom 30%', scrub:true}
@@ -1750,8 +1662,8 @@ if(!isMobile){
   steps.forEach(function(step, i){
     step.classList.remove('reveal');
     gsap.from(step, {
-      y: isMobile ? 30 : 60, opacity: 0, filter:'blur(4px)',
-      duration: isMobile ? 0.8 : 1.2, delay: i * (isMobile ? 0.1 : 0.2), ease: 'power3.out',
+      y: 60, rotationX: 5, opacity: 0, filter:'blur(4px)',
+      duration: 1.2, delay: i * 0.2, ease: 'power3.out',
       scrollTrigger:{trigger:step, start:'top 88%', once:true}
     });
   });
@@ -1777,19 +1689,18 @@ if(!isMobile){
   });
 })();
 
-/* [#32] CONTACT TITLE LETTER SPACING ANIMATION (desktop only — scrub per-frame) */
-if(!isMobile){
-  var _contactTitle = document.querySelector('.contact-title');
-  ScrollTrigger.create({
-    trigger: '#contact',
-    start: 'top 70%',
-    end: 'top 20%',
-    scrub: true,
-    onUpdate: function(self){
-      if(_contactTitle) _contactTitle.style.letterSpacing = (self.progress * 0.1) + 'em';
-    }
-  });
-}
+/* [#32] CONTACT TITLE LETTER SPACING ANIMATION */
+ScrollTrigger.create({
+  trigger: '#contact',
+  start: 'top 70%',
+  end: 'top 20%',
+  scrub: true,
+  onUpdate: function(self){
+    var ls = self.progress * 0.1;
+    var ct = document.querySelector('.contact-title');
+    if(ct) ct.style.letterSpacing = ls + 'em';
+  }
+});
 
 /* [#33] CONTACT CTA MAGNETIC BUTTON */
 (function(){
@@ -1875,16 +1786,12 @@ document.addEventListener('visibilitychange', function(){
     onUpdate: function(){ counterEl.textContent = Math.round(count.val) + '%' }
   });
 })();
-var _preloaderDone = false;
-function _dismissPreloader(){
-  if(_preloaderDone) return; _preloaderDone = true;
+setTimeout(function(){
   document.getElementById('preloader').classList.add('done');
-  setTimeout(function(){ if(window._heroEntrance) window._heroEntrance.play(); }, 500);
-}
-setTimeout(_dismissPreloader, 2200);
-// Safety net: if user touches/scrolls before timer, release scroll immediately
-window.addEventListener('touchstart', _dismissPreloader, {once:true, passive:true});
-window.addEventListener('wheel', _dismissPreloader, {once:true, passive:true});
+  setTimeout(function(){
+    if(window._heroEntrance) window._heroEntrance.play();
+  }, 500);
+}, 2200);
 </script>
 
 <!-- ===== EXTRA MOTION — magnetic buttons + tilt ===== -->
@@ -2076,7 +1983,6 @@ window.addEventListener('wheel', _dismissPreloader, {once:true, passive:true});
 <script>
 (function(){
   if(!window.gsap || !window.ScrollTrigger) return;
-  if(window.innerWidth < 768) return; // no scrub parallax on mobile
   function reduced(){ return document.documentElement.classList.contains('a11y-stop') ||
     (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches); }
   if(reduced()) return;
@@ -2170,8 +2076,8 @@ window.addEventListener('wheel', _dismissPreloader, {once:true, passive:true});
 })();
 </script>
 
-<!-- Three.js UMD — desktop only (mobile uses CSS ambient, no canvas) -->
-<script>if(window.innerWidth>=768){document.write('<scr'+'ipt src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"><\/scr'+'ipt>')}</script>
+<!-- Three.js UMD (global THREE) from cdnjs — reliable, no ES-modules/importmap -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 (function(){
   var canvas = document.getElementById('scene3d');
@@ -2184,13 +2090,11 @@ window.addEventListener('wheel', _dismissPreloader, {once:true, passive:true});
   // shared mouse (px) + smoothed
   var mx = window.innerWidth*0.5, my = window.innerHeight*0.5;
   addEventListener('mousemove', function(e){ mx=e.clientX; my=e.clientY; }, {passive:true});
-
-  // On mobile: skip all canvas/WebGL — CSS-only ambient (#mobile-fx) handles the visual.
-  // Zero rAF JS on mobile = nothing competing with native iOS scroll momentum.
-  if(mobile){ console.log('[MAROM] mobile: CSS ambient mode'); return; }
+  addEventListener('touchmove', function(e){ if(e.touches[0]){ mx=e.touches[0].clientX; my=e.touches[0].clientY; } }, {passive:true});
 
   var glOK = false;
   try{ var probe=document.createElement('canvas'); glOK = !!(window.THREE && (probe.getContext('webgl2')||probe.getContext('webgl')||probe.getContext('experimental-webgl'))); }catch(e){ glOK=false; }
+  // probe a throwaway canvas so THREE can create its own (WebGL2) context on #scene3d
   if(glOK){ try{ startWebGL(); }catch(e){ console.warn('[MAROM] WebGL failed, fallback:', e); startCanvas2D(); } }
   else { startCanvas2D(); }
 
@@ -2218,7 +2122,7 @@ window.addEventListener('wheel', _dismissPreloader, {once:true, passive:true});
     var DEPTH = 420;
 
     /* ---- DUST (GPU shader physics) ---- */
-    var N = mobile ? 700 : 14000;
+    var N = mobile ? 1500 : 14000;
     var g = new THREE.BufferGeometry();
     var homes = new Float32Array(N*3), seeds = new Float32Array(N*3), sizes = new Float32Array(N), golds = new Float32Array(N);
     for(var i=0;i<N;i++){
@@ -2300,8 +2204,8 @@ window.addEventListener('wheel', _dismissPreloader, {once:true, passive:true});
     });
     var dust = new THREE.Points(g, mat); dust.frustumCulled=false; scene.add(dust);
 
-    /* ---- NODES (CPU Verlet physics) + constellation lines — desktop only ---- */
-    var NN = mobile ? 0 : 120;
+    /* ---- NODES (CPU Verlet physics) + constellation lines ---- */
+    var NN = mobile ? 34 : 120;
     var nx=new Float32Array(NN), ny=new Float32Array(NN), px=new Float32Array(NN), py=new Float32Array(NN);
     var hx=new Float32Array(NN), hy=new Float32Array(NN);
     for(var k=0;k<NN;k++){
