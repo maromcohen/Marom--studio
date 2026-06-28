@@ -957,34 +957,46 @@ var globalMx = 0, globalMy = 0;
 var inDarkSection = false;
 var scrollProgress = 0;
 
-/* ===== LENIS SMOOTH SCROLL ===== */
-var lenis = new Lenis(isMobile ? {lerp:0.1, smoothWheel:true, syncTouch:false} : {lerp:0.06, wheelMultiplier:0.7, smoothWheel:true});
-lenis.on('scroll', ScrollTrigger.update);
-gsap.ticker.add(function(t){ lenis.raf(t*1000) });
-gsap.ticker.lagSmoothing(0);
-
-/* [#4] NAV HIDE ON SCROLL DOWN / SHOW ON SCROLL UP + [#9] VELOCITY TRACKING + [#39/#40] MARQUEE SYNC */
+/* ===== SMOOTH SCROLL — Lenis on desktop, NATIVE scroll on mobile (perf) ===== */
 var lastScrollY = 0;
 var navEl = document.querySelector('.nav');
 var navLogo = document.querySelector('.nav-logo');
 var marqueeTrack = document.querySelector('.marquee-track');
-lenis.on('scroll', function(e){
-  scrollVel = e.velocity;
-  scrollDir = e.direction;
+
+function handleScroll(velocity, direction){
+  scrollVel = velocity;
+  scrollDir = direction;
   var sy = window.scrollY;
-  if(sy > 200 && e.direction === 1 && sy > lastScrollY + 5){
+  if(sy > 200 && direction === 1 && sy > lastScrollY + 5){
     navEl.classList.add('nav-hidden');
-  } else if(e.direction === -1 || sy < 100){
+  } else if(direction === -1 || sy < 100){
     navEl.classList.remove('nav-hidden');
   }
   lastScrollY = sy;
-  navLogo.classList.toggle('no-breathe', Math.abs(scrollVel) > 0.5);
+  if(navLogo) navLogo.classList.toggle('no-breathe', Math.abs(velocity) > 0.5);
   if(marqueeTrack){
-    marqueeTrack.classList.toggle('reverse', e.direction === -1);
-    var speed = Math.max(8, 30 - Math.abs(scrollVel) * 3);
+    marqueeTrack.classList.toggle('reverse', direction === -1);
+    var speed = Math.max(8, 30 - Math.abs(velocity) * 3);
     marqueeTrack.style.animationDuration = speed + 's';
   }
-});
+}
+
+var lenis = null;
+if(!isMobile){
+  lenis = new Lenis({lerp:0.06, wheelMultiplier:0.7, smoothWheel:true});
+  lenis.on('scroll', function(e){ ScrollTrigger.update(); handleScroll(e.velocity, e.direction); });
+  gsap.ticker.add(function(t){ lenis.raf(t*1000) });
+  gsap.ticker.lagSmoothing(0);
+} else {
+  // native momentum scrolling — no JS hijack
+  var _ly = window.scrollY, _lt = performance.now();
+  window.addEventListener('scroll', function(){
+    var y = window.scrollY, now = performance.now(), dt = Math.max(16, now - _lt);
+    handleScroll((y - _ly)/dt, y >= _ly ? 1 : -1);
+    _ly = y; _lt = now;
+    ScrollTrigger.update();
+  }, {passive:true});
+}
 
 /* [#9] SCROLL VELOCITY SKEW + BLUR + [#12] GRAIN INTENSITY */
 (function(){
@@ -1468,7 +1480,11 @@ document.querySelectorAll('a[href^="#"]').forEach(function(a){
     var href = this.getAttribute('href');
     if(href==='#') return;
     var target = document.querySelector(href);
-    if(target){e.preventDefault(); lenis.scrollTo(target, {offset:-80, duration:2})}
+    if(target){
+      e.preventDefault();
+      if(lenis){ lenis.scrollTo(target, {offset:-80, duration:2}); }
+      else { var y=target.getBoundingClientRect().top+window.scrollY-80; window.scrollTo({top:y, behavior:'smooth'}); }
+    }
   });
 });
 
@@ -1746,6 +1762,7 @@ gsap.from('footer', {
 
 /* [#43] PAGE VISIBILITY — PAUSE WHEN HIDDEN */
 document.addEventListener('visibilitychange', function(){
+  if(!lenis) return;
   if(document.hidden){ lenis.stop(); } else { lenis.start(); }
 });
 
