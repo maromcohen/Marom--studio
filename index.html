@@ -1278,7 +1278,7 @@ if(!isMobile){
 }
 
 /* [#17] TEXT SCRAMBLE ON SECTION EYEBROWS */
-if(!isMobile)(function(){
+(function(){
   var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789·';
   document.querySelectorAll('.section-eyebrow').forEach(function(el){
     var original = el.textContent;
@@ -1339,7 +1339,7 @@ if(!isMobile){
 }
 
 /* [#11] SMOOTH SECTION BACKGROUND COLOR TRANSITIONS */
-if(!isMobile)(function(){
+(function(){
   var colors = ['#08070a','#0a0810','#09080d','#0a0910','#08070a'];
   var sections = document.querySelectorAll('.content-section');
   sections.forEach(function(sec, i){
@@ -1356,7 +1356,7 @@ if(!isMobile)(function(){
 })();
 
 /* [#13] SECTION SNAP PULSE */
-if(!isMobile) document.querySelectorAll('.content-section').forEach(function(sec){
+document.querySelectorAll('.content-section').forEach(function(sec){
   if(sec.id === 'contact') return;
   ScrollTrigger.create({
     trigger: sec,
@@ -1649,10 +1649,9 @@ document.getElementById('cookieDecline').addEventListener('click',function(){loc
 /* ===== CHARACTER-BY-CHARACTER REVEAL ===== */
 document.querySelectorAll('.char-reveal').forEach(function(p){
   if(isMobile){
-    // CSS class + IntersectionObserver — zero GSAP/ScrollTrigger overhead
-    new IntersectionObserver(function(entries,obs){
-      if(entries[0].isIntersecting){ p.classList.add('visible'); obs.disconnect(); }
-    }, {threshold:0.2}).observe(p);
+    ScrollTrigger.create({trigger:p, start:'top 85%', once:true,
+      onEnter:function(){ gsap.to(p,{opacity:1,duration:0.8,ease:'power3.out'}); }});
+    gsap.set(p,{opacity:0});
     return;
   }
   var text = p.textContent;
@@ -1679,12 +1678,6 @@ document.querySelectorAll('.char-reveal').forEach(function(p){
 
 /* ===== ABOUT VISUAL CLIP REVEAL ===== */
 document.querySelectorAll('[data-reveal="clip"]').forEach(function(el){
-  if(isMobile){
-    new IntersectionObserver(function(entries,obs){
-      if(entries[0].isIntersecting){ el.classList.add('visible'); obs.disconnect(); }
-    }, {threshold:0.2}).observe(el);
-    return;
-  }
   gsap.from(el, {
     clipPath: 'inset(100% 0% 0% 0%)',
     duration: 1.8,
@@ -1710,15 +1703,10 @@ if(!isMobile){
   var serviceCards = document.querySelectorAll('.service-card');
   serviceCards.forEach(function(card, i){
     card.classList.remove('reveal');
-    if(isMobile){
-      new IntersectionObserver(function(entries,obs){
-        if(entries[0].isIntersecting){ card.classList.add('visible'); obs.disconnect(); }
-      }, {threshold:0.15}).observe(card);
-      return;
-    }
     gsap.from(card, {
-      y: 80, rotationX: 8, scale: 0.9, opacity: 0, filter:'blur(8px)',
-      duration: 1.4, delay: i * 0.15, ease: 'power3.out',
+      y: isMobile ? 40 : 80, scale: isMobile ? 0.96 : 0.9, opacity: 0,
+      filter: isMobile ? 'blur(4px)' : 'blur(8px)',
+      duration: isMobile ? 0.9 : 1.4, delay: i * 0.1, ease: 'power3.out',
       scrollTrigger:{trigger:card, start:'top 90%', once:true}
     });
   });
@@ -1761,20 +1749,14 @@ if(!isMobile){
   var steps = document.querySelectorAll('.step');
   steps.forEach(function(step, i){
     step.classList.remove('reveal');
-    if(isMobile){
-      new IntersectionObserver(function(entries,obs){
-        if(entries[0].isIntersecting){ step.classList.add('visible'); obs.disconnect(); }
-      }, {threshold:0.15}).observe(step);
-      return;
-    }
     gsap.from(step, {
-      y: 60, rotationX: 5, opacity: 0, filter:'blur(4px)',
-      duration: 1.2, delay: i * 0.2, ease: 'power3.out',
+      y: isMobile ? 30 : 60, opacity: 0, filter:'blur(4px)',
+      duration: isMobile ? 0.8 : 1.2, delay: i * (isMobile ? 0.1 : 0.2), ease: 'power3.out',
       scrollTrigger:{trigger:step, start:'top 88%', once:true}
     });
   });
 
-  if(!isMobile) document.querySelectorAll('.step-num').forEach(function(num){
+  document.querySelectorAll('.step-num').forEach(function(num){
     var target = parseInt(num.textContent);
     gsap.from(num, {
       scale: 0.3, opacity: 0, duration: 1.2, ease: 'elastic.out(1,0.5)',
@@ -1831,7 +1813,7 @@ if(!isMobile){
 })();
 
 /* [#34] CONTACT DETAILS STAGGER REVEAL */
-if(!isMobile)(function(){
+(function(){
   var details = document.querySelectorAll('.contact-details > *');
   details.forEach(function(el, i){
     gsap.from(el, {
@@ -1843,7 +1825,7 @@ if(!isMobile)(function(){
 })();
 
 /* [#35] FOOTER PARALLAX */
-if(!isMobile) gsap.from('footer', {
+gsap.from('footer', {
   y: 40, opacity: 0, duration: 1,
   scrollTrigger:{trigger:'footer', start:'top 95%', once:true}
 });
