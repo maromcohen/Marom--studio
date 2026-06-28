@@ -26,7 +26,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--fg);overflow-x:hid
 
 /* NAV */
 .nav{position:fixed;top:0;inset-inline:0;z-index:100;padding:28px 48px;display:flex;align-items:center;justify-content:space-between;transition:all .6s var(--ease)}
-.nav.scrolled{padding:16px 48px;background:rgba(250,250,250,.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(0,0,0,.04)}
+.nav.scrolled{padding:16px 48px;background:rgba(250,250,250,.88);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);box-shadow:0 1px 40px rgba(0,0,0,.04)}
 .nav-logo{font-family:var(--font);font-size:1.1rem;font-weight:200;letter-spacing:.4em;text-decoration:none;color:var(--fg)}
 .nav-links{display:flex;gap:40px;align-items:center}
 .nav-links a{font-size:.75rem;font-weight:400;letter-spacing:.15em;text-transform:uppercase;text-decoration:none;color:var(--muted);transition:color .4s;position:relative}
@@ -69,7 +69,7 @@ section.content-section{padding:clamp(80px,12vw,160px) clamp(24px,6vw,120px)}
 
 /* SPLIT TEXT */
 .split-line{display:block;overflow:hidden}
-.split-line-inner{display:block;transform:translateY(110%)}
+.split-line-inner{display:block;transform:translateY(110%);filter:blur(3px)}
 
 /* ABOUT */
 .about{display:grid;grid-template-columns:1fr 1fr;gap:clamp(40px,8vw,120px);align-items:center}
@@ -79,8 +79,8 @@ section.content-section{padding:clamp(80px,12vw,160px) clamp(24px,6vw,120px)}
 .about-text p{font-size:.95rem;font-weight:300;line-height:2;color:#555;margin-top:24px}
 
 /* SERVICES */
-.services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:64px}
-.service-card{background:var(--accent-soft);padding:clamp(32px,4vw,56px);border-radius:2px;transition:all .7s var(--ease);position:relative;overflow:hidden}
+.services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:64px}
+.service-card{background:var(--accent-soft);padding:clamp(32px,4vw,56px);border-radius:12px;transition:all .7s var(--ease);position:relative;overflow:hidden}
 .service-card::before{content:"";position:absolute;inset:0;background:var(--fg);transform:scaleY(0);transform-origin:bottom;transition:transform .6s var(--ease);z-index:0}
 .service-card:hover::before{transform:scaleY(1)}
 .service-card:hover{color:#fff}
@@ -113,8 +113,8 @@ section.content-section{padding:clamp(80px,12vw,160px) clamp(24px,6vw,120px)}
 .contact{text-align:center;display:flex;flex-direction:column;align-items:center}
 .contact-title{font-size:clamp(2.5rem,5vw,4.5rem);font-weight:100;letter-spacing:.1em;line-height:1.2}
 .contact-sub{font-size:1rem;font-weight:300;color:var(--muted);margin-top:24px;line-height:1.8;max-width:450px}
-.contact-cta{display:inline-flex;align-items:center;gap:12px;margin-top:48px;padding:18px 40px;border:1px solid var(--fg);border-radius:100px;text-decoration:none;color:var(--fg);font-size:.8rem;font-weight:400;letter-spacing:.15em;text-transform:uppercase;transition:all .5s}
-.contact-cta:hover{background:var(--fg);color:var(--bg)}
+.contact-cta{display:inline-flex;align-items:center;gap:12px;margin-top:48px;padding:18px 40px;border:1px solid var(--fg);border-radius:100px;text-decoration:none;color:var(--fg);font-size:.8rem;font-weight:400;letter-spacing:.15em;text-transform:uppercase;transition:all .6s var(--ease)}
+.contact-cta:hover{background:var(--fg);color:var(--bg);transform:scale(.97);box-shadow:0 8px 40px rgba(0,0,0,.12)}
 .contact-cta svg{width:16px;height:16px;transition:transform .4s}
 .contact-cta:hover svg{transform:translateX(4px)}
 .contact-details{margin-top:64px;display:flex;gap:48px;font-size:.75rem;font-weight:300;letter-spacing:.1em;color:var(--muted)}
@@ -128,8 +128,8 @@ footer a:hover{color:var(--fg)}
 .footer-links{display:flex;gap:32px}
 
 /* REVEAL */
-.reveal{opacity:0;transform:translateY(40px);transition:all 1s var(--ease)}
-.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal{opacity:0;transform:translateY(40px);filter:blur(4px);transition:all 1.2s var(--ease)}
+.reveal.visible{opacity:1;transform:translateY(0);filter:blur(0px)}
 
 /* CURSOR */
 .cursor{position:fixed;width:20px;height:20px;border:1.5px solid rgba(0,0,0,.25);border-radius:50%;pointer-events:none;z-index:9999;mix-blend-mode:difference;will-change:transform}
@@ -480,7 +480,8 @@ function curlNoise(x,y,z){var e=.01,s=1/(2*e);return[(snoise3(x,y+e,z)-snoise3(x
   scene.add(group);
 
   /* --- Sample M shape from canvas --- */
-  var TOTAL = 600;
+  var isMobile = window.innerWidth < 768;
+  var TOTAL = isMobile ? 350 : 600;
   var mCvs = document.createElement('canvas');
   mCvs.width = 256; mCvs.height = 256;
   var mCtx = mCvs.getContext('2d');
@@ -524,33 +525,30 @@ function curlNoise(x,y,z){var e=.01,s=1/(2*e);return[(snoise3(x,y+e,z)-snoise3(x
   geo.setAttribute('aSize', new THREE.BufferAttribute(pSizes, 1));
   geo.setAttribute('aAlpha', new THREE.BufferAttribute(pAlphas, 1));
 
-  /* --- Custom ShaderMaterial: soft glow particles --- */
+  /* --- Custom ShaderMaterial: subtle dot particles --- */
+  var viewScale = Math.min(window.innerWidth, 1200) / 1000;
   var mat = new THREE.ShaderMaterial({
-    uniforms: {uOpacity:{value:0}, uTime:{value:0}},
+    uniforms: {uOpacity:{value:0}, uTime:{value:0}, uScale:{value:viewScale}},
     vertexShader: [
       'attribute float aSize;',
       'attribute float aAlpha;',
+      'uniform float uScale;',
       'varying float vAlpha;',
-      'varying float vDist;',
       'void main(){',
       '  vec4 mv = modelViewMatrix * vec4(position, 1.0);',
-      '  gl_PointSize = (5.0 * aSize) * (300.0 / -mv.z);',
+      '  gl_PointSize = (2.0 * aSize * uScale) * (100.0 / -mv.z);',
       '  vAlpha = aAlpha;',
-      '  vDist = length(position) * 0.15;',
       '  gl_Position = projectionMatrix * mv;',
       '}'
     ].join('\n'),
     fragmentShader: [
       'uniform float uOpacity;',
       'varying float vAlpha;',
-      'varying float vDist;',
       'void main(){',
       '  float d = length(gl_PointCoord - 0.5) * 2.0;',
       '  if(d > 1.0) discard;',
-      '  float core = smoothstep(0.7, 0.0, d);',
-      '  float halo = exp(-d * d * 2.5);',
-      '  float a = (core * 0.7 + halo * 0.3) * uOpacity * vAlpha;',
-      '  gl_FragColor = vec4(vec3(0.06 + vDist * 0.03), a);',
+      '  float alpha = smoothstep(1.0, 0.2, d) * uOpacity * vAlpha * 0.6;',
+      '  gl_FragColor = vec4(vec3(0.12), alpha);',
       '}'
     ].join('\n'),
     transparent: true,
@@ -581,6 +579,7 @@ function curlNoise(x,y,z){var e=.01,s=1/(2*e);return[(snoise3(x,y+e,z)-snoise3(x
     camera.aspect = window.innerWidth/window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
+    mat.uniforms.uScale.value = Math.min(window.innerWidth, 1200) / 1000;
   });
 
   window._coin = {state: coinState, group: group};
@@ -685,15 +684,15 @@ function curlNoise(x,y,z){var e=.01,s=1/(2*e);return[(snoise3(x,y+e,z)-snoise3(x
   var coin = window._coin;
 
   // Initial entrance (paused — triggered after preloader)
-  gsap.set(letters, {opacity:0, y:60});
-  gsap.set([heroEyebrow, heroSub, heroScroll], {opacity:0, y:20});
+  gsap.set(letters, {opacity:0, y:60, filter:'blur(8px)'});
+  gsap.set([heroEyebrow, heroSub, heroScroll], {opacity:0, y:20, filter:'blur(4px)'});
 
   var entrance = gsap.timeline({paused:true});
   entrance
-    .to(heroEyebrow, {opacity:1, y:0, duration:0.8, ease:'power3.out'})
-    .to(letters, {opacity:1, y:0, duration:1, stagger:0.08, ease:'power3.out'}, '<0.2')
-    .to(heroSub, {opacity:1, y:0, duration:0.8, ease:'power3.out'}, '<0.4')
-    .to(heroScroll, {opacity:1, y:0, duration:0.6, ease:'power3.out'}, '<0.3');
+    .to(heroEyebrow, {opacity:1, y:0, filter:'blur(0px)', duration:1, ease:'power3.out'})
+    .to(letters, {opacity:1, y:0, filter:'blur(0px)', duration:1.2, stagger:0.08, ease:'power3.out'}, '<0.2')
+    .to(heroSub, {opacity:1, y:0, filter:'blur(0px)', duration:1, ease:'power3.out'}, '<0.4')
+    .to(heroScroll, {opacity:1, y:0, filter:'blur(0px)', duration:0.8, ease:'power3.out'}, '<0.3');
 
   window._heroEntrance = entrance;
 
@@ -809,7 +808,7 @@ document.querySelectorAll('.section-title,.contact-title').forEach(function(titl
     trigger: title,
     start: 'top 85%',
     onEnter: function(){
-      gsap.to(inners, {y:'0%', duration:1.2, stagger:0.15, ease:'power3.out'});
+      gsap.to(inners, {y:'0%', filter:'blur(0px)', duration:1.4, stagger:0.15, ease:'power3.out'});
     },
     once: true
   });
