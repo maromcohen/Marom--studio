@@ -65,7 +65,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--fg);overflow-x:hid
 .mobile-nav.open a:nth-child(4){transition-delay:.2s}
 
 /* AMBIENT CANVAS */
-#scene3d{position:fixed;top:0;left:0;width:100%;height:100%;z-index:1;pointer-events:none}
+#scene3d{position:fixed;top:0;left:0;width:100%;height:100%;z-index:1;pointer-events:none;touch-action:none}
 
 /* ========== HERO ========== */
 .hero{height:300vh;position:relative}
@@ -296,6 +296,7 @@ html.a11y-stop *{animation:none!important;transition:none!important}
   .nav.nav-hidden{transform:translateY(-120%)}
   .nav-links{display:none}
   .burger{display:flex}
+  .hero{height:180vh}
   .about{grid-template-columns:1fr}
   .services-grid{grid-template-columns:1fr}
   .services-connector{display:none}
@@ -629,7 +630,7 @@ var inDarkSection = false;
 var scrollProgress = 0;
 
 /* ===== LENIS SMOOTH SCROLL ===== */
-var lenis = new Lenis({lerp:0.07, wheelMultiplier:0.8, smoothWheel:true});
+var lenis = new Lenis(isMobile ? {lerp:0.12, touchMultiplier:1.8, smoothWheel:true, syncTouch:true, syncTouchLerp:0.065} : {lerp:0.07, wheelMultiplier:0.8, smoothWheel:true});
 lenis.on('scroll', ScrollTrigger.update);
 gsap.ticker.add(function(t){ lenis.raf(t*1000) });
 gsap.ticker.lagSmoothing(0);
@@ -659,6 +660,7 @@ lenis.on('scroll', function(e){
 
 /* [#9] SCROLL VELOCITY SKEW + BLUR + [#12] GRAIN INTENSITY */
 (function(){
+  if(isMobile) { velocityLoop = function(){}; return; }
   var sectionWrap = document.querySelector('.section-wrap');
   var grain = document.querySelector('.grain');
   var currentSkew = 0;
@@ -805,29 +807,31 @@ document.addEventListener('mousemove', function(e){ globalMx = e.clientX; global
     scrollTrigger:{trigger:'#heroWrap', start:'12% top', end:'48% top', scrub:0.8}
   });
 
-  collapse.to(letters[1], {
+  var blurProp = isMobile ? {} : {filter:'blur(14px)'};
+  var blurBig = isMobile ? {} : {filter:'blur(28px)'};
+  collapse.to(letters[1], Object.assign({
     x: function(){ return letters[0].offsetLeft + letters[0].offsetWidth/2 - (letters[1].offsetLeft + letters[1].offsetWidth/2) },
-    opacity:0, scale:0.2, rotationY:55, filter:'blur(14px)', duration:0.5
-  }, 0.05);
-  collapse.to(letters[2], {
+    opacity:0, scale:0.2, rotationY:55, duration:0.5
+  }, blurProp), 0.05);
+  collapse.to(letters[2], Object.assign({
     x: function(){ return letters[0].offsetLeft + letters[0].offsetWidth/2 - (letters[2].offsetLeft + letters[2].offsetWidth/2) },
-    opacity:0, scale:0.2, rotationY:-40, filter:'blur(14px)', duration:0.5
-  }, 0.1);
-  collapse.to(letters[3], {
+    opacity:0, scale:0.2, rotationY:-40, duration:0.5
+  }, blurProp), 0.1);
+  collapse.to(letters[3], Object.assign({
     x: function(){ return letters[0].offsetLeft + letters[0].offsetWidth/2 - (letters[3].offsetLeft + letters[3].offsetWidth/2) },
-    opacity:0, scale:0.2, rotationY:65, filter:'blur(14px)', duration:0.5
-  }, 0.15);
-  collapse.to(letters[4], {
+    opacity:0, scale:0.2, rotationY:65, duration:0.5
+  }, blurProp), 0.15);
+  collapse.to(letters[4], Object.assign({
     x: function(){ return letters[0].offsetLeft + letters[0].offsetWidth/2 - (letters[4].offsetLeft + letters[4].offsetWidth/2) },
-    opacity:0, scale:0.2, rotationY:-50, filter:'blur(14px)', duration:0.5
-  }, 0.2);
+    opacity:0, scale:0.2, rotationY:-50, duration:0.5
+  }, blurProp), 0.2);
 
   var mDissolve = gsap.timeline({
     scrollTrigger:{trigger:'#heroWrap', start:'45% top', end:'78% top', scrub:0.8}
   });
   mDissolve
     .to(letters[0], {scale:2.5, duration:0.5}, 0)
-    .to(letters[0], {opacity:0, filter:'blur(28px)', scale:3.5, duration:0.4}, 0.35);
+    .to(letters[0], Object.assign({opacity:0, scale:3.5, duration:0.4}, blurBig), 0.35);
 
   gsap.timeline({
     scrollTrigger:{trigger:'#heroWrap', start:'72% top', end:'100% top', scrub:0.5}
@@ -1636,8 +1640,8 @@ const postShader = {
   const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 100);
   camera.position.set(0, 0, 5);
 
-  const noiseAmp = mobile ? 0.2 : 0.35;
-  const meshDetail = mobile ? 32 : 64;
+  const noiseAmp = mobile ? 0.15 : 0.35;
+  const meshDetail = mobile ? 16 : 64;
 
   function createOrgMesh(color1L, color2L, color1D, color2D, scale, pos){
     const geo = new THREE.IcosahedronGeometry(1, meshDetail);
@@ -1672,7 +1676,7 @@ const postShader = {
     createOrgMesh('#c8a0b4','#a0c8c0','#2e1a5c','#1a5c40', 0.8, [0, -0.3, -1.5])
   ];
 
-  const pCount = mobile ? 500 : 2000;
+  const pCount = mobile ? 200 : 2000;
   const pPositions = new Float32Array(pCount * 3);
   const pRandoms = new Float32Array(pCount);
   const pSizes = new Float32Array(pCount);
@@ -1741,10 +1745,14 @@ const postShader = {
 
   let w = window.innerWidth;
   let h = window.innerHeight;
+  let lastFrame = 0;
+  const frameInterval = mobile ? 33 : 0;
 
   function animate(time){
     requestAnimationFrame(animate);
     if(document.hidden) return;
+    if(mobile && time - lastFrame < frameInterval) return;
+    lastFrame = time;
 
     const t = time * 0.001;
     const sv = window.scrollVel || 0;
