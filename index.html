@@ -2091,7 +2091,7 @@ setTimeout(function(){
   /* ============ WEBGL ENGINE ============ */
   function startWebGL(){
     var THREE = window.THREE;
-    var renderer = new THREE.WebGLRenderer({canvas:canvas, alpha:true, antialias:false, powerPreference:'high-performance'});
+    var renderer = new THREE.WebGLRenderer({canvas:canvas, alpha:true, antialias:false, powerPreference: mobile ? 'low-power' : 'high-performance'});
     renderer.setClearColor(0x000000, 0);
     var DPR = Math.min(window.devicePixelRatio||1, mobile?1:2);
     renderer.setPixelRatio(DPR);
@@ -2112,7 +2112,7 @@ setTimeout(function(){
     var DEPTH = 420;
 
     /* ---- DUST (GPU shader physics) ---- */
-    var N = mobile ? 1500 : 14000;
+    var N = mobile ? 600 : 14000;
     var g = new THREE.BufferGeometry();
     var homes = new Float32Array(N*3), seeds = new Float32Array(N*3), sizes = new Float32Array(N), golds = new Float32Array(N);
     for(var i=0;i<N;i++){
@@ -2195,7 +2195,7 @@ setTimeout(function(){
     var dust = new THREE.Points(g, mat); dust.frustumCulled=false; scene.add(dust);
 
     /* ---- NODES (CPU Verlet physics) + constellation lines ---- */
-    var NN = mobile ? 34 : 120;
+    var NN = mobile ? 18 : 120;
     var nx=new Float32Array(NN), ny=new Float32Array(NN), px=new Float32Array(NN), py=new Float32Array(NN);
     var hx=new Float32Array(NN), hy=new Float32Array(NN);
     for(var k=0;k<NN;k++){
@@ -2256,10 +2256,12 @@ setTimeout(function(){
       uniforms.uMouse.value.set(smX, smY);
       uniforms.uScroll.value = scrollN;
 
-      // camera subtle parallax with mouse
-      cam.position.x += ((smX*0.04) - cam.position.x)*0.04;
-      cam.position.y += ((smY*0.04) - cam.position.y)*0.04;
-      cam.lookAt(0,0,0);
+      // camera subtle parallax with mouse (desktop only)
+      if(!mobile){
+        cam.position.x += ((smX*0.04) - cam.position.x)*0.04;
+        cam.position.y += ((smY*0.04) - cam.position.y)*0.04;
+        cam.lookAt(0,0,0);
+      }
 
       if(!isPaused && (!mobile || (wfc&1)===0)){
         // ---- CPU node physics (Verlet) ----  (half-rate on mobile)
