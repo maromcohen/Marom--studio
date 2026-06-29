@@ -1,6 +1,9 @@
 ---
 name: test-driven-development
-description: Use when implementing any feature or bugfix, before writing implementation code
+description: "Use when implementing any feature or bugfix, before writing implementation code"
+risk: unknown
+source: community
+date_added: "2026-02-27"
 ---
 
 # Test-Driven Development (TDD)
@@ -14,7 +17,6 @@ Write the test first. Watch it fail. Write minimal code to pass.
 **Violating the letter of the rules is violating the spirit of the rules.**
 
 ## When to Use
-
 **Always:**
 - New features
 - Bug fixes
@@ -356,7 +358,7 @@ Never fix bugs without a test.
 
 ## Testing Anti-Patterns
 
-When adding mocks or test utilities, read [testing-anti-patterns.md](testing-anti-patterns.md) to avoid common pitfalls:
+When adding mocks or test utilities, read @testing-anti-patterns.md to avoid common pitfalls:
 - Testing mock behavior instead of real behavior
 - Adding test-only methods to production classes
 - Mocking without understanding dependencies
@@ -369,3 +371,8 @@ Otherwise → not TDD
 ```
 
 No exceptions without your human partner's permission.
+
+## Limitations
+- Use this skill only when the task clearly matches the scope described above.
+- Do not treat the output as a substitute for environment-specific validation, testing, or expert review.
+- Stop and ask for clarification if required inputs, permissions, safety boundaries, or success criteria are missing.
