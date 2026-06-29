@@ -518,8 +518,8 @@ html[dir="rtl"] .work-view{right:auto;left:16px}
 <div class="hero" id="heroWrap">
   <div class="hero-pin">
     <div class="hero-mesh">
-      <video id="heroBgVid" muted playsinline autoplay loop preload="metadata"
-             style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-1;opacity:0;transition:opacity 1.5s ease;will-change:opacity">
+      <video id="heroBgVid" muted playsinline autoplay loop preload="auto"
+             style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.5s ease;will-change:opacity">
         <source src="https://d8j0ntlcm91z4.cloudfront.net/user_3FiJmqy12NASFK67PFaBPuFwpXv/hf_20260629_040649_18a58320-c98a-4740-a823-08d24186730a.mp4" type="video/mp4">
       </video>
       <div class="hero-orb hero-orb--1"></div>
@@ -1800,8 +1800,11 @@ setTimeout(function(){
   if(!v) return;
   var shown = false;
   function showVid(){ if(shown) return; shown=true; v.style.opacity='0.38'; }
-  v.addEventListener('canplay', function(){ setTimeout(showVid, 2500); }, {once:true});
-  v.play().catch(function(){ /* autoplay blocked — video stays hidden */ });
+  /* guaranteed fade-in 3s after load — doesn't rely on canplay timing */
+  setTimeout(showVid, 3000);
+  /* also trigger on canplay for slower connections */
+  v.addEventListener('canplay', function(){ setTimeout(showVid, 2600); }, {once:true});
+  v.play().catch(function(){});
 })();
 </script>
 
