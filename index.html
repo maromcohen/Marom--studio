@@ -372,9 +372,9 @@ html.a11y-stop *{animation:none!important;transition:none!important}
 }
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
-  #heroBgVid{display:none}
+  #heroBgVid,#imgSeq,#seqVid{display:none}
 }
-@media(max-width:767px){#heroBgVid{display:none}}
+@media(max-width:767px){#heroBgVid,#imgSeq,#seqVid{display:none}}
 :focus-visible{outline:3px solid var(--fg);outline-offset:4px}
 
 /* ===== APPROACH / MANIFESTO ===== */
@@ -521,6 +521,10 @@ html[dir="rtl"] .work-view{right:auto;left:16px}
       <video id="heroBgVid" muted playsinline autoplay loop preload="auto"
              style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.8s ease">
         <source src="https://d8j0ntlcm91z4.cloudfront.net/user_3FiJmqy12NASFK67PFaBPuFwpXv/hf_20260629_040649_18a58320-c98a-4740-a823-08d24186730a.mp4" type="video/mp4">
+      </video>
+      <canvas id="imgSeq" style="position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity 1.5s ease;pointer-events:none"></canvas>
+      <video id="seqVid" muted playsinline preload="auto" style="display:none;position:absolute">
+        <source src="https://d8j0ntlcm91z4.cloudfront.net/user_3FiJmqy12NASFK67PFaBPuFwpXv/hf_20260629_161121_f3b36c7a-1e8f-4d84-901c-f3019c131201.mp4" type="video/mp4">
       </video>
       <div class="hero-orb hero-orb--1"></div>
       <div class="hero-orb hero-orb--2"></div>
@@ -1794,15 +1798,63 @@ setTimeout(function(){
   }, 500);
 }, 2200);
 
-/* hero background video — fade in during preloader exit, desktop only */
+/* hero ambient video — fallback / mobile (loops silently) */
 (function(){
   var v = document.getElementById('heroBgVid');
   if(!v) return;
   var shown = false;
   function showVid(){ if(shown) return; shown=true; v.style.opacity='0.65'; }
-  /* fire at 1500ms so 1.8s transition completes just as preloader (2200ms) exits */
   setTimeout(showVid, 1500);
   v.play().catch(function(){});
+})();
+
+/* hero scroll-sequence — desktop only, canvas scrubs through cinematic video */
+(function(){
+  if(innerWidth < 768) return;
+  var canvas = document.getElementById('imgSeq');
+  var video  = document.getElementById('seqVid');
+  if(!canvas || !video) return;
+  var ctx = canvas.getContext('2d');
+  var ready = false;
+
+  function resize(){
+    canvas.width  = innerWidth;
+    canvas.height = innerHeight;
+    if(ready) ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  /* draw after each seek completes */
+  video.addEventListener('seeked', function(){
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+  });
+
+  video.addEventListener('canplaythrough', function(){
+    ready = true;
+    /* show canvas, fade out the looping ambient */
+    canvas.style.opacity = '0.65';
+    var bg = document.getElementById('heroBgVid');
+    if(bg){ bg.style.transition='opacity 0.8s ease'; bg.style.opacity='0'; bg.pause(); }
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    initScrub();
+  }, {once:true});
+
+  video.load();
+
+  function initScrub(){
+    if(typeof ScrollTrigger === 'undefined') return;
+    var dur = video.duration || 8;
+    ScrollTrigger.create({
+      trigger: '#heroWrap',
+      start: 'top top',
+      end: 'bottom bottom',
+      scrub: 0.8,
+      onUpdate: function(self){
+        video.currentTime = self.progress * dur;
+      }
+    });
+  }
 })();
 </script>
 
