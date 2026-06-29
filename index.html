@@ -372,7 +372,9 @@ html.a11y-stop *{animation:none!important;transition:none!important}
 }
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+  #heroBgVid{display:none}
 }
+@media(max-width:767px){#heroBgVid{display:none}}
 :focus-visible{outline:3px solid var(--fg);outline-offset:4px}
 
 /* ===== APPROACH / MANIFESTO ===== */
@@ -516,6 +518,10 @@ html[dir="rtl"] .work-view{right:auto;left:16px}
 <div class="hero" id="heroWrap">
   <div class="hero-pin">
     <div class="hero-mesh">
+      <video id="heroBgVid" muted playsinline autoplay loop preload="metadata"
+             style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-1;opacity:0;transition:opacity 1.5s ease;will-change:opacity">
+        <source src="https://d8j0ntlcm91z4.cloudfront.net/user_3FiJmqy12NASFK67PFaBPuFwpXv/hf_20260629_040649_18a58320-c98a-4740-a823-08d24186730a.mp4" type="video/mp4">
+      </video>
       <div class="hero-orb hero-orb--1"></div>
       <div class="hero-orb hero-orb--2"></div>
       <div class="hero-orb hero-orb--3"></div>
@@ -1787,6 +1793,16 @@ setTimeout(function(){
     if(window._heroEntrance) window._heroEntrance.play();
   }, 500);
 }, 2200);
+
+/* hero background video — fade in after preloader, desktop only */
+(function(){
+  var v = document.getElementById('heroBgVid');
+  if(!v) return;
+  var shown = false;
+  function showVid(){ if(shown) return; shown=true; v.style.opacity='0.38'; }
+  v.addEventListener('canplay', function(){ setTimeout(showVid, 2500); }, {once:true});
+  v.play().catch(function(){ /* autoplay blocked — video stays hidden */ });
+})();
 </script>
 
 <!-- ===== EXTRA MOTION — magnetic buttons + tilt ===== -->
