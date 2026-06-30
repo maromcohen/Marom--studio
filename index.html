@@ -528,10 +528,7 @@ html[dir="rtl"] .work-view{right:auto;left:16px}
 <div class="hero" id="heroWrap">
   <div class="hero-pin">
     <div class="hero-mesh">
-      <video id="heroBgVid" muted playsinline autoplay loop preload="auto"
-             style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.8s ease">
-        <source src="https://d8j0ntlcm91z4.cloudfront.net/user_3FiJmqy12NASFK67PFaBPuFwpXv/hf_20260630_172110_7c6ffccb-1e6a-4e7f-b667-982929c1a26b.mp4" type="video/mp4">
-      </video>
+      <!-- crystal video removed — the iridescent world is the hero -->
       <canvas id="imgSeq" style="position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity 1.5s ease;pointer-events:none"></canvas>
       <video id="seqVid" muted playsinline preload="none" style="display:none;position:absolute">
         <source src="https://d8j0ntlcm91z4.cloudfront.net/user_3FiJmqy12NASFK67PFaBPuFwpXv/hf_20260629_161121_f3b36c7a-1e8f-4d84-901c-f3019c131201.mp4" type="video/mp4">
@@ -2224,7 +2221,7 @@ setTimeout(function(){
       'attribute vec3 aSeed; attribute float aSize; attribute float aGold;',
       'uniform float uTime; uniform vec2 uHalf; uniform float uDepth;',
       'uniform vec2 uMouse; uniform float uMouseR; uniform float uScroll; uniform float uPR; uniform float uIgnite; uniform float uSizeK;',
-      'varying float vGold; varying float vA;',
+      'varying float vGold; varying float vA; varying float vHue;',
       'void main(){',
       '  vec3 pos = vec3(position.x*uHalf.x, position.y*uHalf.y, position.z*uDepth);',
       '  float t = uTime;',
@@ -2251,6 +2248,7 @@ setTimeout(function(){
       '  gl_PointSize = sz * uPR * uSizeK * (760.0 / max(1.0,-mv.z)) * (0.6+depthN*0.8);',
       '  gl_Position = projectionMatrix * mv;',
       '  vGold = aGold;',
+      '  vHue = aSeed.x + position.y*0.15 + t*0.03;',     // iridescent hue per grain, drifting
       '  float flash = 1.0 + (1.0-ig)*1.6;',              // brief over-bright during ignite
       '  vA = (0.45 + 0.55*sin(t*0.6 + aSeed.x*10.0)) * (0.5+depthN*0.5) * (0.25+0.75*ig) * flash;',
       '}'
@@ -2258,7 +2256,8 @@ setTimeout(function(){
 
     var fsh = [
       'precision mediump float;',
-      'uniform float uOpacity; varying float vGold; varying float vA;',
+      'uniform float uOpacity; varying float vGold; varying float vA; varying float vHue;',
+      'vec3 pal(float t){ return 0.55 + 0.45*cos(6.28318*(t + vec3(0.0,0.33,0.67))); }',
       'void main(){',
       '  float d = length(gl_PointCoord - vec2(0.5));',
       '  if(d>0.5) discard;',
@@ -2266,9 +2265,9 @@ setTimeout(function(){
       '  float core = pow(smoothstep(0.5, 0.0, d), 1.6);',
       '  float halo = pow(max(0.0, 1.0 - d*2.0), 2.2);',
       '  float a = core + halo*0.55;',
-      '  vec3 gold = vec3(0.95,0.80,0.42);',
-      '  vec3 cream= vec3(0.97,0.94,0.88);',
-      '  vec3 col = mix(cream, gold, vGold) * (1.0 + vGold*0.6);',   // gold over-bright (additive bloom)
+      '  vec3 iri = pal(vHue);',                                    // iridescent hue
+      '  vec3 white = vec3(0.97,0.96,1.0);',
+      '  vec3 col = mix(white, iri, 0.55 + vGold*0.45) * (1.0 + vGold*0.5);',
       '  gl_FragColor = vec4(col, a*vA*uOpacity);',
       '}'
     ].join('\n');
@@ -2291,7 +2290,7 @@ setTimeout(function(){
     var ng = new THREE.BufferGeometry();
     var npos = new Float32Array(NN*3);
     ng.setAttribute('position', new THREE.BufferAttribute(npos,3));
-    var nmat = new THREE.PointsMaterial({color:0xe8c97a, size:mobile?7:9, sizeAttenuation:false, transparent:true, opacity:0.9, depthTest:false, depthWrite:false, blending:THREE.AdditiveBlending});
+    var nmat = new THREE.PointsMaterial({color:0x9ad8ff, size:mobile?7:9, sizeAttenuation:false, transparent:true, opacity:0.9, depthTest:false, depthWrite:false, blending:THREE.AdditiveBlending});
     var nodePts = new THREE.Points(ng, nmat); nodePts.frustumCulled=false; scene.add(nodePts);
     // lines
     var maxLines = NN*7;
@@ -2552,7 +2551,7 @@ setTimeout(function(){
               var o=li*6;
               lpos[o]=nx[k]; lpos[o+1]=ny[k]; lpos[o+2]=DEPTH*0.25;
               lpos[o+3]=nx[j]; lpos[o+4]=ny[j]; lpos[o+5]=DEPTH*0.25;
-              lcol[o]=0.91*a; lcol[o+1]=0.79*a; lcol[o+2]=0.46*a;
+              lcol[o]=0.55*a; lcol[o+1]=0.78*a; lcol[o+2]=1.0*a;
               lcol[o+3]=lcol[o]; lcol[o+4]=lcol[o+1]; lcol[o+5]=lcol[o+2];
               li++;
             }
