@@ -33,8 +33,8 @@
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{
   --bg:#08070a;--fg:#f3ede0;--muted:#9a9488;--subtle:rgba(255,255,255,.12);
-  --accent:#e8c97a;--accent-soft:rgba(232,201,122,.07);
-  --gold:#e8c97a;--gold-deep:#c8a04a;--gold-soft:rgba(232,201,122,.18);
+  --accent:#86d8ff;--accent-soft:rgba(134,216,255,.08);
+  --gold:#b9a0ff;--gold-deep:#7aa6ff;--gold-soft:rgba(160,150,255,.18);
   --font:'Inter',sans-serif;--serif:'Marcellus',serif;
   --ease:cubic-bezier(.32,.72,0,1);
   /* iridescent / holographic palette */
@@ -130,7 +130,7 @@ html[dir="rtl"] .contact-details{direction:ltr}
 @keyframes scrollBounce{0%,100%{transform:translateY(0);opacity:.6}50%{transform:translateY(8px);opacity:1}}
 
 /* ========== SECTION WRAP ========== */
-.section-wrap{position:relative;z-index:3;background:rgba(11,10,14,0.62);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);border-radius:40px 40px 0 0;box-shadow:0 -20px 80px rgba(0,0,0,.5),0 -1px 0 rgba(232,201,122,.12)}
+.section-wrap{position:relative;z-index:3;background:transparent;border-radius:0}
 
 /* MARQUEE STRIP */
 .marquee{overflow:hidden;white-space:nowrap;padding:28px 0;border-bottom:1px solid var(--subtle);position:relative}
@@ -141,11 +141,11 @@ html[dir="rtl"] .contact-details{direction:ltr}
 .marquee-track.reverse{animation-direction:reverse}
 
 /* SECTION BG TEXT */
-.section-bg-text{position:absolute;top:50%;left:0;font-size:clamp(6rem,18vw,16rem);font-weight:100;color:rgba(232,201,122,.05);letter-spacing:.08em;white-space:nowrap;pointer-events:none;will-change:transform;user-select:none;line-height:1;transform:translateY(-50%)}
+.section-bg-text{position:absolute;top:50%;left:0;font-size:clamp(6rem,18vw,16rem);font-weight:100;color:rgba(200,210,255,.045);letter-spacing:.08em;white-space:nowrap;pointer-events:none;will-change:transform;user-select:none;line-height:1;transform:translateY(-50%)}
 
-/* SECTIONS — OVERLAP TRANSITIONS */
-section.content-section{padding:clamp(80px,12vw,160px) clamp(24px,6vw,120px);position:relative;overflow:hidden}
-section.content-section+section.content-section{margin-top:-24px;border-radius:32px 32px 0 0;box-shadow:0 -10px 40px rgba(0,0,0,.4);background:rgba(11,10,14,0.62)}
+/* SECTIONS — CINEMATIC ONE-PAGE: each a full-screen moment over the continuous 3D world */
+section.content-section{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:clamp(80px,12vw,160px) clamp(24px,6vw,120px);position:relative;overflow:hidden;background:radial-gradient(ellipse 82% 62% at 50% 48%, rgba(6,6,11,.74) 0%, rgba(6,6,11,.42) 46%, transparent 82%)}
+section.content-section+section.content-section{margin-top:0;border-radius:0;box-shadow:none;background:radial-gradient(ellipse 82% 62% at 50% 48%, rgba(6,6,11,.74) 0%, rgba(6,6,11,.42) 46%, transparent 82%)}
 #about{z-index:1}#services{z-index:2}#work{z-index:3}#process{z-index:4}#contact{z-index:5}
 .section-snap-line{position:absolute;top:0;left:10%;right:10%;height:1px;background:var(--fg);opacity:0;pointer-events:none}
 .section-eyebrow{font-size:.6rem;font-weight:400;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);margin-bottom:20px}
@@ -273,7 +273,7 @@ footer a{text-decoration:none;transition:color .3s,transform .4s var(--ease)}
 .thread{position:fixed;top:0;left:22px;width:84px;height:100vh;height:100dvh;z-index:5;pointer-events:none;opacity:0;transition:opacity 1.2s var(--ease);overflow:visible}
 .thread.on{opacity:1}
 html[dir="rtl"] .thread{left:auto;right:22px}
-.thread-comet{position:fixed;top:0;left:0;width:9px;height:9px;border-radius:50%;background:#fff6e0;z-index:5;pointer-events:none;opacity:0;transform:translate(-50%,-50%);box-shadow:0 0 8px 2px rgba(232,201,122,.9),0 0 18px 6px rgba(232,201,122,.45);transition:opacity 1.2s var(--ease)}
+.thread-comet{position:fixed;top:0;left:0;width:9px;height:9px;border-radius:50%;background:#eaf6ff;z-index:5;pointer-events:none;opacity:0;transform:translate(-50%,-50%);box-shadow:0 0 8px 2px rgba(160,180,255,.9),0 0 18px 6px rgba(180,150,255,.45);transition:opacity 1.2s var(--ease)}
 .thread.on ~ .thread-comet,.thread-comet.on{opacity:1}
 @media(max-width:768px){.thread{left:6px;width:40px}html[dir="rtl"] .thread{left:auto;right:6px}}
 
@@ -368,9 +368,10 @@ html.a11y-stop *{animation:none!important;transition:none!important}
   .work-card{flex:none;width:100%}
   .work-drag-hint{display:none}
   .work-progress{display:none}
-  .section-wrap{border-radius:24px 24px 0 0}
-  section.content-section+section.content-section{margin-top:-12px;border-radius:24px 24px 0 0}
-  #contact.contact-dark{border-radius:24px 24px 0 0}
+  .section-wrap{border-radius:0}
+  section.content-section{min-height:auto;padding-top:clamp(64px,16vw,110px);padding-bottom:clamp(64px,16vw,110px)}
+  section.content-section+section.content-section{margin-top:0;border-radius:0}
+  #contact.contact-dark{border-radius:0}
   .section-bg-text{font-size:clamp(4rem,16vw,8rem)}
   .marquee-item{padding:0 24px;gap:24px}
 }
@@ -441,8 +442,8 @@ html[dir="rtl"] .work-view{right:auto;left:16px}
   /* perf: heavy GPU blurs are expensive on phones */
   .hero-orb{filter:blur(55px);opacity:.16}
   .hero-orb--3{display:none}
-  .section-wrap{backdrop-filter:none;-webkit-backdrop-filter:none;background:rgba(11,10,14,.82)}
-  section.content-section+section.content-section{background:rgba(11,10,14,.82)}
+  .section-wrap{backdrop-filter:none;-webkit-backdrop-filter:none;background:transparent}
+  section.content-section,section.content-section+section.content-section{background:radial-gradient(ellipse 95% 60% at 50% 48%, rgba(6,6,11,.85) 0%, rgba(6,6,11,.55) 52%, transparent 88%)}
   .grain{opacity:.03}
 }
 @media(hover:none){ .cursor,.cursor-dot,.cursor-label,.cursor-trail{display:none!important} }
@@ -486,10 +487,11 @@ html[dir="rtl"] .work-view{right:auto;left:16px}
 <svg class="thread" id="goldThread" viewBox="0 0 80 1000" preserveAspectRatio="none" aria-hidden="true">
   <defs>
     <linearGradient id="threadGrad" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#e8c97a" stop-opacity="0"/>
-      <stop offset=".12" stop-color="#e8c97a" stop-opacity=".85"/>
-      <stop offset=".88" stop-color="#c8a04a" stop-opacity=".85"/>
-      <stop offset="1" stop-color="#c8a04a" stop-opacity="0"/>
+      <stop offset="0" stop-color="#86d8ff" stop-opacity="0"/>
+      <stop offset=".12" stop-color="#86d8ff" stop-opacity=".85"/>
+      <stop offset=".5" stop-color="#b9a0ff" stop-opacity=".85"/>
+      <stop offset=".88" stop-color="#ff9ed8" stop-opacity=".85"/>
+      <stop offset="1" stop-color="#ff9ed8" stop-opacity="0"/>
     </linearGradient>
     <filter id="threadGlow" x="-200%" y="-50%" width="500%" height="200%"><feGaussianBlur stdDeviation="2.4"/></filter>
   </defs>
