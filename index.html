@@ -37,7 +37,14 @@
   --gold:#e8c97a;--gold-deep:#c8a04a;--gold-soft:rgba(232,201,122,.18);
   --font:'Inter',sans-serif;--serif:'Marcellus',serif;
   --ease:cubic-bezier(.32,.72,0,1);
+  /* iridescent / holographic palette */
+  --iri-a:#b38bff;--iri-b:#5ad1ff;--iri-c:#ff8fd8;--iri-d:#9affd6;--iri-e:#ffd98f;
+  --iri-grad:linear-gradient(110deg,var(--iri-a),var(--iri-b),var(--iri-c),var(--iri-d),var(--iri-e),var(--iri-a));
 }
+/* holographic animated text */
+.iri-text{background:var(--iri-grad);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;animation:iriShift 9s linear infinite}
+@keyframes iriShift{to{background-position:300% 50%}}
+@media(prefers-reduced-motion:reduce){.iri-text{animation:none}}
 html{font-size:16px;overflow-x:hidden}
 body{font-family:var(--font);background:var(--bg);color:var(--fg);overflow-x:hidden;-webkit-font-smoothing:antialiased}
 /* ===== HEBREW / RTL ===== */
@@ -60,7 +67,7 @@ html[dir="rtl"] .contact-details{direction:ltr}
 .skip:focus{top:0}
 
 /* SCROLL PROGRESS */
-.scroll-progress{position:fixed;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold-deep),var(--gold));z-index:201;transform-origin:left;transform:scaleX(0);will-change:transform;pointer-events:none}
+.scroll-progress{position:fixed;top:0;left:0;right:0;height:2px;background:var(--iri-grad);background-size:300% 100%;z-index:201;transform-origin:left;transform:scaleX(0);will-change:transform;pointer-events:none;animation:iriShift 9s linear infinite}
 
 /* NAV — FLOATING ISLAND */
 .nav{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:100;padding:14px 32px;display:flex;align-items:center;justify-content:space-between;gap:40px;max-width:fit-content;border-radius:100px;background:rgba(14,12,16,.55);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(232,201,122,.14);box-shadow:0 4px 30px rgba(0,0,0,.4);transition:all .6s var(--ease)}
@@ -68,7 +75,7 @@ html[dir="rtl"] .contact-details{direction:ltr}
 .nav.nav-hidden{transform:translateX(-50%) translateY(-120%)}
 .nav.inverted{background:rgba(14,12,16,.55);border-color:rgba(232,201,122,.14)}
 .nav.inverted.scrolled{background:rgba(14,12,16,.82)}
-.nav-logo{font-family:var(--font);font-size:1.1rem;font-weight:200;letter-spacing:.4em;text-decoration:none;color:var(--fg);animation:logoBreathe 4s ease-in-out infinite}
+.nav-logo{font-family:var(--serif);font-size:1.2rem;font-weight:400;letter-spacing:.42em;text-decoration:none;background:var(--iri-grad);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;animation:iriShift 9s linear infinite}
 .nav-logo.no-breathe{animation:none}
 @keyframes logoBreathe{0%,100%{transform:scale(1)}50%{transform:scale(1.015)}}
 .nav-links{display:flex;gap:40px;align-items:center}
@@ -449,7 +456,10 @@ html[dir="rtl"] .work-view{right:auto;left:16px}
   <div class="preloader-bottom"></div>
   <div class="preloader-content">
     <svg viewBox="0 0 120 100" width="120" height="100">
-      <path class="preloader-path" d="M15,85 L15,15 L50,55 L85,15 L85,85" fill="none" stroke="#e8c97a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <defs><linearGradient id="iriGrad" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#b38bff"/><stop offset="0.5" stop-color="#5ad1ff"/><stop offset="1" stop-color="#ff8fd8"/>
+      </linearGradient></defs>
+      <path class="preloader-path" d="M15,85 L15,15 L50,55 L85,15 L85,85" fill="none" stroke="url(#iriGrad)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
     <span class="preloader-counter" id="preloaderCount">0%</span>
   </div>
@@ -530,7 +540,7 @@ html[dir="rtl"] .work-view{right:auto;left:16px}
       <div class="hero-orb hero-orb--2"></div>
       <div class="hero-orb hero-orb--3"></div>
     </div>
-    <span class="hero-eyebrow" id="heroEyebrow" data-i18n="hero.eyebrow">Digital Studio · Tel Aviv</span>
+    <span class="hero-eyebrow iri-text" id="heroEyebrow" data-i18n="hero.eyebrow">Digital Studio · Tel Aviv</span>
     <div class="hero-letters" id="heroLetters">
       <span class="hero-letter" data-char="M">M</span>
       <span class="hero-letter" data-char="A">A</span>
