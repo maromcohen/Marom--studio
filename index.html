@@ -118,10 +118,10 @@ html[dir="rtl"] .contact-details{direction:ltr}
 @keyframes orbFloat2{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(-25px,20px) scale(.94)}66%{transform:translate(20px,-20px) scale(1.05)}}
 @keyframes orbFloat3{0%,100%{transform:translateX(-50%) scale(1)}50%{transform:translateX(-50%) translate(15px,-30px) scale(1.08)}}
 
-.hero-letters{display:none;align-items:center;justify-content:center;gap:0;position:relative;z-index:2;perspective:1000px;transform-style:preserve-3d;direction:ltr}
-.hero-letters::before{content:"";position:absolute;left:50%;top:50%;width:120%;height:160%;transform:translate(-50%,-50%);background:radial-gradient(ellipse at center,rgba(232,201,122,.18) 0%,rgba(232,201,122,.06) 35%,transparent 70%);filter:blur(30px);pointer-events:none;z-index:-1;animation:heroHalo 6s ease-in-out infinite}
+.hero-letters{display:flex;align-items:center;justify-content:center;gap:0;position:relative;z-index:2;perspective:1000px;transform-style:preserve-3d;direction:ltr}
+.hero-letters::before{content:"";position:absolute;left:50%;top:50%;width:120%;height:160%;transform:translate(-50%,-50%);background:radial-gradient(ellipse at center,rgba(120,180,255,.16) 0%,rgba(179,139,255,.06) 35%,transparent 70%);filter:blur(34px);pointer-events:none;z-index:-1;animation:heroHalo 6s ease-in-out infinite}
 @keyframes heroHalo{0%,100%{opacity:.7;transform:translate(-50%,-50%) scale(1)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.06)}}
-.hero-letter{font-family:var(--font);font-size:clamp(4rem,12vw,10rem);font-weight:100;letter-spacing:.05em;line-height:1;display:inline-block;will-change:transform,opacity;transform-style:preserve-3d;background:linear-gradient(105deg,#f3ede0 0%,#f3ede0 38%,#e8c97a 50%,#fff6e0 56%,#f3ede0 64%,#f3ede0 100%);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;animation:goldSheen 7s ease-in-out infinite}
+.hero-letter{font-family:var(--serif);font-size:clamp(4rem,13vw,11rem);font-weight:400;letter-spacing:.06em;line-height:1;display:inline-block;will-change:transform,opacity;transform-style:preserve-3d;background:var(--iri-grad);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;animation:iriShift 9s linear infinite}
 @keyframes goldSheen{0%{background-position:120% 0}100%{background-position:-20% 0}}
 .hero-eyebrow{font-size:.65rem;font-weight:400;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);margin-bottom:32px;position:relative;z-index:2}
 .hero-sub{font-size:clamp(.9rem,1.5vw,1.1rem);font-weight:300;color:var(--muted);margin-top:32px;line-height:1.8;max-width:500px;text-align:center;position:relative;z-index:2}
