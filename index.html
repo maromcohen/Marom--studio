@@ -2490,15 +2490,31 @@ setTimeout(function(){
       flash.style.cssText = 'position:fixed;inset:0;z-index:50;pointer-events:none;opacity:0;mix-blend-mode:screen;will-change:opacity;background:rgb(179,139,255)';
       document.body.appendChild(flash);
 
-      // the six worlds (hero + 5 sections): tint, cos amplitude, hue offset, flash colour
+      // cinematic per-world backdrop (AI-generated environments) — two crossfading layers behind the canvas
+      var CDN = 'https://d8j0ntlcm91z4.cloudfront.net/user_3FiJmqy12NASFK67PFaBPuFwpXv/';
+      var BG_OP = mobile ? 0.42 : 0.55;
+      function mkBgLayer(){ var d=document.createElement('div');
+        d.style.cssText='position:fixed;inset:0;z-index:1;pointer-events:none;opacity:0;background-size:cover;background-position:center;transition:opacity 1.1s ease;will-change:opacity';
+        document.body.appendChild(d); return d; }
+      var bgLayers=[mkBgLayer(), mkBgLayer()], bgActive=0, lastBg=-1;
+      function setWorldBg(idx, url){
+        if(idx===lastBg) return; lastBg=idx;
+        var cur=bgLayers[bgActive], nxt=bgLayers[1-bgActive];
+        if(!url){ cur.style.opacity='0'; return; }
+        nxt.style.backgroundImage="url('"+url+"')"; nxt.style.opacity=BG_OP; cur.style.opacity='0'; bgActive=1-bgActive;
+      }
+
+      // the six worlds (hero + 5 sections): palette + flash + AI backdrop (world 0 = pure void)
       var WORLDS = [
-        {tint:[0.62,0.55,0.78], sat:0.30, hue:0.72, flash:'179,139,255'}, // hero — iridescent
-        {tint:[0.26,0.55,0.55], sat:0.26, hue:0.45, flash:'90,209,255'},  // about — teal
-        {tint:[0.60,0.24,0.52], sat:0.40, hue:0.86, flash:'255,90,200'},  // services — neon magenta
-        {tint:[0.34,0.60,0.32], sat:0.40, hue:0.30, flash:'120,255,140'}, // work — neon green
-        {tint:[0.30,0.42,0.70], sat:0.32, hue:0.60, flash:'90,140,255'},  // process — electric blue
-        {tint:[0.64,0.52,0.30], sat:0.28, hue:0.10, flash:'255,210,140'}  // contact — gold finale
+        {tint:[0.62,0.55,0.78], sat:0.30, hue:0.72, flash:'179,139,255', bg:null}, // hero — iridescent void
+        {tint:[0.26,0.55,0.55], sat:0.26, hue:0.45, flash:'90,209,255',  bg:CDN+'hf_20260630_191502_e36683e7-9df5-4f1c-af2e-5e727a682397_min.webp'}, // about — teal fluid
+        {tint:[0.60,0.24,0.52], sat:0.40, hue:0.86, flash:'255,90,200',  bg:CDN+'hf_20260630_191512_bea5b1af-6cbe-4973-b438-20774552f43c_min.webp'}, // services — magenta lattice
+        {tint:[0.34,0.60,0.32], sat:0.40, hue:0.30, flash:'120,255,140', bg:CDN+'hf_20260630_191513_83acd9f8-e213-4a66-be61-bea8dc561257_min.webp'}, // work — neon green
+        {tint:[0.30,0.42,0.70], sat:0.32, hue:0.60, flash:'90,140,255',  bg:CDN+'hf_20260630_191521_c8f0b364-6f41-4a5e-96ac-8070a5fb7b83_min.webp'}, // process — electric blue
+        {tint:[0.64,0.52,0.30], sat:0.28, hue:0.10, flash:'255,210,140', bg:CDN+'hf_20260630_191523_fd491970-6fb9-4f86-805f-574a20e6d88a_min.webp'}  // contact — gold summit
       ];
+      // preload backdrops so world entries don't pop
+      WORLDS.forEach(function(w){ if(w.bg){ var im=new Image(); im.src=w.bg; } });
       var IDS = ['heroWrap','about','services','work','process','contact'];
       var tops = [];
       function measure(){
@@ -2516,7 +2532,7 @@ setTimeout(function(){
         var focus = (window.scrollY||0) + innerHeight*0.5;
         var wi=0; for(var k=0;k<6;k++){ if(focus >= tops[k]) wi=k; }
         wi = Math.max(0, Math.min(5, wi));
-        if(wi !== lastWorld){ reseed(); lastWorld = wi; }
+        if(wi !== lastWorld){ reseed(); setWorldBg(wi, WORLDS[wi].bg); lastWorld = wi; }
         var W = WORLDS[wi];
 
         // smooth warp of the shared palette toward the current world's colour
