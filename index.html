@@ -111,6 +111,8 @@ html[dir="rtl"] .contact-details{direction:ltr}
 @keyframes orbFloat2{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(-25px,20px) scale(.94)}66%{transform:translate(20px,-20px) scale(1.05)}}
 @keyframes orbFloat3{0%,100%{transform:translateX(-50%) scale(1)}50%{transform:translateX(-50%) translate(15px,-30px) scale(1.08)}}
 
+#crystalHero{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(46vw,440px);max-width:88vw;z-index:1;opacity:0;pointer-events:none;will-change:transform,opacity;mix-blend-mode:screen;filter:drop-shadow(0 0 50px rgba(232,201,122,.30));transition:opacity .12s linear}
+@media(max-width:767px){#crystalHero{width:min(72vw,360px)}}
 .hero-letters{display:flex;align-items:center;justify-content:center;gap:0;position:relative;z-index:2;perspective:1000px;transform-style:preserve-3d;direction:ltr}
 .hero-letters::before{content:"";position:absolute;left:50%;top:50%;width:120%;height:160%;transform:translate(-50%,-50%);background:radial-gradient(ellipse at center,rgba(232,201,122,.18) 0%,rgba(232,201,122,.06) 35%,transparent 70%);filter:blur(30px);pointer-events:none;z-index:-1;animation:heroHalo 6s ease-in-out infinite}
 @keyframes heroHalo{0%,100%{opacity:.7;transform:translate(-50%,-50%) scale(1)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.06)}}
@@ -530,6 +532,7 @@ html[dir="rtl"] .work-view{right:auto;left:16px}
       <div class="hero-orb hero-orb--2"></div>
       <div class="hero-orb hero-orb--3"></div>
     </div>
+    <img id="crystalHero" src="https://d2ol7oe51mr4n9.cloudfront.net/user_3FiJmqy12NASFK67PFaBPuFwpXv/5b1378dc-50be-41f1-b66a-8a57770d222b.png" alt="MAROM crystal monogram" loading="eager" decoding="async">
     <span class="hero-eyebrow" id="heroEyebrow" data-i18n="hero.eyebrow">Digital Studio · Tel Aviv</span>
     <div class="hero-letters" id="heroLetters">
       <span class="hero-letter" data-char="M">M</span>
@@ -2142,8 +2145,6 @@ setTimeout(function(){
 
 <!-- Three.js UMD (global THREE) from cdnjs — reliable, no ES-modules/importmap -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<!-- GLTFLoader UMD (attaches THREE.GLTFLoader) — for the crystal-M centerpiece -->
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 <script>
 (function(){
   var canvas = document.getElementById('scene3d');
@@ -2308,85 +2309,56 @@ setTimeout(function(){
     canvas.__particleLoaded = true;
     console.log('[MAROM] WebGL running');
 
-    /* ===== CRYSTAL-M : 3D centerpiece + explode/reassemble transitions ===== */
+    /* ===== CRYSTAL-M : 2D image hero + particle explode/reassemble ===== */
     (function(){
-      if(typeof THREE.GLTFLoader === 'undefined'){ console.warn('[MAROM] GLTFLoader missing — crystal skipped'); return; }
-      var GLB_URL = "https://d3u0tzju9qaucj.cloudfront.net/7d051b5a-7bfe-49fe-a484-24e7b3a9458a/01876061-f954-4de7-a373-7668ec0be8f2.glb";
-      var NSH = mobile ? 1200 : 3000;
-      var pivot = new THREE.Group(); pivot.renderOrder = 1; scene.add(pivot);
-      var inner = null, ready = false, baseH = 0, spin = 0, crystOpacity = 0;
+      var heroImg = document.getElementById('crystalHero');
+      var NSH = mobile ? 1100 : 2600, NSH3 = NSH*3;
+      var pivot = new THREE.Group(); pivot.renderOrder = 2; scene.add(pivot);
+      var ready = false, spin = 0, crystOpacity = 0, lastImgA = -1;
       var burstState = { amp: 0 };
 
-      // lights — affect only the lit GLB (particles use unlit materials)
-      var amb = new THREE.AmbientLight(0xfff4e0, 0.75); scene.add(amb);
-      var dir = new THREE.DirectionalLight(0xffffff, 1.15); dir.position.set(-120, 320, 420); scene.add(dir);
-      var pL  = new THREE.PointLight(0xe8c97a, 0.9, 2600);  pL.position.set(-360, 120, 360); scene.add(pL);
-      var pR  = new THREE.PointLight(0xbfd4ff, 0.55, 2600); pR.position.set(360, -60, 360);  scene.add(pR);
-
-      // shard (explosion) particles — children of pivot so they rotate with the crystal
-      var NSH3 = NSH*3;
       var sHome = new Float32Array(NSH3), sScatter = new Float32Array(NSH3), sPos = new Float32Array(NSH3), sCol = new Float32Array(NSH3);
+
+      // build an "M" letterform point cloud (centered at origin, world units)
+      function buildM(){
+        var H = half.y * 0.6, W = half.x * 0.24, depth = 70;
+        var valleyY = -H * 0.12;
+        var strokes = [
+          [-W,-H, -W, H],         // left leg
+          [ W,-H,  W, H],         // right leg
+          [-W, H,  0, valleyY],   // left diagonal (top-left → middle valley)
+          [ W, H,  0, valleyY]    // right diagonal (top-right → middle valley)
+        ];
+        for(var i=0;i<NSH;i++){
+          var s = strokes[i % strokes.length], u = Math.random();
+          var hx2 = s[0] + (s[2]-s[0])*u + (Math.random()*2-1)*W*0.10;
+          var hy2 = s[1] + (s[3]-s[1])*u + (Math.random()*2-1)*H*0.04;
+          var hz2 = (Math.random()*2-1)*depth;
+          sHome[i*3]=hx2; sHome[i*3+1]=hy2; sHome[i*3+2]=hz2;
+          sPos[i*3]=hx2;  sPos[i*3+1]=hy2;  sPos[i*3+2]=hz2;
+          var dl = Math.sqrt(hx2*hx2+hy2*hy2)||1, mag = (mobile?240:380)*(0.5+Math.random()*1.2);
+          sScatter[i*3]   = (hx2/dl)*mag + (Math.random()*2-1)*130;
+          sScatter[i*3+1] = (hy2/dl)*mag + (Math.random()*2-1)*130;
+          sScatter[i*3+2] = (Math.random()*2-1)*230;
+          if(Math.random()<0.24){ sCol[i*3]=1.0; sCol[i*3+1]=0.96; sCol[i*3+2]=0.80; }       // bright gold sparks
+          else { var gg=Math.random(); sCol[i*3]=0.62+0.38*gg; sCol[i*3+1]=0.42+0.34*gg; sCol[i*3+2]=0.12+0.18*gg; } // gold↔deep bronze
+        }
+      }
+      buildM();
+
       var shardGeo = new THREE.BufferGeometry();
       shardGeo.setAttribute('position', new THREE.BufferAttribute(sPos,3).setUsage(THREE.DynamicDrawUsage));
       shardGeo.setAttribute('color', new THREE.BufferAttribute(sCol,3));
-      var shardMat = new THREE.PointsMaterial({ size: mobile?6:9, sizeAttenuation:true, vertexColors:true, transparent:true, opacity:0, depthWrite:false, blending:THREE.AdditiveBlending });
-      var shards = new THREE.Points(shardGeo, shardMat); shards.frustumCulled=false; shards.renderOrder=2; shards.visible=false; pivot.add(shards);
-
-      function rescale(){ if(inner && baseH){ inner.scale.setScalar((half.y * 0.9) / baseH); } }
-
-      new THREE.GLTFLoader().load(GLB_URL, function(gltf){
-        inner = gltf.scene;
-        var box = new THREE.Box3().setFromObject(inner);
-        var size = box.getSize(new THREE.Vector3());
-        var ctr  = box.getCenter(new THREE.Vector3());
-        inner.position.sub(ctr);                 // center at origin
-        baseH = size.y || 1;
-        inner.traverse(function(o){ if(o.isMesh && o.material){
-          o.material.transparent = true;
-          o.renderOrder = 1;
-        }});
-        pivot.add(inner);
-        rescale();
-        pivot.updateMatrixWorld(true);
-        inner.updateMatrixWorld(true);
-
-        // sample shard "home" points from mesh vertices (pivot-local space)
-        var verts = [], tmp = new THREE.Vector3();
-        inner.traverse(function(o){
-          if(o.isMesh && o.geometry && o.geometry.attributes.position){
-            var pa = o.geometry.attributes.position, m = o.matrixWorld;
-            var step = Math.max(1, Math.floor(pa.count / 4000));
-            for(var vi=0; vi<pa.count; vi+=step){
-              tmp.set(pa.getX(vi), pa.getY(vi), pa.getZ(vi)).applyMatrix4(m);
-              pivot.worldToLocal(tmp);
-              verts.push(tmp.x, tmp.y, tmp.z);
-            }
-          }
-        });
-        var vc = verts.length/3;
-        for(var i=0;i<NSH;i++){
-          var src = vc>0 ? (Math.floor(Math.random()*vc)*3) : 0;
-          var hx2 = vc>0?verts[src]:0, hy2 = vc>0?verts[src+1]:0, hz2 = vc>0?verts[src+2]:0;
-          sHome[i*3]=hx2; sHome[i*3+1]=hy2; sHome[i*3+2]=hz2;
-          sPos[i*3]=hx2;  sPos[i*3+1]=hy2;  sPos[i*3+2]=hz2;
-          var dl = Math.sqrt(hx2*hx2+hy2*hy2+hz2*hz2)||1, mag = (mobile?240:360)*(0.5+Math.random()*1.1);
-          sScatter[i*3]   = (hx2/dl)*mag + (Math.random()*2-1)*120;
-          sScatter[i*3+1] = (hy2/dl)*mag + (Math.random()*2-1)*120;
-          sScatter[i*3+2] = (hz2/dl)*mag*0.6 + (Math.random()*2-1)*90;
-          if(Math.random()<0.22){ sCol[i*3]=1.0; sCol[i*3+1]=0.95; sCol[i*3+2]=0.78; }  // bright gold sparks
-          else { var gg=Math.random(); sCol[i*3]=0.55+0.42*gg; sCol[i*3+1]=0.38+0.34*gg; sCol[i*3+2]=0.10+0.16*gg; } // gold↔deep bronze
-        }
-        shardGeo.attributes.position.needsUpdate = true;
-        shardGeo.attributes.color.needsUpdate = true;
-        ready = true;
-        setupTriggers();
-      }, undefined, function(err){ console.warn('[MAROM] crystal GLB failed to load', err); });
+      var shardMat = new THREE.PointsMaterial({ size: mobile?7:11, sizeAttenuation:true, vertexColors:true, transparent:true, opacity:0, depthTest:false, depthWrite:false, blending:THREE.AdditiveBlending });
+      var shards = new THREE.Points(shardGeo, shardMat); shards.frustumCulled=false; shards.visible=false; pivot.add(shards);
+      ready = true;
+      setupTriggers();
 
       function fireBurst(){
         if(!ready || paused() || !window.gsap) return;
         window.gsap.killTweensOf(burstState);
         burstState.amp = 0;
-        window.gsap.to(burstState, { amp:1, duration: mobile?0.9:1.1, ease:'power2.inOut' });
+        window.gsap.to(burstState, { amp:1, duration: mobile?0.9:1.15, ease:'power2.inOut' });
       }
 
       function setupTriggers(){
@@ -2395,6 +2367,8 @@ setTimeout(function(){
           var el = document.querySelector(sel); if(!el) return;
           ScrollTrigger.create({ trigger: el, start:'top 80%', onEnter: fireBurst, onEnterBack: fireBurst });
         });
+        // guaranteed dramatic shatter as the crystal-M leaves the hero
+        ScrollTrigger.create({ trigger:'#heroWrap', start:'80% top', onEnter: fireBurst, onLeaveBack: fireBurst });
         // condense MAROM wordmark as hero scrolls → crystal-M becomes the hero
         var hl = document.getElementById('heroLetters');
         if(hl && window.gsap && !reduce){
@@ -2411,9 +2385,11 @@ setTimeout(function(){
         crystOpacity += (want - crystOpacity) * 0.04;
 
         var f = Math.sin(Math.min(1, Math.max(0, burstState.amp)) * Math.PI); // 0→1→0 across a burst
-        var cryA = (1 - f) * crystOpacity, shA = f * crystOpacity;
-        if(inner){ inner.traverse(function(o){ if(o.isMesh && o.material){ o.material.opacity = cryA; o.visible = cryA>0.02; }}); }
-        shardMat.opacity = shA; shards.visible = shA>0.02;
+        var imgA = (1 - f) * crystOpacity, shA = f * crystOpacity;
+        shardMat.opacity = shA; shards.visible = shA > 0.02;
+
+        // crossfade the hero image (DOM write only when it actually changes)
+        if(heroImg && Math.abs(imgA - lastImgA) > 0.004){ heroImg.style.opacity = imgA.toFixed(3); lastImgA = imgA; }
 
         if(f > 0.002){
           for(var i=0;i<NSH;i++){
@@ -2425,13 +2401,16 @@ setTimeout(function(){
         }
 
         if(!isPaused){
-          spin += 0.0032;
-          pivot.rotation.y = spin + (mobile?0:(smX*0.00012));
-          pivot.rotation.x = mobile?0:(-smY*0.00010);
+          spin += 0.0016;
+          pivot.rotation.z = Math.sin(spin) * 0.03;
+          // subtle "fake depth" parallax tilt on the image (desktop only)
+          if(!mobile && heroImg && imgA > 0.02){
+            heroImg.style.transform = 'translate(-50%,-50%) translate('+(smX*0.010).toFixed(1)+'px,'+(smY*0.010).toFixed(1)+'px) rotate('+(smX*0.00004).toFixed(4)+'rad)';
+          }
         }
       };
 
-      window.addEventListener('resize', function(){ setTimeout(rescale, 220); });
+      window.addEventListener('resize', function(){ setTimeout(function(){ buildM(); shardGeo.attributes.position.needsUpdate=true; }, 220); });
     })();
 
     var firstShown=false, frozenT=0, wfc=0;
