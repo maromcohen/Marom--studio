@@ -2421,6 +2421,64 @@ setTimeout(function(){
       window.addEventListener('resize', function(){ setTimeout(function(){ buildM(); shardGeo.attributes.position.needsUpdate=true; }, 220); });
     })();
 
+    /* ===== FLOATING STRUCTURES — iridescent 3D world (fly-through on scroll) ===== */
+    (function(){
+      var COUNT = mobile ? 8 : 18;
+      var group = new THREE.Group(); group.renderOrder = 0; scene.add(group);
+      var uni = { uTime:{value:0} };
+      var vert = [
+        'varying vec3 vN; varying vec3 vV; varying float vY;',
+        'void main(){',
+        '  vec4 wp = modelMatrix * vec4(position,1.0);',
+        '  vN = normalize(mat3(modelMatrix) * normal);',
+        '  vV = normalize(cameraPosition - wp.xyz);',
+        '  vY = wp.y;',
+        '  gl_Position = projectionMatrix * viewMatrix * wp;',
+        '}'
+      ].join('\n');
+      var frag = [
+        'precision highp float;',
+        'uniform float uTime; varying vec3 vN; varying vec3 vV; varying float vY;',
+        'vec3 pal(float t){ return 0.55 + 0.45*cos(6.28318*(t + vec3(0.0,0.33,0.67))); }',
+        'void main(){',
+        '  float f = pow(1.0 - clamp(dot(normalize(vN), normalize(vV)), 0.0, 1.0), 2.0);',
+        '  float h = f*1.1 + vY*0.0008 + uTime*0.03;',
+        '  vec3 col = pal(h);',
+        '  float a = 0.20 + 0.80*f;',
+        '  gl_FragColor = vec4(col * a * 1.25, a * 0.82);',
+        '}'
+      ].join('\n');
+      var mat = new THREE.ShaderMaterial({ uniforms:uni, vertexShader:vert, fragmentShader:frag,
+        transparent:true, depthWrite:false, blending:THREE.AdditiveBlending, side:THREE.DoubleSide });
+      var geoms = [ new THREE.IcosahedronGeometry(1,0), new THREE.OctahedronGeometry(1,0),
+                    new THREE.TetrahedronGeometry(1,0), new THREE.DodecahedronGeometry(1,0) ];
+      var items = [];
+      for(var i=0;i<COUNT;i++){
+        var m = new THREE.Mesh(geoms[i % geoms.length], mat);
+        m.scale.setScalar(36 + Math.random()*100);
+        var sgn = (Math.random()<0.5?-1:1);
+        m.position.set(sgn*(half.x*0.30 + Math.random()*half.x*1.4), (Math.random()*2-1)*half.y*1.55, -Math.random()*1800 - 160);
+        m.rotation.set(Math.random()*6.28, Math.random()*6.28, Math.random()*6.28);
+        m.userData = { rx:(Math.random()*2-1)*0.0035, ry:(Math.random()*2-1)*0.0035,
+                       fx:Math.random()*6.28, fy:Math.random()*6.28, sp:0.35+Math.random()*0.7 };
+        m.frustumCulled = false; group.add(m); items.push(m);
+      }
+      var sZ = 0;
+      window.__structuresUpdate = function(t, isPaused){
+        uni.uTime.value = t;
+        if(isPaused) return;
+        var target = Math.min((window.scrollY||0), innerHeight*3) * 0.55;
+        sZ += (target - sZ) * 0.06;
+        group.position.z = sZ;
+        for(var i=0;i<items.length;i++){
+          var m = items[i], u = m.userData;
+          m.rotation.x += u.rx; m.rotation.y += u.ry;
+          m.position.x = u.fx*0 + (m.position.x); // keep x
+          m.position.y += Math.sin(t*0.3 + u.fy)*0.10; // gentle float
+        }
+      };
+    })();
+
     var firstShown=false, frozenT=0, wfc=0;
     function loop(){
       requestAnimationFrame(loop);
@@ -2507,6 +2565,7 @@ setTimeout(function(){
       }
 
       if(window.__crystalUpdate) window.__crystalUpdate(isPaused, smX, smY);
+      if(window.__structuresUpdate) window.__structuresUpdate(t, isPaused);
 
       renderer.render(scene, cam);
     }
