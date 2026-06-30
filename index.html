@@ -111,8 +111,6 @@ html[dir="rtl"] .contact-details{direction:ltr}
 @keyframes orbFloat2{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(-25px,20px) scale(.94)}66%{transform:translate(20px,-20px) scale(1.05)}}
 @keyframes orbFloat3{0%,100%{transform:translateX(-50%) scale(1)}50%{transform:translateX(-50%) translate(15px,-30px) scale(1.08)}}
 
-#crystalHero{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(46vw,440px);max-width:88vw;z-index:1;opacity:0;pointer-events:none;will-change:transform,opacity;mix-blend-mode:screen;filter:drop-shadow(0 0 50px rgba(232,201,122,.30));transition:opacity .12s linear}
-@media(max-width:767px){#crystalHero{width:min(72vw,360px)}}
 .hero-letters{display:flex;align-items:center;justify-content:center;gap:0;position:relative;z-index:2;perspective:1000px;transform-style:preserve-3d;direction:ltr}
 .hero-letters::before{content:"";position:absolute;left:50%;top:50%;width:120%;height:160%;transform:translate(-50%,-50%);background:radial-gradient(ellipse at center,rgba(232,201,122,.18) 0%,rgba(232,201,122,.06) 35%,transparent 70%);filter:blur(30px);pointer-events:none;z-index:-1;animation:heroHalo 6s ease-in-out infinite}
 @keyframes heroHalo{0%,100%{opacity:.7;transform:translate(-50%,-50%) scale(1)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.06)}}
@@ -522,17 +520,16 @@ html[dir="rtl"] .work-view{right:auto;left:16px}
     <div class="hero-mesh">
       <video id="heroBgVid" muted playsinline autoplay loop preload="auto"
              style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.8s ease">
-        <source src="https://d8j0ntlcm91z4.cloudfront.net/user_3FiJmqy12NASFK67PFaBPuFwpXv/hf_20260629_040649_18a58320-c98a-4740-a823-08d24186730a.mp4" type="video/mp4">
+        <source src="https://d8j0ntlcm91z4.cloudfront.net/user_3FiJmqy12NASFK67PFaBPuFwpXv/hf_20260630_172110_7c6ffccb-1e6a-4e7f-b667-982929c1a26b.mp4" type="video/mp4">
       </video>
       <canvas id="imgSeq" style="position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity 1.5s ease;pointer-events:none"></canvas>
-      <video id="seqVid" muted playsinline preload="auto" style="display:none;position:absolute">
+      <video id="seqVid" muted playsinline preload="none" style="display:none;position:absolute">
         <source src="https://d8j0ntlcm91z4.cloudfront.net/user_3FiJmqy12NASFK67PFaBPuFwpXv/hf_20260629_161121_f3b36c7a-1e8f-4d84-901c-f3019c131201.mp4" type="video/mp4">
       </video>
       <div class="hero-orb hero-orb--1"></div>
       <div class="hero-orb hero-orb--2"></div>
       <div class="hero-orb hero-orb--3"></div>
     </div>
-    <img id="crystalHero" src="https://d2ol7oe51mr4n9.cloudfront.net/user_3FiJmqy12NASFK67PFaBPuFwpXv/5b1378dc-50be-41f1-b66a-8a57770d222b.png" alt="MAROM crystal monogram" loading="eager" decoding="async">
     <span class="hero-eyebrow" id="heroEyebrow" data-i18n="hero.eyebrow">Digital Studio · Tel Aviv</span>
     <div class="hero-letters" id="heroLetters">
       <span class="hero-letter" data-char="M">M</span>
@@ -1801,18 +1798,19 @@ setTimeout(function(){
   }, 500);
 }, 2200);
 
-/* hero ambient video — fallback / mobile (loops silently) */
+/* hero crystal video — the live moving background (loops silently) */
 (function(){
   var v = document.getElementById('heroBgVid');
   if(!v) return;
   var shown = false;
-  function showVid(){ if(shown) return; shown=true; v.style.opacity='0.65'; }
+  function showVid(){ if(shown) return; shown=true; v.style.opacity='0.95'; }
   setTimeout(showVid, 1500);
   v.play().catch(function(){});
 })();
 
-/* hero scroll-sequence — desktop only, canvas scrubs through cinematic video */
+/* hero scroll-sequence — DISABLED: the crystal video is now the hero background */
 (function(){
+  return;
   if(innerWidth < 768) return;
   var canvas = document.getElementById('imgSeq');
   var video  = document.getElementById('seqVid');
