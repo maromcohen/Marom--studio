@@ -6,3 +6,35 @@ canvas{display:block;touch-action:none}
 /* drei ScrollControls scrollbar — hide for the cinematic feel */
 .scroll-hint{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);z-index:10;font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;color:rgba(207,214,255,.6);pointer-events:none;animation:hintPulse 2.4s ease-in-out infinite}
 @keyframes hintPulse{0%,100%{opacity:.4}50%{opacity:.9}}
+
+/* ---------- overlay UI (never captures input except its buttons) ---------- */
+.overlay{position:fixed;inset:0;z-index:20;pointer-events:none;touch-action:auto}
+.overlay a,.overlay button{pointer-events:auto;touch-action:auto}
+
+.wordmark{position:fixed;top:22px;left:26px;font-family:'Marcellus',serif;font-size:1.02rem;letter-spacing:.34em;color:#eef0ff;text-decoration:none;opacity:.92;transition:opacity .6s ease}
+.wordmark.hidden{opacity:0;pointer-events:none}
+
+.dots{position:fixed;right:20px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:16px}
+.dot{position:relative;width:10px;height:10px;border-radius:50%;border:1px solid rgba(238,240,255,.45);background:transparent;cursor:pointer;transition:background .35s ease,border-color .35s ease,box-shadow .35s ease}
+.dot.active{background:var(--c);border-color:var(--c);box-shadow:0 0 12px var(--c)}
+.dot-label{position:absolute;right:22px;top:50%;transform:translateY(-50%);white-space:nowrap;font-size:.58rem;letter-spacing:.24em;text-transform:uppercase;color:rgba(238,240,255,.85);opacity:0;transition:opacity .25s ease;pointer-events:none}
+.dot:hover .dot-label,.dot:focus-visible .dot-label{opacity:1}
+
+.sound-toggle{position:fixed;top:22px;right:26px;background:transparent;border:1px solid rgba(238,240,255,.28);border-radius:999px;color:rgba(238,240,255,.85);font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;padding:7px 13px;cursor:pointer;transition:border-color .3s ease,color .3s ease}
+.sound-toggle:hover{border-color:rgba(238,240,255,.6);color:#fff}
+
+.cta{position:fixed;right:26px;bottom:34px;font-family:'Marcellus',serif;font-size:1rem;letter-spacing:.06em;color:#ffd98f;text-decoration:none;border-bottom:1px solid rgba(255,217,143,.45);padding-bottom:3px;opacity:0;transform:translateY(8px);transition:opacity .7s ease,transform .7s ease;pointer-events:none!important}
+.cta.show{opacity:1;transform:translateY(0);pointer-events:auto!important}
+
+.progress{position:fixed;left:0;right:0;bottom:0;height:2px;background:rgba(238,240,255,.08)}
+.progress-bar{height:100%;background:linear-gradient(90deg,#b38bff,#5ad1ff,#ff8fd8,#9affd6,#8fb4ff,#ffd98f);transform-origin:left;transform:scaleX(0)}
+
+@media(max-width:767px){
+  .wordmark{top:16px;left:18px;font-size:.9rem}
+  .dots{right:12px;gap:13px}
+  .sound-toggle{top:16px;right:16px;padding:6px 11px}
+  .cta{right:18px;bottom:30px}
+}
+@media(prefers-reduced-motion:reduce){
+  .scroll-hint{animation:none}
+}

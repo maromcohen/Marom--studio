@@ -3,7 +3,9 @@ import { ScrollControls, AdaptiveDpr } from '@react-three/drei'
 import CameraRig from './rig/CameraRig'
 import Particles from './fx/Particles'
 import Mood from './fx/Mood'
+import PostFX from './fx/PostFX'
 import Station from './worlds/Station'
+import Overlay from './ui/Overlay'
 import { WORLDS, BG } from './data/worlds'
 
 const mobile = typeof window !== 'undefined' && window.innerWidth < 768
@@ -13,7 +15,7 @@ export default function App() {
     <>
       <Canvas
         dpr={[1, mobile ? 1 : 2]}
-        gl={{ antialias: !mobile, powerPreference: 'high-performance' }}
+        gl={{ antialias: false, powerPreference: 'high-performance' }}
         camera={{ position: [0, 0, 14], fov: 55, near: 0.1, far: 220 }}
         style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100dvh' }}
       >
@@ -32,8 +34,10 @@ export default function App() {
           ))}
         </ScrollControls>
 
+        <PostFX />
         <AdaptiveDpr pixelated />
       </Canvas>
+      <Overlay />
       <div className="scroll-hint">scroll to explore</div>
     </>
   )
