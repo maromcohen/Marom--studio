@@ -1,5 +1,5 @@
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-html,body,#root{width:100%;height:100%;background:#070710;overflow:hidden}
+html,body,#root{width:100%;height:100vh;height:100dvh;background:#050509;overflow:hidden;position:fixed;inset:0}
 body{font-family:'Inter',system-ui,sans-serif;color:#eef0ff;-webkit-font-smoothing:antialiased;overscroll-behavior:none}
 canvas{display:block;touch-action:none}
 ::selection{background:rgba(179,139,255,.35)}
