@@ -1,0 +1,8 @@
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html,body,#root{width:100%;height:100%;background:#070710;overflow:hidden}
+body{font-family:'Inter',system-ui,sans-serif;color:#eef0ff;-webkit-font-smoothing:antialiased;overscroll-behavior:none}
+canvas{display:block;touch-action:none}
+::selection{background:rgba(179,139,255,.35)}
+/* drei ScrollControls scrollbar — hide for the cinematic feel */
+.scroll-hint{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);z-index:10;font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;color:rgba(207,214,255,.6);pointer-events:none;animation:hintPulse 2.4s ease-in-out infinite}
+@keyframes hintPulse{0%,100%{opacity:.4}50%{opacity:.9}}
