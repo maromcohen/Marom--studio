@@ -67,12 +67,12 @@ export default function Particles({ count = 1400 }) {
   }), [])
 
   useFrame((s) => {
-    if (ref.current) {
+    if (ref.current && !motion.frozen) {
       ref.current.rotation.y = s.clock.elapsedTime * 0.012
       ref.current.position.y = Math.sin(s.clock.elapsedTime * 0.15) * 0.4
     }
     if (matRef.current && !REDUCED) {
-      matRef.current.uniforms.uWarp.value = motion.velocity
+      matRef.current.uniforms.uWarp.value = motion.frozen ? 0 : motion.velocity
     }
   })
 

@@ -4,7 +4,7 @@ import { Float } from '@react-three/drei'
 import * as THREE from 'three'
 import SpatialText from '../ui/SpatialText'
 import VideoPortal from '../media/VideoPortal'
-import { FONT_SERIF, FONT_SANS, FONT_SANS_MED } from '../ui/fonts'
+import { FONT_BRAND, FONT_SERIF, FONT_SANS, FONT_SANS_MED } from '../ui/fonts'
 import { MOBILE, REDUCED } from '../state/motion'
 
 // portrait phones see only ~2.5 world-units of width at the station —
@@ -66,10 +66,10 @@ export default function Station({ world }) {
 
       <Suspense fallback={null}>
         <group ref={textGroup}>
-          <SpatialText ref={eyebrowRef} font={FONT_SANS_MED} position={[0, MOBILE ? 1.85 : 1.5, 0.8]} fontSize={0.2 * TS} color="#eaf0ff" letterSpacing={0.3} fillOpacity={0.9}>
+          <SpatialText ref={eyebrowRef} font={FONT_SANS_MED} position={[0, MOBILE ? 1.85 : 1.5, 0.8]} fontSize={0.2 * TS} color="#eaf0ff" letterSpacing={0.08} fillOpacity={0.9}>
             {world.eyebrow}
           </SpatialText>
-          <SpatialText ref={titleRef} font={FONT_SERIF} position={[0, 0.55, 0.8]} fontSize={(isHero ? (MOBILE ? 1.45 : 1.7) : 0.9) * TS} color="#ffffff" letterSpacing={isHero ? 0.18 : 0.02} maxWidth={TITLE_MAX} textAlign="center" lineHeight={1.12}>
+          <SpatialText ref={titleRef} font={world.brand ? FONT_BRAND : FONT_SERIF} position={[0, 0.55, 0.8]} fontSize={(isHero ? (MOBILE ? 1.45 : 1.7) : 0.9) * TS} color="#ffffff" letterSpacing={world.brand ? 0.18 : 0} maxWidth={TITLE_MAX} textAlign="center" lineHeight={1.12}>
             {world.title}
           </SpatialText>
           <SpatialText ref={bodyRef} font={FONT_SANS} position={[0, MOBILE ? -1.4 : -1.2, 0.8]} fontSize={0.19 * (MOBILE ? 0.7 : 1)} color="#c3ccec" maxWidth={BODY_MAX} textAlign="center" lineHeight={1.5} fillOpacity={0.9}>

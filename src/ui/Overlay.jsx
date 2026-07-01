@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
 import { WORLDS } from '../data/worlds'
-import { motion, worldFraction } from '../state/motion'
+import { motion, goToWorld } from '../state/motion'
 import { isSoundOn, toggleSound } from '../audio/sound'
 
 // Fixed HTML layer over the 3D canvas: wordmark, world-dots nav, progress bar,
-// sound toggle and a contact CTA on the last world. The container never captures
-// input (pointer-events:none) — only the interactive bits do.
-export default function Overlay() {
+// sound toggle, a contact CTA and legal footer links on the last world. The
+// container never captures input (pointer-events:none) — only the interactive
+// bits do.
+export default function Overlay({ onLegal }) {
   const [wi, setWi] = useState(0)
   const [sound, setSound] = useState(isSoundOn())
   const barRef = useRef()
@@ -22,16 +23,11 @@ export default function Overlay() {
     return () => cancelAnimationFrame(raf)
   }, [])
 
-  const go = (i) => {
-    const el = motion.scrollEl
-    if (!el) return
-    const top = (el.scrollHeight - el.clientHeight) * worldFraction(WORLDS, i)
-    el.scrollTo({ top, behavior: 'smooth' })
-  }
+  const last = wi === WORLDS.length - 1
 
   return (
     <div className="overlay">
-      <a className={`wordmark${wi === 0 ? ' hidden' : ''}`} href="#top" onClick={(e) => { e.preventDefault(); go(0) }}>MAROM</a>
+      <a className={`wordmark${wi === 0 ? ' hidden' : ''}`} href="#top" onClick={(e) => { e.preventDefault(); goToWorld(WORLDS, 0) }}>MAROM</a>
 
       <nav className="dots" aria-label="Worlds">
         {WORLDS.map((w, i) => (
@@ -39,7 +35,7 @@ export default function Overlay() {
             key={w.id}
             className={`dot${i === wi ? ' active' : ''}`}
             style={{ '--c': w.color }}
-            onClick={() => go(i)}
+            onClick={() => goToWorld(WORLDS, i)}
             aria-label={w.eyebrow}
           >
             <span className="dot-label">{w.eyebrow.split('·')[0].trim()}</span>
@@ -47,13 +43,20 @@ export default function Overlay() {
         ))}
       </nav>
 
-      <button className="sound-toggle" onClick={() => setSound(toggleSound())} aria-pressed={sound} aria-label="Toggle sound">
-        {sound ? '♪ on' : '♪ off'}
+      <button className="sound-toggle" onClick={() => setSound(toggleSound())} aria-pressed={sound} aria-label="הפעלת סאונד">
+        {sound ? '♪ פועל' : '♪ כבוי'}
       </button>
 
-      <a className={`cta${wi === WORLDS.length - 1 ? ' show' : ''}`} href="mailto:marom7777@icloud.com">
-        Let’s talk →
-      </a>
+      <div className={`contact-block${last ? ' show' : ''}`}>
+        <a className="cta" href="mailto:marom7777@icloud.com" data-cursor="שלום">דברו איתנו ←</a>
+        <a className="cta-alt" href="https://wa.me/972532748125" target="_blank" rel="noopener noreferrer">וואטסאפ</a>
+        <div className="foot-legal">
+          <button onClick={() => onLegal('privacy')}>פרטיות</button>
+          <button onClick={() => onLegal('terms')}>תקנון</button>
+          <button onClick={() => onLegal('a11y')}>נגישות</button>
+          <span>© MAROM · תל אביב</span>
+        </div>
+      </div>
 
       <div className="progress"><div ref={barRef} className="progress-bar" /></div>
     </div>

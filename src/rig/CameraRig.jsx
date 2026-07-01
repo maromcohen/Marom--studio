@@ -33,14 +33,17 @@ export default function CameraRig() {
 
   useFrame((state, dt) => {
     const t = THREE.MathUtils.clamp(scroll.offset, 0, 1)
+    const still = REDUCED || motion.frozen        // a11y: no sway, no kicks
     curve.getPointAt(t, pos)
     // subtle mouse parallax so the shot feels alive even when still
-    pos.x += state.pointer.x * 0.7
-    pos.y += state.pointer.y * 0.45
-    camera.position.lerp(pos, 0.07)
+    if (!still) {
+      pos.x += state.pointer.x * 0.7
+      pos.y += state.pointer.y * 0.45
+    }
+    camera.position.lerp(pos, still ? 0.3 : 0.07)
     // always look a little further down the path → cinematic "flying forward"
     curve.getPointAt(Math.min(t + 0.045, 1), look)
-    look.x += state.pointer.x * 0.5
+    if (!still) look.x += state.pointer.x * 0.5
     camera.lookAt(look)
 
     // ---- shared motion state (velocity / world index / boundary pulse) ----
@@ -57,12 +60,12 @@ export default function CameraRig() {
     }
     if (nearest !== motion.worldIndex) {
       motion.worldIndex = nearest
-      if (!REDUCED) motion.pulse = 1        // flash on entering a new world
+      if (!still) motion.pulse = 1          // flash on entering a new world
     }
     motion.arrival = THREE.MathUtils.clamp(1 - best / 9, 0, 1)
 
     // warp FOV kick — speed sensation while scrolling fast
-    const targetFov = BASE_FOV + motion.velocity * FOV_KICK
+    const targetFov = BASE_FOV + (still ? 0 : motion.velocity * FOV_KICK)
     if (Math.abs(camera.fov - targetFov) > 0.05) {
       camera.fov = THREE.MathUtils.lerp(camera.fov, targetFov, 0.1)
       camera.updateProjectionMatrix()
