@@ -79,9 +79,14 @@ export default function VideoPortal({ src, color = '#b38bff', width = 8, height 
       meshRef.current.getWorldPosition(tmp)
       const dz = tmp.z - s.camera.position.z
       const adz = Math.abs(dz)
-      // pause decode when the portal is far from the camera
-      if (adz > 24) { if (!video.paused) video.pause() }
+      // pause decode when the portal is far from the camera — and honour the
+      // a11y "stop animations" / "hide media" toggles
+      if (adz > 24 || motion.frozen || motion.noMedia) { if (!video.paused) video.pause() }
       else if (video.paused) video.play().catch(() => {})
+      if (matRef.current) {
+        const uo = matRef.current.uniforms.uOpacity
+        uo.value = THREE.MathUtils.lerp(uo.value, motion.noMedia ? 0 : opacity, 0.1)
+      }
       if (matRef.current) {
         // rim breathes with proximity and FLARES as the camera crosses the portal
         const near = THREE.MathUtils.clamp(1 - adz / 16, 0, 1)

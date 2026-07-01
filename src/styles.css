@@ -1,40 +1,158 @@
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 html,body,#root{width:100%;height:100vh;height:100dvh;background:#050509;overflow:hidden;position:fixed;inset:0}
-body{font-family:'Inter',system-ui,sans-serif;color:#eef0ff;-webkit-font-smoothing:antialiased;overscroll-behavior:none}
+body{font-family:'Heebo',system-ui,sans-serif;color:#eef0ff;-webkit-font-smoothing:antialiased;overscroll-behavior:none}
 canvas{display:block;touch-action:none}
 ::selection{background:rgba(179,139,255,.35)}
-/* drei ScrollControls scrollbar — hide for the cinematic feel */
-.scroll-hint{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);z-index:10;font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;color:rgba(207,214,255,.6);pointer-events:none;animation:hintPulse 2.4s ease-in-out infinite}
+:focus-visible{outline:3px solid #b38bff;outline-offset:3px;border-radius:4px}
+html.loading{pointer-events:none}
+html.loading .preloader{pointer-events:auto}
+
+.scroll-hint{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);z-index:10;font-size:.72rem;letter-spacing:.28em;color:rgba(207,214,255,.6);pointer-events:none;animation:hintPulse 2.4s ease-in-out infinite}
 @keyframes hintPulse{0%,100%{opacity:.4}50%{opacity:.9}}
 
 /* ---------- overlay UI (never captures input except its buttons) ---------- */
 .overlay{position:fixed;inset:0;z-index:20;pointer-events:none;touch-action:auto}
 .overlay a,.overlay button{pointer-events:auto;touch-action:auto}
 
-.wordmark{position:fixed;top:22px;left:26px;font-family:'Marcellus',serif;font-size:1.02rem;letter-spacing:.34em;color:#eef0ff;text-decoration:none;opacity:.92;transition:opacity .6s ease}
+.wordmark{position:fixed;top:22px;right:26px;font-family:'Marcellus',serif;font-size:1.02rem;letter-spacing:.34em;color:#eef0ff;text-decoration:none;opacity:.92;transition:opacity .6s ease;direction:ltr}
 .wordmark.hidden{opacity:0;pointer-events:none}
 
-.dots{position:fixed;right:20px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:16px}
+.dots{position:fixed;left:20px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:16px}
 .dot{position:relative;width:10px;height:10px;border-radius:50%;border:1px solid rgba(238,240,255,.45);background:transparent;cursor:pointer;transition:background .35s ease,border-color .35s ease,box-shadow .35s ease}
 .dot.active{background:var(--c);border-color:var(--c);box-shadow:0 0 12px var(--c)}
-.dot-label{position:absolute;right:22px;top:50%;transform:translateY(-50%);white-space:nowrap;font-size:.58rem;letter-spacing:.24em;text-transform:uppercase;color:rgba(238,240,255,.85);opacity:0;transition:opacity .25s ease;pointer-events:none}
+.dot-label{position:absolute;left:22px;top:50%;transform:translateY(-50%);white-space:nowrap;font-size:.68rem;letter-spacing:.12em;color:rgba(238,240,255,.85);opacity:0;transition:opacity .25s ease;pointer-events:none}
 .dot:hover .dot-label,.dot:focus-visible .dot-label{opacity:1}
 
-.sound-toggle{position:fixed;top:22px;right:26px;background:transparent;border:1px solid rgba(238,240,255,.28);border-radius:999px;color:rgba(238,240,255,.85);font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;padding:7px 13px;cursor:pointer;transition:border-color .3s ease,color .3s ease}
+.sound-toggle{position:fixed;top:22px;left:82px;background:transparent;border:1px solid rgba(238,240,255,.28);border-radius:999px;color:rgba(238,240,255,.85);font-size:.68rem;letter-spacing:.1em;padding:7px 13px;cursor:pointer;transition:border-color .3s ease,color .3s ease}
 .sound-toggle:hover{border-color:rgba(238,240,255,.6);color:#fff}
 
-.cta{position:fixed;right:26px;bottom:34px;font-family:'Marcellus',serif;font-size:1rem;letter-spacing:.06em;color:#ffd98f;text-decoration:none;border-bottom:1px solid rgba(255,217,143,.45);padding-bottom:3px;opacity:0;transform:translateY(8px);transition:opacity .7s ease,transform .7s ease;pointer-events:none!important}
-.cta.show{opacity:1;transform:translateY(0);pointer-events:auto!important}
+.contact-block{position:fixed;right:26px;bottom:34px;display:flex;flex-direction:column;align-items:flex-start;gap:10px;opacity:0;transform:translateY(8px);transition:opacity .7s ease,transform .7s ease}
+.contact-block.show{opacity:1;transform:translateY(0)}
+.contact-block:not(.show) a,.contact-block:not(.show) button{pointer-events:none!important}
+.cta{font-family:'Frank Ruhl Libre',serif;font-size:1.15rem;letter-spacing:.02em;color:#ffd98f;text-decoration:none;border-bottom:1px solid rgba(255,217,143,.45);padding-bottom:3px}
+.cta-alt{font-size:.82rem;color:rgba(238,240,255,.75);text-decoration:none;border-bottom:1px solid rgba(238,240,255,.25);padding-bottom:2px}
+.cta-alt:hover{color:#fff}
+.foot-legal{display:flex;gap:14px;align-items:center;margin-top:6px;font-size:.66rem;color:rgba(238,240,255,.45)}
+.foot-legal button{background:none;border:none;color:rgba(238,240,255,.6);font-size:.66rem;cursor:pointer;font-family:inherit;padding:2px}
+.foot-legal button:hover{color:#fff;text-decoration:underline}
 
 .progress{position:fixed;left:0;right:0;bottom:0;height:2px;background:rgba(238,240,255,.08)}
-.progress-bar{height:100%;background:linear-gradient(90deg,#b38bff,#5ad1ff,#ff8fd8,#9affd6,#8fb4ff,#ffd98f);transform-origin:left;transform:scaleX(0)}
+.progress-bar{height:100%;background:linear-gradient(90deg,#b38bff,#5ad1ff,#ff8fd8,#9affd6,#8fb4ff,#ffd98f);transform-origin:right;transform:scaleX(0)}
+
+/* ---------- preloader ---------- */
+.preloader{position:fixed;inset:0;z-index:80;display:grid;place-items:center;pointer-events:auto}
+.preloader-panel{position:absolute;left:0;right:0;height:50.5%;background:#06060d;transition:transform 1.2s cubic-bezier(.76,0,.24,1)}
+.preloader-panel.top{top:0}
+.preloader-panel.bottom{bottom:0}
+.preloader.leaving .preloader-panel.top{transform:translateY(-101%)}
+.preloader.leaving .preloader-panel.bottom{transform:translateY(101%)}
+.preloader.leaving{pointer-events:none}
+.preloader-core{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:14px;transition:opacity .5s ease}
+.preloader.leaving .preloader-core{opacity:0}
+.preloader-mark{animation:markBreathe 2.2s ease-in-out infinite}
+@keyframes markBreathe{0%,100%{opacity:.55;transform:scale(.97)}50%{opacity:1;transform:scale(1)}}
+.preloader-count{font-family:'Marcellus',serif;font-size:2.6rem;color:#eef0ff;letter-spacing:.06em;font-variant-numeric:tabular-nums;direction:ltr}
+.preloader-count span{font-size:1.1rem;color:rgba(238,240,255,.5);margin-inline-start:4px}
+.preloader-tag{font-size:.72rem;letter-spacing:.3em;color:rgba(207,214,255,.55)}
+
+/* ---------- custom cursor ---------- */
+html.has-cursor,html.has-cursor *{cursor:none!important}
+html.has-cursor.a11y-bigcur,html.has-cursor.a11y-bigcur *{cursor:auto!important}
+html.a11y-bigcur .cursor-dot,html.a11y-bigcur .cursor-ring{display:none}
+.cursor-dot{position:fixed;top:0;left:0;width:7px;height:7px;border-radius:50%;background:#eef0ff;z-index:99;pointer-events:none;opacity:0;mix-blend-mode:difference}
+.cursor-ring{position:fixed;top:0;left:0;width:38px;height:38px;border-radius:50%;border:1px solid rgba(238,240,255,.55);z-index:99;pointer-events:none;opacity:0;display:grid;place-items:center;transition:border-color .3s ease}
+.cursor-label{font-size:.6rem;letter-spacing:.08em;color:#eef0ff;opacity:0;transition:opacity .25s ease;white-space:nowrap}
+html:not(.has-cursor) .cursor-dot,html:not(.has-cursor) .cursor-ring{display:none}
+
+/* ---------- burger + fullscreen menu ---------- */
+.burger{position:fixed;top:16px;left:20px;z-index:60;width:46px;height:46px;background:rgba(6,6,13,.35);backdrop-filter:blur(6px);border:1px solid rgba(238,240,255,.2);border-radius:50%;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:border-color .3s ease}
+.burger span{display:block;width:18px;height:1.6px;background:#eef0ff;margin:2.5px 0;transition:transform .45s cubic-bezier(.76,0,.24,1),opacity .3s ease}
+.burger:hover{border-color:rgba(238,240,255,.55)}
+.burger.open span:first-child{transform:translateY(3.3px) rotate(45deg)}
+.burger.open span:last-child{transform:translateY(-3.3px) rotate(-45deg)}
+
+.menu{position:fixed;inset:0;z-index:50;visibility:hidden;pointer-events:none}
+.menu.open{visibility:visible;pointer-events:auto}
+.menu-bg{position:absolute;inset:0;background:rgba(5,5,9,.55);backdrop-filter:blur(18px) saturate(1.2);opacity:0;transition:opacity .6s ease}
+.menu.open .menu-bg{opacity:1}
+.menu-nav{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:2px;pointer-events:none}
+.menu-nav .menu-item{pointer-events:auto}
+.menu-item{display:flex;align-items:baseline;gap:18px;background:none;border:none;cursor:pointer;padding:8px 20px;opacity:0;transform:translateY(26px);transition:opacity .5s ease,transform .6s cubic-bezier(.22,1,.36,1);transition-delay:calc(var(--i) * 60ms)}
+.menu.open .menu-item{opacity:1;transform:translateY(0)}
+.menu-index{font-size:.7rem;letter-spacing:.2em;color:var(--c);font-variant-numeric:tabular-nums;direction:ltr}
+.menu-title{font-family:'Frank Ruhl Libre',serif;font-size:clamp(2rem,6.5vh,3.4rem);color:#eef0ff;line-height:1.15;transition:color .3s ease,letter-spacing .4s ease}
+.menu-item:hover .menu-title,.menu-item:focus-visible .menu-title{color:var(--c);letter-spacing:.04em}
+.menu-foot{position:absolute;bottom:30px;left:0;right:0;display:flex;justify-content:center;flex-wrap:wrap;gap:22px;opacity:0;transition:opacity .6s ease .35s;font-size:.78rem}
+.menu.open .menu-foot{opacity:1}
+.menu-foot a,.menu-foot button{color:rgba(238,240,255,.65);background:none;border:none;font-size:.78rem;font-family:inherit;cursor:pointer;text-decoration:none}
+.menu-foot a:hover,.menu-foot button:hover{color:#fff;text-decoration:underline}
+
+/* ---------- legal modals ---------- */
+.legal{position:fixed;inset:0;z-index:70;display:grid;place-items:center;padding:20px}
+.legal-bg{position:absolute;inset:0;background:rgba(5,5,9,.7);backdrop-filter:blur(10px)}
+.legal-card{position:relative;width:min(680px,94vw);max-height:min(78vh,720px);overflow-y:auto;background:#0b0b16;border:1px solid rgba(179,139,255,.25);border-radius:18px;padding:34px 34px 28px;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+.legal-card h3{font-family:'Frank Ruhl Libre',serif;font-size:1.6rem;margin-bottom:16px;color:#fff}
+.legal-body{font-size:.92rem;line-height:1.75;color:#c3ccec}
+.legal-body h4{color:#eef0ff;margin:18px 0 6px;font-size:1rem}
+.legal-body p{margin-bottom:10px}
+.legal-body a{color:#b38bff}
+.legal-close{position:sticky;top:0;float:left;background:rgba(238,240,255,.08);border:1px solid rgba(238,240,255,.2);color:#eef0ff;width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:.9rem}
+.legal-close:hover{background:rgba(238,240,255,.18)}
+
+/* ---------- cookie note ---------- */
+.cookie-note{position:fixed;bottom:18px;left:80px;z-index:65;max-width:340px;background:rgba(11,11,22,.92);backdrop-filter:blur(8px);border:1px solid rgba(238,240,255,.18);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.cookie-note p{font-size:.78rem;line-height:1.6;color:#c3ccec}
+.cookie-note button{align-self:flex-start;background:#b38bff;color:#12081f;border:none;border-radius:999px;padding:7px 18px;font-size:.78rem;font-family:inherit;font-weight:500;cursor:pointer}
+.cookie-note button:hover{filter:brightness(1.1)}
+
+/* ---------- accessibility widget ---------- */
+.a11y-fab{position:fixed;bottom:18px;left:18px;z-index:66;width:50px;height:50px;border-radius:50%;background:#0b0b16;border:1px solid rgba(179,139,255,.4);color:#b38bff;cursor:pointer;display:grid;place-items:center;transition:box-shadow .3s ease,border-color .3s ease}
+.a11y-fab:hover{border-color:#b38bff;box-shadow:0 0 18px rgba(179,139,255,.35)}
+.a11y-panel{position:fixed;bottom:78px;left:18px;z-index:66;width:320px;max-height:calc(100dvh - 140px);overflow-y:auto;background:#0b0b16;border:1px solid rgba(179,139,255,.3);border-radius:16px;padding:18px;box-shadow:0 24px 60px rgba(0,0,0,.55);opacity:0;visibility:hidden;transform:translateY(10px);transition:opacity .3s ease,transform .3s ease,visibility .3s}
+.a11y-panel.open{opacity:1;visibility:visible;transform:translateY(0)}
+.a11y-panel h4{font-family:'Frank Ruhl Libre',serif;font-size:1.1rem;color:#fff;margin-bottom:10px}
+.a11y-panel h5{font-size:.72rem;color:rgba(238,240,255,.55);margin:12px 0 7px;letter-spacing:.06em}
+.a11y-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.a11y-grid button{background:rgba(238,240,255,.05);border:1px solid rgba(238,240,255,.16);border-radius:10px;color:#dfe4ff;font-size:.72rem;font-family:inherit;padding:9px 6px;cursor:pointer;transition:background .25s ease,border-color .25s ease,color .25s ease}
+.a11y-grid button:hover{border-color:rgba(179,139,255,.6)}
+.a11y-grid button.on{background:#b38bff;color:#12081f;border-color:#b38bff}
+.a11y-ico{display:block;font-size:1.05rem;margin-bottom:3px}
+.a11y-reset{grid-column:1/-1}
+.a11y-statement{margin-top:12px;width:100%;background:none;border:none;color:#b38bff;font-size:.74rem;font-family:inherit;cursor:pointer;text-decoration:underline}
+.a11y-reading-guide{position:fixed;inset-inline:0;height:4px;background:#b38bff;z-index:98;pointer-events:none;display:none;box-shadow:0 0 10px rgba(179,139,255,.8)}
+
+/* a11y feature classes — the HTML layers respond to font/spacing options,
+   the whole page (canvas included) responds to the colour filters */
+html.a11y-fs1 .overlay,html.a11y-fs1 .menu,html.a11y-fs1 .legal-card,html.a11y-fs1 .a11y-panel,html.a11y-fs1 .cookie-note{font-size:115%}
+html.a11y-fs2 .overlay,html.a11y-fs2 .menu,html.a11y-fs2 .legal-card,html.a11y-fs2 .a11y-panel,html.a11y-fs2 .cookie-note{font-size:130%}
+html.a11y-fs1 .legal-body{font-size:1.05rem}
+html.a11y-fs2 .legal-body{font-size:1.2rem}
+html.a11y-spacing .legal-body,html.a11y-spacing .legal-body p,html.a11y-spacing .cookie-note p,html.a11y-spacing .menu-title{line-height:2.2!important}
+html.a11y-letters .legal-body,html.a11y-letters .legal-body p,html.a11y-letters .overlay,html.a11y-letters .menu{letter-spacing:.14em!important;word-spacing:.2em!important}
+html.a11y-contrast body{filter:contrast(1.6) saturate(1.2)}
+html.a11y-gray body{filter:grayscale(100%)}
+html.a11y-invert body{filter:invert(100%) hue-rotate(180deg)}
+html.a11y-contrast.a11y-gray body{filter:contrast(1.6) grayscale(100%)}
+html.a11y-links a{outline:2px solid currentColor!important;outline-offset:2px;text-decoration:underline!important}
+html.a11y-headings h1,html.a11y-headings h2,html.a11y-headings h3,html.a11y-headings h4,html.a11y-headings h5{outline:3px solid #b38bff!important;outline-offset:4px}
+html.a11y-focus *:focus{outline:4px solid #ff0!important;outline-offset:4px!important}
+html.a11y-readable .overlay,html.a11y-readable .overlay *,html.a11y-readable .menu *,html.a11y-readable .legal-card *,html.a11y-readable .a11y-panel *,html.a11y-readable .cookie-note *{font-family:Arial,sans-serif!important}
+html.a11y-dyslexia .overlay,html.a11y-dyslexia .overlay *,html.a11y-dyslexia .menu *,html.a11y-dyslexia .legal-card *,html.a11y-dyslexia .a11y-panel *,html.a11y-dyslexia .cookie-note *{font-family:'OpenDyslexic','Comic Sans MS',Arial,sans-serif!important}
+html.a11y-stop *,html.a11y-stop *::before,html.a11y-stop *::after{animation:none!important;transition:none!important}
+html.a11y-bigcur,html.a11y-bigcur *{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath d='M6 3 L6 33 L14 25 L19 36 L24 33 L19 23 L30 23 Z' fill='%23ffffff' stroke='%23000000' stroke-width='2'/%3E%3C/svg%3E") 6 3,auto!important}
 
 @media(max-width:767px){
-  .wordmark{top:16px;left:18px;font-size:.9rem}
-  .dots{right:12px;gap:13px}
-  .sound-toggle{top:16px;right:16px;padding:6px 11px}
-  .cta{right:18px;bottom:30px}
+  .wordmark{top:16px;right:18px;font-size:.9rem}
+  .dots{left:12px;gap:13px}
+  .sound-toggle{top:16px;left:74px;padding:6px 11px}
+  .burger{top:12px;left:14px}
+  .contact-block{right:18px;bottom:30px}
+  .a11y-panel{width:calc(100vw - 36px)}
+  .cookie-note{max-width:calc(100vw - 110px)}
+  .menu-title{font-size:clamp(1.6rem,5.4vh,2.6rem)}
 }
 @media(prefers-reduced-motion:reduce){
   .scroll-hint{animation:none}
+  .preloader-mark{animation:none}
+  .preloader-panel{transition-duration:.4s}
 }

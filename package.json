@@ -9,6 +9,8 @@
     "preview": "vite preview --port 4173"
   },
   "dependencies": {
+    "@expo-google-fonts/frank-ruhl-libre": "^0.4.1",
+    "@expo-google-fonts/heebo": "^0.4.2",
     "@expo-google-fonts/inter": "^0.4.2",
     "@expo-google-fonts/marcellus": "^0.4.1",
     "@react-three/drei": "^9.114.3",

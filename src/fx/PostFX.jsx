@@ -15,6 +15,11 @@ export default function PostFX() {
 
   useFrame(() => {
     if (REDUCED) return
+    if (motion.frozen) {                     // a11y stop-animations: settle the grade
+      caOffset.set(0.0002, 0.0001)
+      if (bloomRef.current) bloomRef.current.intensity = 0.35
+      return
+    }
     const v = motion.velocity
     const o = 0.0005 + v * 0.0038 + motion.pulse * 0.0022
     caOffset.set(o, o * 0.6)
