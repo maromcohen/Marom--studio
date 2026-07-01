@@ -11,14 +11,14 @@ export default function CameraRig() {
 
   const curve = useMemo(() => {
     const pts = []
-    // start slightly in front of the first world, then thread between worlds with lateral sway
-    pts.push(new THREE.Vector3(0, 0, WORLDS[0].z + 9))
+    // gentle, mostly-centred path: approach each world head-on so its text frames,
+    // with a soft lateral/vertical sway for life
+    pts.push(new THREE.Vector3(0, 0, WORLDS[0].z + 10))
     WORLDS.forEach((w, i) => {
-      const sway = i % 2 === 0 ? 1 : -1
-      pts.push(new THREE.Vector3((w.x || 0) + sway * 1.4, (w.y || 0) + 0.6, w.z + 5))
+      pts.push(new THREE.Vector3(Math.sin(i * 1.7) * 0.6, Math.cos(i * 1.3) * 0.3, w.z + 6))
     })
-    pts.push(new THREE.Vector3(0, 0.4, WORLDS[WORLDS.length - 1].z - 6))
-    return new THREE.CatmullRomCurve3(pts, false, 'catmullrom', 0.4)
+    pts.push(new THREE.Vector3(0, 0, WORLDS[WORLDS.length - 1].z - 5))
+    return new THREE.CatmullRomCurve3(pts, false, 'catmullrom', 0.3)
   }, [])
 
   const pos = useMemo(() => new THREE.Vector3(), [])

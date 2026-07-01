@@ -4,6 +4,7 @@ import { Text } from '@react-three/drei'
 export default function SpatialText({ children, font, ...props }) {
   return (
     <Text
+      font={font}
       anchorX="center"
       anchorY="middle"
       outlineWidth={0}
