@@ -3,40 +3,34 @@ import { Float } from '@react-three/drei'
 import SpatialText from '../ui/SpatialText'
 import ParallaxVideo from '../media/ParallaxVideo'
 
-// A "station" along the camera path: floating 3D headline + a luminous structure,
-// with an optional Higgsfield parallax-video backdrop. No HTML boxes — all native 3D.
+// A "station" along the camera path: a large cinematic Higgsfield video world
+// the camera flies toward and through, with floating 3D headlines in front.
 export default function Station({ world }) {
   const isHero = world.id === 'hero'
   return (
     <group position={[world.x || 0, world.y || 0, world.z]}>
+      {/* the AI-generated cinematic world — big parallax video plane */}
       {world.video && (
-        <ParallaxVideo src={world.video} position={[0, 0, -3.4]} width={10} height={5.6} strength={0.05} opacity={0.9} />
+        <Float speed={0.6} rotationIntensity={0.05} floatIntensity={0.4}>
+          <ParallaxVideo
+            src={world.video}
+            position={[0, 0, -3.6]}
+            width={isHero ? 15 : 17}
+            height={isHero ? 8.4 : 9.6}
+            strength={0.06}
+            opacity={0.96}
+          />
+        </Float>
       )}
 
-      <Float speed={1.3} rotationIntensity={0.7} floatIntensity={0.9}>
-        <mesh position={[0, isHero ? -0.2 : 0, isHero ? -1.2 : 0]}>
-          <icosahedronGeometry args={[isHero ? 1.6 : 1.25, 0]} />
-          <meshStandardMaterial
-            color={world.color}
-            emissive={world.color}
-            emissiveIntensity={0.55}
-            metalness={0.7}
-            roughness={0.18}
-            flatShading
-            transparent
-            opacity={0.82}
-          />
-        </mesh>
-      </Float>
-
       <Suspense fallback={null}>
-        <SpatialText position={[0, 2.1, 0.6]} fontSize={0.22} color="#cfd6ff" letterSpacing={0.28} fillOpacity={0.85}>
+        <SpatialText position={[0, 2.2, 0.8]} fontSize={0.22} color="#eaf0ff" letterSpacing={0.3} fillOpacity={0.9}>
           {world.eyebrow}
         </SpatialText>
-        <SpatialText position={[0, 1.1, 0.6]} fontSize={isHero ? 1.7 : 0.82} color={world.color} letterSpacing={isHero ? 0.18 : 0.02}>
+        <SpatialText position={[0, 1.15, 0.8]} fontSize={isHero ? 1.7 : 0.9} color="#ffffff" letterSpacing={isHero ? 0.18 : 0.02}>
           {world.title}
         </SpatialText>
-        <SpatialText position={[0, -1.8, 0.6]} fontSize={0.2} color="#9aa6c0" maxWidth={6.2} textAlign="center" lineHeight={1.5}>
+        <SpatialText position={[0, -1.9, 0.8]} fontSize={0.2} color="#c3ccec" maxWidth={6.4} textAlign="center" lineHeight={1.5} fillOpacity={0.9}>
           {world.body}
         </SpatialText>
       </Suspense>
