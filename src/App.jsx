@@ -15,6 +15,7 @@ export default function App() {
         dpr={[1, mobile ? 1 : 2]}
         gl={{ antialias: !mobile, powerPreference: 'high-performance' }}
         camera={{ position: [0, 0, 14], fov: 55, near: 0.1, far: 220 }}
+        style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100dvh' }}
       >
         <color attach="background" args={[BG]} />
         <fog attach="fog" args={[BG, 8, 48]} />
@@ -22,7 +23,7 @@ export default function App() {
         <directionalLight position={[5, 8, 10]} intensity={0.85} color="#cdd6ff" />
         <pointLight position={[-8, -4, -10]} intensity={0.5} color="#ff8fd8" />
 
-        <ScrollControls pages={WORLDS.length + 0.5} damping={0.3}>
+        <ScrollControls pages={WORLDS.length * 2} damping={0.4}>
           <Mood />
           <CameraRig />
           <Particles count={mobile ? 700 : 1400} />
